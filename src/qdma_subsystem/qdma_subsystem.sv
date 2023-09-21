@@ -347,7 +347,7 @@ module qdma_subsystem #(
     .s_axis_cpl_ctrl_err_idx         (axis_qdma_cpl_ctrl_err_idx),
     .s_axis_cpl_ctrl_no_wrb_marker   (axis_qdma_cpl_ctrl_no_wrb_marker),
     .s_axis_cpl_tready               (axis_qdma_cpl_tready),
-
+//not use
     .h2c_byp_out_vld                 (h2c_byp_out_vld),
     .h2c_byp_out_dsc                 (h2c_byp_out_dsc),
     .h2c_byp_out_st_mm               (h2c_byp_out_st_mm),
@@ -359,7 +359,7 @@ module qdma_subsystem #(
     .h2c_byp_out_port_id             (h2c_byp_out_port_id),
     .h2c_byp_out_fmt                 (h2c_byp_out_fmt),
     .h2c_byp_out_rdy                 (h2c_byp_out_rdy),
-
+//not use
     .h2c_byp_in_st_vld               (h2c_byp_in_st_vld),
     .h2c_byp_in_st_addr              (h2c_byp_in_st_addr),
     .h2c_byp_in_st_len               (h2c_byp_in_st_len),
@@ -374,7 +374,7 @@ module qdma_subsystem #(
     .h2c_byp_in_st_cidx              (h2c_byp_in_st_cidx),
     .h2c_byp_in_st_no_dma            (h2c_byp_in_st_no_dma),
     .h2c_byp_in_st_rdy               (h2c_byp_in_st_rdy),
-
+//not use
     .c2h_byp_out_vld                 (c2h_byp_out_vld),
     .c2h_byp_out_dsc                 (c2h_byp_out_dsc),
     .c2h_byp_out_st_mm               (c2h_byp_out_st_mm),
@@ -387,7 +387,7 @@ module qdma_subsystem #(
     .c2h_byp_out_fmt                 (c2h_byp_out_fmt),
     .c2h_byp_out_pfch_tag            (c2h_byp_out_pfch_tag),
     .c2h_byp_out_rdy                 (c2h_byp_out_rdy),
-
+//not use
     .c2h_byp_in_st_csh_vld           (c2h_byp_in_st_csh_vld),
     .c2h_byp_in_st_csh_addr          (c2h_byp_in_st_csh_addr),
     .c2h_byp_in_st_csh_port_id       (c2h_byp_in_st_csh_port_id),

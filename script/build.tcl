@@ -47,6 +47,7 @@ proc _do_post_impl {build_dir top impl_run {zynq_family 0}} {
         set bit_file ${build_dir}/${top}.runs/${impl_run}/${top}.bit
         set mcs_file ${build_dir}/${top}.runs/${impl_run}/${top}.mcs
         write_cfgmem -format mcs -size 128 -interface $interface -loadbit "up $start_address $bit_file" -file "$mcs_file"
+        #write_cfgmem -force -format mcs -interface spix4 -size 128 -loadbit "up 0x01002000 /home/hxz/Documents/open_nic/open-nic-shell/build/au50/open_nic_shell/open_nic_shell.runs/impl_1/open_nic_shell.bit" -file "/home/hxz/Documents/open_nic/open-nic-shell/build/au50/open_nic_shell/open_nic_shell.runs/impl_1/open_nic_shell.mcs"
     }
 }
 
