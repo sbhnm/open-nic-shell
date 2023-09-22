@@ -26,7 +26,6 @@ module open_nic_shell #(
   parameter int    NUM_QUEUE       = 512,
   parameter int    NUM_CMAC_PORT   = 1
 ) (
-`ifdef __synthesis__
 `ifdef __au280__
   output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
 `elsif __au50__
@@ -76,7 +75,6 @@ module open_nic_shell #(
     end
   end
 
-`ifdef __synthesis__
   wire         powerup_rstn;
   wire         pcie_user_lnk_up;
   wire         pcie_phy_ready;
@@ -123,7 +121,6 @@ module open_nic_shell #(
 
 `ifdef __zynq_family__
   zynq_usplus_ps zynq_usplus_ps_inst ();
-`endif
 `endif
 
   wire                         axil_qdma_awvalid;
@@ -425,3 +422,4 @@ module open_nic_shell #(
   );
 
 endmodule: open_nic_shell
+// vivado -mode batch -source build.tcl -tclargs -board au50 -overwrite 1
