@@ -40,14 +40,14 @@ module open_nic_shell #(
   output                  [15:0] pcie_txn,
   input                          pcie_refclk_p,
   input                          pcie_refclk_n,
-  input                          pcie_rstn,
+  input                          pcie_rstn
 
-  input    [4*NUM_CMAC_PORT-1:0] qsfp_rxp,
-  input    [4*NUM_CMAC_PORT-1:0] qsfp_rxn,
-  output   [4*NUM_CMAC_PORT-1:0] qsfp_txp,
-  output   [4*NUM_CMAC_PORT-1:0] qsfp_txn,
-  input      [NUM_CMAC_PORT-1:0] qsfp_refclk_p,
-  input      [NUM_CMAC_PORT-1:0] qsfp_refclk_n
+  //input    [4*NUM_CMAC_PORT-1:0] qsfp_rxp,
+  //input    [4*NUM_CMAC_PORT-1:0] qsfp_rxn,
+  //output   [4*NUM_CMAC_PORT-1:0] qsfp_txp,
+  //output   [4*NUM_CMAC_PORT-1:0] qsfp_txn,
+  //input      [NUM_CMAC_PORT-1:0] qsfp_refclk_p,
+  //input      [NUM_CMAC_PORT-1:0] qsfp_refclk_n
   
 );
 

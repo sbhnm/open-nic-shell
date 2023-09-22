@@ -20,15 +20,15 @@ create_clock -period 10.000 -name pcie_refclk [get_ports pcie_refclk_p]
 set_false_path -through [get_ports pcie_rstn]
 
 set axis_aclk [get_clocks -of_object [get_nets axis_aclk]]
-foreach cmac_clk [get_clocks -of_object [get_nets cmac_clk*]] {
-    set_max_delay -datapath_only -from $axis_aclk -to $cmac_clk 4.000
-    set_max_delay -datapath_only -from $cmac_clk -to $axis_aclk 3.103
-}
+#foreach cmac_clk [get_clocks -of_object [get_nets cmac_clk*]] {
+#    set_max_delay -datapath_only -from $axis_aclk -to $cmac_clk 4.000
+#    set_max_delay -datapath_only -from $cmac_clk -to $axis_aclk 3.103
+#}
 
-create_pblock pblock_packet_adapter_tx
-add_cells_to_pblock [get_pblocks pblock_packet_adapter_tx] [get_cells -quiet {cmac_port*.packet_adapter_inst/tx_inst}]
-resize_pblock [get_pblocks pblock_packet_adapter_tx] -add {CLOCKREGION_X1Y2:CLOCKREGION_X2Y3}
+#create_pblock pblock_packet_adapter_tx
+#add_cells_to_pblock [get_pblocks pblock_packet_adapter_tx] [get_cells -quiet {cmac_port*.packet_adapter_inst/tx_inst}]
+#resize_pblock [get_pblocks pblock_packet_adapter_tx] -add {CLOCKREGION_X1Y2:CLOCKREGION_X2Y3}
 
-create_pblock pblock_packet_adapter_rx
-add_cells_to_pblock [get_pblocks pblock_packet_adapter_rx] [get_cells -quiet {cmac_port*.packet_adapter_inst/rx_inst}]
-resize_pblock [get_pblocks pblock_packet_adapter_rx] -add {CLOCKREGION_X5Y2:CLOCKREGION_X6Y3}
+#create_pblock pblock_packet_adapter_rx
+#add_cells_to_pblock [get_pblocks pblock_packet_adapter_rx] [get_cells -quiet {cmac_port*.packet_adapter_inst/rx_inst}]
+#resize_pblock [get_pblocks pblock_packet_adapter_rx] -add {CLOCKREGION_X5Y2:CLOCKREGION_X6Y3}
