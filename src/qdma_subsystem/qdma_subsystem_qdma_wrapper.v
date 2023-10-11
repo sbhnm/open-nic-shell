@@ -56,17 +56,27 @@ module qdma_subsystem_qdma_wrapper (
   input    [1:0] m_axil_rresp,
   (* MARK_DEBUG="true" *)
   output         m_axil_rready,
-
+  (* MARK_DEBUG="true" *)
   output         m_axis_h2c_tvalid,
+  (* MARK_DEBUG="true" *)
   output [511:0] m_axis_h2c_tdata,
+  (* MARK_DEBUG="true" *)
   output  [31:0] m_axis_h2c_tcrc,
+  (* MARK_DEBUG="true" *)
   output         m_axis_h2c_tlast,
+  (* MARK_DEBUG="true" *)
   output  [10:0] m_axis_h2c_tuser_qid,
+  (* MARK_DEBUG="true" *)
   output   [2:0] m_axis_h2c_tuser_port_id,
+  (* MARK_DEBUG="true" *)
   output         m_axis_h2c_tuser_err,
+  (* MARK_DEBUG="true" *)
   output  [31:0] m_axis_h2c_tuser_mdata,
+  (* MARK_DEBUG="true" *)
   output   [5:0] m_axis_h2c_tuser_mty,
+  (* MARK_DEBUG="true" *)
   output         m_axis_h2c_tuser_zero_byte,
+  (* MARK_DEBUG="true" *)
   input          m_axis_h2c_tready,
 
   input          s_axis_c2h_tvalid,
