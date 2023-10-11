@@ -40,13 +40,21 @@ module box_250mhz #(
   output                   [1:0] s_axil_rresp,
   input                          s_axil_rready,
 
+  (* MARK_DEBUG="true" *)
   input      [NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tvalid,
+  (* MARK_DEBUG="true" *)
   input  [512*NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tdata,
+  (* MARK_DEBUG="true" *)
   input   [64*NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tkeep,
+  (* MARK_DEBUG="true" *)
   input      [NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tlast,
+  (* MARK_DEBUG="true" *)
   input   [16*NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tuser_size,
+  (* MARK_DEBUG="true" *)
   input   [16*NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tuser_src,
+  (* MARK_DEBUG="true" *)
   input   [16*NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tuser_dst,
+  (* MARK_DEBUG="true" *)
   output     [NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tready,
 
   output     [NUM_PHYS_FUNC-1:0] m_axis_qdma_c2h_tvalid,
