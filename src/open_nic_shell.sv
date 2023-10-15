@@ -158,13 +158,21 @@ module open_nic_shell #(
   wire                         axil_box0_rready;
 
   // QDMA subsystem interfaces to the box running at 250MHz
+  (* MARK_DEBUG="true" *)
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tvalid;
+  // (* MARK_DEBUG="true" *)
   wire [512*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tdata;
+  // (* MARK_DEBUG="true" *)
   wire  [64*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tkeep;
+  (* MARK_DEBUG="true" *)
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tlast;
+  // (* MARK_DEBUG="true" *)
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_size;
+  // (* MARK_DEBUG="true" *)
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_src;
+  // (* MARK_DEBUG="true" *)
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_dst;
+  (* MARK_DEBUG="true" *)
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tready;
 
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_c2h_tvalid;
