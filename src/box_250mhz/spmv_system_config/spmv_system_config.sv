@@ -25,8 +25,6 @@ module spmv_vector_loader #(
     output                   [1:0] s_axil_rresp,
     input                          s_axil_rready,
 
-
-
     input aclk,
     input aresetn
 );
