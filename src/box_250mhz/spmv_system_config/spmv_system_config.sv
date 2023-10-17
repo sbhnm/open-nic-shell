@@ -2,10 +2,12 @@
 `timescale 1ns/1ps
 // 负责矩阵乘法的参数写入
 module spmv_vector_loader #(
-    parameter int CONF_BASE_ADDR = 32'h0,
-    parameter int CONF_HBM_LOADER_MODE_OFFSET = 32'h00,
-    parameter int CONF_HBM_BASE_ADDR_OFFSET = 32'h08,
-    parameter int CONF_HBM_NOW_ADDR_OFFSET = 32'h08,
+    parameter int CONF_NUM_KERNEL = 32'h4,
+    parameter int CTRL_OFFSET = 32'h00,
+    parameter int ROW_OFFSET = 32'h04,
+    parameter int NNZ_OFFSET = 32'h08,
+
+    parameter int PER_ADDR_SPACE = 32'd12
 
 ) (
     input                          s_axil_awvalid,
@@ -25,27 +27,19 @@ module spmv_vector_loader #(
     output                   [1:0] s_axil_rresp,
     input                          s_axil_rready,
 
-
+    output [32*3*CONF_NUM_KERNEL-1:0] config_wire,
 
     input aclk,
     input aresetn
 );
-    
-    reg [63:0] config_hbm_base_addr;
-    reg [63:0] config_hbm_now_addr;
-    reg [31:0] config_mode_reg;
-    wire loader_mode;
-    assign loader_mode = config_mode_reg[0];
-    wire rw_mode;
-    assign rw_mode =  config_mode_reg[1];
     wire                reg_en;
     wire                reg_we;
-    wire         [31:0] reg_addr;
+    wire         [9:0] reg_addr;
     wire         [31:0] reg_din;
     reg          [31:0] reg_dout;
     axi_lite_register #(
     .CLOCKING_MODE ("common_clock"),
-    .ADDR_W        (32),
+    .ADDR_W        (10),
     .DATA_W        (32)
   ) axil_reg_inst (
     .s_axil_awvalid (s_axil_awvalid),
@@ -78,61 +72,54 @@ module spmv_vector_loader #(
   );
 
     // 控制寄存器逻辑
-    always @(posedge clk ) begin
-        if(~rstn)begin
+
+
+    reg [32*CONF_NUM_KERNEL-1:0] ctrl_reg;
+    reg [32*CONF_NUM_KERNEL-1:0] row_num;
+    reg [32*CONF_NUM_KERNEL-1:0] nnz_num;
+
+
+
+  generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
+    
+    assign config_wire[`getvec(32,3*i)] = ctrl_reg[`getvec(32,i)];
+    assign config_wire[`getvec(32,3*i+1)] = row_num[`getvec(32,i)];
+    assign config_wire[`getvec(32,3*i+2)] = nnz_num[`getvec(32,i)];
+
+  end
+  endgenerate
+
+    always @(posedge aclk ) begin
+        if(~aresetn)begin
             reg_dout<=32'h0;
         end
         else if(reg_en&&~reg_we)begin
-            case (reg_addr[3:0])
-                (CONF_HBM_LOADER_MODE_OFFSET): reg_dout<= config_mode_reg;
-                (CONF_HBM_BASE_ADDR_OFFSET): reg_dout<= config_hbm_base_addr[`getvec(32, 0)];
-                (CONF_HBM_BASE_ADDR_OFFSET+32'h04): reg_dout<= config_hbm_base_addr[`getvec(32, 1)];
-                (CONF_HBM_NOW_ADDR_OFFSET): reg_dout<= config_hbm_now_addr[`getvec(32, 0)];
-                (CONF_HBM_NOW_ADDR_OFFSET+32'h04): reg_dout<= config_hbm_now_addr[`getvec(32, 1)];
-                default: reg_dout <= 32'hDEADADDE;
-            endcase
+            if(reg_en&&~reg_we)begin
+                if(reg_addr>= 0 *PER_ADDR_SPACE && reg_addr < CONF_NUM_KERNEL *PER_ADDR_SPACE)begin
+                    for (int i = 0; i < CONF_NUM_KERNEL; i++) begin
+                        if(reg_addr>= i *PER_ADDR_SPACE && reg_addr < i *PER_ADDR_SPACE +PER_ADDR_SPACE)begin //在地址范围内
+                            case (reg_addr - i *12)
+                                CTRL_OFFSET: begin
+                                    reg_dout<= ctrl_reg[`getvec(32,i)];
+                                end
+                                ROW_OFFSET:begin
+                                    reg_dout<= row_num[`getvec(32,i)];
+                                end
+                                NNZ_OFFSET:begin
+                                    reg_dout<= nnz_num[`getvec(32,i)];
+                                end
+                                default:begin
+                                    reg_dout<= 32'hdeadbeef;
+                                end 
+                            endcase
+                        end
+                    end
+                end
+                else begin
+                    reg_dout<=32'hdeadbeef;
+                end
+                
+            end  
         end
     end
-
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            config_mode_reg<=32'h0;
-        end
-        else if(reg_en && reg_we && reg_addr[3:0] == CONF_HBM_LOADER_MODE_OFFSET)begin
-            config_mode_reg <= reg_din;
-        end
-    end
-
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            config_hbm_base_addr<=32'h0;
-        end
-        else if(reg_en && reg_we)begin
-            case (reg_addr[3:0])
-                (CONF_HBM_BASE_ADDR_OFFSET) : config_hbm_base_addr[`getvec(32, 0)] <=reg_din;
-                (CONF_HBM_BASE_ADDR_OFFSET+32'h04) : config_hbm_base_addr[`getvec(32, 1)] <=reg_din;
-                default: config_hbm_base_addr<=config_hbm_base_addr;
-            endcase
-        end
-    end
-
-
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            config_hbm_now_addr<=0;
-        end
-        else if()begin//waddr 在传输时步进 ，优先处理步进请求
-            
-        end
-        else if(reg_en && reg_we)begin
-            case (reg_addr[3:0])
-                (CONF_HBM_BASE_ADDR_OFFSET) : config_hbm_now_addr[`getvec(32, 0)] <=reg_din;
-                (CONF_HBM_BASE_ADDR_OFFSET+32'h04) : config_hbm_now_addr[`getvec(32, 1)] <=reg_din;
-                default: config_hbm_now_addr<= config_hbm_now_addr;
-            endcase
-        end
-
-    end
-
-    
 endmodule
