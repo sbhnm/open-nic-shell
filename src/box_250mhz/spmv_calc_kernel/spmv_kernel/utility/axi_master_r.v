@@ -13,7 +13,7 @@
 		parameter  C_M_AXI_TARGET_SLAVE_BASE_ADDR	= 32'h40000000,
 		parameter integer C_M_AXI_BURST_LEN	= 8,
 		parameter integer C_M_AXI_ID_WIDTH	= 1,
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
 	(
@@ -25,6 +25,7 @@
 
 		// Ports of Axi Master Bus Interface M00_AXI
 		// input wire  m_axi_init_axi_txn,
+		input wire read_ctrl,
         input wire  m_axi_init_axi_read,
         // input wire  m_axi_init_axi_write,
 		output wire  m_axi_r_done,
@@ -89,8 +90,8 @@
 		.M_AXI_RVALID(m_axi_rvalid),
 		.M_AXI_RREADY(m_axi_rready),
         .read_length(read_length),
-        .read_base_addr(read_base_addr)
-        
+        .read_base_addr(read_base_addr),
+        .read_ctrl(read_ctrl)
 	);
 
 	// Add user logic here

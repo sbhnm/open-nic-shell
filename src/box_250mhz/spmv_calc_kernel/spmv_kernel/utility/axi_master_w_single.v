@@ -11,9 +11,9 @@
 
 		// Parameters of Axi Master Bus Interface M00_AXI
 		parameter  C_M_AXI_TARGET_SLAVE_BASE_ADDR	= 32'h40000000,
-		parameter integer C_M_AXI_BURST_LEN	= 16,
+		parameter integer C_M_AXI_BURST_LEN	= 1,
 		parameter integer C_M_AXI_ID_WIDTH	= 1,
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
 	(
@@ -29,6 +29,8 @@
         input wire  m_axi_init_axi_write,
 		// output wire  m_axi_r_done,
         output wire  m_axi_w_done,
+		input wire [C_M_AXI_DATA_WIDTH-1:0] write_data,
+		
 		input wire  m_axi_aclk,
 		input wire  m_axi_aresetn,
 		output wire [C_M_AXI_ID_WIDTH-1 : 0] m_axi_awid,
@@ -52,9 +54,9 @@
 		input wire  m_axi_bvalid,
 		output wire  m_axi_bready,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] write_length,
+        // input wire [C_M_AXI_DATA_WIDTH -1:0] write_length,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] write_base_addr
+        input wire [C_M_AXI_ADDR_WIDTH -1:0] write_base_addr
 	);
 // Instantiation of Axi Bus Interface M00_AXI
 	axi_master_w_single_ctrl # ( 
@@ -64,11 +66,11 @@
 		.C_M_AXI_ADDR_WIDTH(C_M_AXI_ADDR_WIDTH),
 		.C_M_AXI_DATA_WIDTH(C_M_AXI_DATA_WIDTH)
 	) axi_master_w_ctrl (
-		.INIT_AXI_READ(m_axi_init_axi_read),
-        .INIT_AXI_WRITE(m_axi_init_axi_write),
 
+        .INIT_AXI_WRITE(m_axi_init_axi_write),
+		.DATA_SEND(write_data),
 		.WRITE_DONE(m_axi_w_done),
-        // .READ_DONE(m_axi_r_done),
+
 		.M_AXI_ACLK(m_axi_aclk),
 		.M_AXI_ARESETN(m_axi_aresetn),
 		.M_AXI_AWID(m_axi_awid),
@@ -91,7 +93,7 @@
 		.M_AXI_BRESP(m_axi_bresp),
 		.M_AXI_BVALID(m_axi_bvalid),
 		.M_AXI_BREADY(m_axi_bready),
-        .write_length(write_length),
+        .write_length(1),
         .write_base_addr(write_base_addr)
         
 	);

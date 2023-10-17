@@ -15,7 +15,7 @@
 		// Thread ID Width
 		parameter integer C_M_AXI_ID_WIDTH	= 1,
 		// Width of Address Bus
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		// Width of Data Bus
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
@@ -223,7 +223,7 @@
 	    else                                                                       
 	      begin  
 	        init_w_ff <= INIT_AXI_WRITE;
-	        init_w_ff2 <= init_r_ff;                                                                 
+	        init_w_ff2 <= init_w_ff;                                                                 
 	      end                                                                      
 	  end   
 	//--------------------

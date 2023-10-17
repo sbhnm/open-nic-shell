@@ -11,9 +11,9 @@
 
 		// Parameters of Axi Master Bus Interface M00_AXI
 		parameter  C_M_AXI_TARGET_SLAVE_BASE_ADDR	= 32'h40000000,
-		parameter integer C_M_AXI_BURST_LEN	= 16,
-		parameter integer C_M_AXI_ID_WIDTH	= 1,
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_BURST_LEN	= 1,
+		parameter integer C_M_AXI_ID_WIDTH	= 3,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
 	(
@@ -49,9 +49,9 @@
 		input wire  m_axi_rvalid,
 		output wire  m_axi_rready,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] read_length,
+        input wire [32 -1:0] read_length,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] read_base_addr
+        input wire [32 -1:0] read_base_addr
         // input wire [C_M_AXI_DATA_WIDTH -1:0] write_length,
 
         // input wire [C_M_AXI_DATA_WIDTH -1:0] write_base_addr

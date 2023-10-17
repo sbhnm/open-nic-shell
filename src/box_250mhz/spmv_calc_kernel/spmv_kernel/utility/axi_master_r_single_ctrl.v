@@ -11,11 +11,11 @@
 		// Base address of targeted slave
 		parameter  C_M_TARGET_SLAVE_BASE_ADDR	= 32'h40000000,
 		// Burst Length. Supports 1, 2, 4, 8, 16, 32, 64, 128, 256 burst lengths
-		parameter integer C_M_AXI_BURST_LEN	= 16,
+		parameter integer C_M_AXI_BURST_LEN	= 1,
 		// Thread ID Width
-		parameter integer C_M_AXI_ID_WIDTH	= 1,
+		parameter integer C_M_AXI_ID_WIDTH	= 3,
 		// Width of Address Bus
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		// Width of Data Bus
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
@@ -84,9 +84,9 @@
     // accept the read data and response information.
 		output wire  M_AXI_RREADY,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] read_length,
+        input wire [32 -1:0] read_length,
 
-        input wire [C_M_AXI_DATA_WIDTH -1:0] read_base_addr,
+        input wire [32 -1:0] read_base_addr,
 
 		output wire [C_M_AXI_DATA_WIDTH -1:0] read_data,
 		output wire read_data_valid,
@@ -137,7 +137,7 @@
 	//read beat count in a burst
 	reg [C_TRANSACTIONS_NUM : 0] 	read_index;
 	//size of C_M_AXI_BURST_LEN length burst in bytes
-	wire [C_TRANSACTIONS_NUM+2 : 0] 	burst_size_bytes;
+	wire [C_TRANSACTIONS_NUM+3 : 0] 	burst_size_bytes;
 	//The burst counters are used to track the number of burst transfers of C_M_AXI_BURST_LEN burst length needed to transfer 2^C_MASTER_LENGTH bytes of data.
 	// reg [C_NO_BURSTS_REQ : 0] 	write_burst_counter;
 	// reg [C_NO_BURSTS_REQ : 0] 	write_burst_total;
@@ -184,7 +184,10 @@
 	assign init_r_pulse	= (!init_r_ff2) && init_r_ff;
 
 
-	assign M_AXI_ARVALID = M_AXI_ARREADY & INIT_AXI_READ;
+	// assign M_AXI_ARVALID = M_AXI_ARREADY & INIT_AXI_READ;
+	 assign M_AXI_ARVALID = INIT_AXI_READ;
+
+
 	assign M_AXI_ARADDR =  C_M_TARGET_SLAVE_BASE_ADDR + read_base_addr;
 
 	assign READ_DONE = M_AXI_RVALID;

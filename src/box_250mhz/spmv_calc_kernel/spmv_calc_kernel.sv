@@ -356,8 +356,55 @@ module spmv_calc_kernel #(
         .m_axi_Yi_bready(axi_Yi_bready[`getvec(1,2)])
 
     );
+    //连线
+    Load_Balancer Load_Balancer(
+
+    );
 
     generate for (genvar i = 0; i < 4; i++) begin
+        axi_demux_r axi_demux_r(
+        .clk(clk),
+        .rstn(rstn),
+
+        .m_axi_arid(axi_Xi_Col_arid[`getvec(1*2,2*i)]),          // input wire [1 : 0] m_axi_arid
+        .m_axi_araddr(axi_Xi_Col_araddr[`getvec(48*2,2*i)]),      // input wire [65 : 0] m_axi_araddr
+        .m_axi_arlen(axi_Xi_Col_arlen[`getvec(8*2,2*i)]),        // input wire [15 : 0] m_axi_arlen
+        .m_axi_arsize(axi_Xi_Col_arsize[`getvec(3*2,2*i)]),      // input wire [5 : 0] m_axi_arsize
+        .m_axi_arburst(axi_Xi_Col_arburst[`getvec(2*2,2*i)]),    // input wire [3 : 0] m_axi_arburst
+        .m_axi_arlock(axi_Xi_Col_arlock[`getvec(1*2,2*i)]),      // input wire [1 : 0] m_axi_arlock
+        .m_axi_arcache(axi_Xi_Col_arcache[`getvec(4*2,2*i)]),    // input wire [7 : 0] m_axi_arcache
+        .m_axi_arprot(axi_Xi_Col_arprot[`getvec(3*2,2*i)]),      // input wire [5 : 0] m_axi_arprot
+        .m_axi_arqos(axi_Xi_Col_arqos[`getvec(4*2,2*i)]),        // input wire [7 : 0] m_axi_arqos
+        .m_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1*2,2*i)]),    // input wire [1 : 0] m_axi_arvalid
+        .m_axi_arready(axi_Xi_Col_arready[`getvec(1*2,2*i)]),    // output wire [1 : 0] m_axi_arready
+        .m_axi_rid(axi_Xi_Col_rid[`getvec(1*2,2*i)]),            // output wire [1 : 0] m_axi_rid
+        .m_axi_rdata(axi_Xi_Col_rdata[`getvec(256*2,2*i)]),        // output wire [511 : 0] m_axi_rdata
+        .m_axi_rresp(axi_Xi_Col_rresp[`getvec(2*2,2*i)]),        // output wire [3 : 0] m_axi_rresp
+        .m_axi_rlast(axi_Xi_Col_rlast[`getvec(1*2,2*i)]),        // output wire [1 : 0] m_axi_rlast
+        .m_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1*2,2*i)]),      // output wire [1 : 0] m_axi_rvalid
+        .m_axi_rready(axi_Xi_Col_rready[`getvec(1*2,2*i)]),      // input wire [1 : 0] m_axi_rready
+
+ //TODO 连线 axi demux 连线
+        .s_axi_arid(),
+        .s_axi_araddr(),
+        .s_axi_arlen(),
+        .s_axi_arsize(),
+        .s_axi_arburst(),
+        .s_axi_arlock(),
+        .s_axi_arcache(),
+        .s_axi_arprot(),
+        .s_axi_arqos(),
+        .s_axi_arvalid(),
+        .s_axi_arready(),
+        .s_axi_rid(),
+        .s_axi_rdata(),
+        .s_axi_rresp(),
+        .s_axi_rlast(),
+        .s_axi_rvalid(),
+        .s_axi_rready()
+        );
+
+
         axi_colxi_crossbar axi_colxi_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn

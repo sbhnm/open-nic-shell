@@ -11,11 +11,11 @@
 		// Base address of targeted slave
 		parameter  C_M_TARGET_SLAVE_BASE_ADDR	= 32'h40000000,
 		// Burst Length. Supports 1, 2, 4, 8, 16, 32, 64, 128, 256 burst lengths
-		parameter integer C_M_AXI_BURST_LEN	= 16,
+		parameter integer C_M_AXI_BURST_LEN	= 2,
 		// Thread ID Width
 		parameter integer C_M_AXI_ID_WIDTH	= 1,
 		// Width of Address Bus
-		parameter integer C_M_AXI_ADDR_WIDTH	= 32,
+		parameter integer C_M_AXI_ADDR_WIDTH	= 48,
 		// Width of Data Bus
 		parameter integer C_M_AXI_DATA_WIDTH	= 32
 	)
@@ -26,6 +26,8 @@
 		// Do not modify the ports beyond this line
 
 		// Initiate AXI transactions
+
+		input wire read_ctrl,
 		input wire  INIT_AXI_READ,
 
         // input wire  INIT_AXI_WRITE,
@@ -114,7 +116,7 @@
 	// Non-2^n lengths will eventually cause bursts across 4K address boundaries.
 	 localparam integer C_MASTER_LENGTH	= 12;
 	// total number of burst transfers is master length divided by burst length and burst size
-	 localparam integer C_NO_BURSTS_REQ = C_MASTER_LENGTH-clogb2((C_M_AXI_BURST_LEN*C_M_AXI_DATA_WIDTH/8)-1);
+	//  localparam integer C_NO_BURSTS_REQ = C_MASTER_LENGTH-clogb2((C_M_AXI_BURST_LEN*C_M_AXI_DATA_WIDTH/8)-1);
 	// Example State machine to initialize counter, initialize write transactions, 
 	// initialize read transactions and comparison of read data with the 
 	// written data words.
@@ -137,13 +139,13 @@
 	//read beat count in a burst
 	reg [C_TRANSACTIONS_NUM : 0] 	read_index;
 	//size of C_M_AXI_BURST_LEN length burst in bytes
-	wire [C_TRANSACTIONS_NUM+2 : 0] 	burst_size_bytes;
+	wire [C_TRANSACTIONS_NUM+3: 0] 	burst_size_bytes;
 	//The burst counters are used to track the number of burst transfers of C_M_AXI_BURST_LEN burst length needed to transfer 2^C_MASTER_LENGTH bytes of data.
 	// reg [C_NO_BURSTS_REQ : 0] 	write_burst_counter;
 	// reg [C_NO_BURSTS_REQ : 0] 	write_burst_total;
     
-    reg [C_NO_BURSTS_REQ : 0] 	read_burst_counter;
-    reg [C_NO_BURSTS_REQ : 0] 	read_burst_total;
+    reg [31 : 0] 	read_burst_counter;
+    reg [31 : 0] 	read_burst_total;
 
 	// reg  	start_single_burst_write;
 	reg  	start_single_burst_read;
@@ -383,7 +385,7 @@
 	              begin                                                                                         
 	                read_state  <= INIT_READ;                                                               
 	                                                                                                            
-	                if (~axi_arvalid && ~burst_read_active && ~start_single_burst_read)                         
+	                if (~axi_arvalid && ~burst_read_active && ~start_single_burst_read & read_ctrl)                         
 	                  begin                                                                                     
 	                    start_single_burst_read <= 1'b1;                                                        
 	                  end                                                                                       
