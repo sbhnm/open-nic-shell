@@ -122,4 +122,33 @@ module spmv_vector_loader #(
             end  
         end
     end
+    always @(posedge clk ) begin
+        if(~aresetn)begin
+            ctrl_reg<=0;
+            row_num<=0;
+            nnz_num<=0;
+        end
+        else if(reg_en&&reg_we)begin
+            if(reg_addr>= 0 *PER_ADDR_SPACE && reg_addr < CONF_NUM_KERNEL *PER_ADDR_SPACE)begin
+                    for (int i = 0; i < CONF_NUM_KERNEL; i++) begin
+                        if(reg_addr>= i *PER_ADDR_SPACE && reg_addr < i *PER_ADDR_SPACE +PER_ADDR_SPACE)begin //在地址范围内
+                            case (reg_addr - i *12)
+                                CTRL_OFFSET: begin
+                                    ctrl_reg[`getvec(32,i)]<= reg_din;
+                                end
+                                ROW_OFFSET:begin
+                                    row_num[`getvec(32,i)]<= reg_din;
+                                end
+                                NNZ_OFFSET:begin
+                                    nnz_num[`getvec(32,i)]<= reg_din;
+                                end
+                                default:begin
+                                    
+                                end 
+                            endcase
+                        end
+                    end
+                end
+        end
+    end
 endmodule

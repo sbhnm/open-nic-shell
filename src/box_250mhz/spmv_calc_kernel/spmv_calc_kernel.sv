@@ -87,6 +87,26 @@ module spmv_calc_kernel #(
     wire [8*1-1:0]          axi_Xi_Col_rvalid;
     wire [8*1-1:0]          axi_Xi_Col_rready;
 
+    
+    wire [4*1-1 : 0]        axi_demux_Col_arid;
+    wire [4*48-1 : 0]       axi_demux_Col_araddr;
+    wire [4*8-1 : 0]        axi_demux_Col_arlen;
+    wire [4*3-1 : 0]        axi_demux_Col_arsize;
+    wire [4*2-1 : 0]        axi_demux_Col_arburst;
+    wire [4*1-1:0]          axi_demux_Col_arlock;
+    wire [4*4-1 : 0]        axi_demux_Col_arcache;
+    wire [4*3-1 : 0]        axi_demux_Col_arprot;
+    wire [4*4-1 : 0]        axi_demux_Col_arqos;
+    wire [4*1-1:0]          axi_demux_Col_arvalid;
+    wire [4*1-1:0]          axi_demux_Col_arready;
+    wire [4*1-1 : 0]        axi_demux_Col_rid;
+    wire [4*32-1 : 0]       axi_demux_Col_rdata;
+    wire [4*2-1 : 0]        axi_demux_Col_rresp;
+    wire [4*1-1:0]          axi_demux_Col_rlast;
+    wire [4*1-1:0]          axi_demux_Col_rvalid;
+    wire [4*1-1:0]          axi_demux_Col_rready;
+    
+
     wire [3*2-1 : 0]        axi_NNZWB_arid;
     wire [3*48-1 : 0]       axi_NNZWB_araddr;
     wire [3*8-1 : 0]        axi_NNZWB_arlen;
@@ -165,23 +185,23 @@ module spmv_calc_kernel #(
 
 
         //colIndex Buffer
-        .Kernel1_m_axi_colIndex_arid(axi_Xi_Col_arid[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_araddr(axi_Xi_Col_araddr[`getvec(48,0)]),
-        .Kernel1_m_axi_colIndex_arlen(axi_Xi_Col_arlen[`getvec(8,0)]),
-        .Kernel1_m_axi_colIndex_arsize(axi_Xi_Col_arsize[`getvec(3,0)]),
-        .Kernel1_m_axi_colIndex_arburst(axi_Xi_Col_arburst[`getvec(2,0)]),
-        .Kernel1_m_axi_colIndex_arlock(axi_Xi_Col_arlock[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_arcache(axi_Xi_Col_arcache[`getvec(4,0)]),
-        .Kernel1_m_axi_colIndex_arprot(axi_Xi_Col_arprot[`getvec(3,0)]),
-        .Kernel1_m_axi_colIndex_arqos(axi_Xi_Col_arqos[`getvec(4,0)]),
-        .Kernel1_m_axi_colIndex_arvalid(axi_Xi_Col_arvalid[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_arready(axi_Xi_Col_arready[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_rid(axi_Xi_Col_rid[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_rdata(axi_Xi_Col_rdata[`getvec(256,0)]),
-        .Kernel1_m_axi_colIndex_rresp(axi_Xi_Col_rresp[`getvec(2,0)]),
-        .Kernel1_m_axi_colIndex_rlast(axi_Xi_Col_rlast[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_rvalid(axi_Xi_Col_rvalid[`getvec(1,0)]),
-        .Kernel1_m_axi_colIndex_rready(axi_Xi_Col_rready[`getvec(1,0)]),
+        .Kernel1_m_axi_colIndex_arid(axi_demux_Col_arid[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_araddr(axi_demux_Col_araddr[`getvec(48,0/2)]),
+        .Kernel1_m_axi_colIndex_arlen(axi_demux_Col_arlen[`getvec(8,0/2)]),
+        .Kernel1_m_axi_colIndex_arsize(axi_demux_Col_arsize[`getvec(3,0/2)]),
+        .Kernel1_m_axi_colIndex_arburst(axi_demux_Col_arburst[`getvec(2,0/2)]),
+        .Kernel1_m_axi_colIndex_arlock(axi_demux_Col_arlock[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_arcache(axi_demux_Col_arcache[`getvec(4,0/2)]),
+        .Kernel1_m_axi_colIndex_arprot(axi_demux_Col_arprot[`getvec(3,0/2)]),
+        .Kernel1_m_axi_colIndex_arqos(axi_demux_Col_arqos[`getvec(4,0/2)]),
+        .Kernel1_m_axi_colIndex_arvalid(axi_demux_Col_arvalid[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_arready(axi_demux_Col_arready[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_rid(axi_demux_Col_rid[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_rdata(axi_demux_Col_rdata[`getvec(256,0/2)]),
+        .Kernel1_m_axi_colIndex_rresp(axi_demux_Col_rresp[`getvec(2,0/2)]),
+        .Kernel1_m_axi_colIndex_rlast(axi_demux_Col_rlast[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_rvalid(axi_demux_Col_rvalid[`getvec(1,0/2)]),
+        .Kernel1_m_axi_colIndex_rready(axi_demux_Col_rready[`getvec(1,0/2)]),
 
         //Xi Buffer
         .Kernel1_m_axi_Xi_arid(axi_Xi_Col_arid[`getvec(1,1)]),
@@ -203,23 +223,23 @@ module spmv_calc_kernel #(
         .Kernel1_m_axi_Xi_rready(axi_Xi_Col_rready[`getvec(1,1)]),
 
         //colIndex Buffer
-        .Kernel2_m_axi_colIndex_arid(axi_Xi_Col_arid[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_araddr(axi_Xi_Col_araddr[`getvec(48,2)]),
-        .Kernel2_m_axi_colIndex_arlen(axi_Xi_Col_arlen[`getvec(8,2)]),
-        .Kernel2_m_axi_colIndex_arsize(axi_Xi_Col_arsize[`getvec(3,2)]),
-        .Kernel2_m_axi_colIndex_arburst(axi_Xi_Col_arburst[`getvec(2,2)]),
-        .Kernel2_m_axi_colIndex_arlock(axi_Xi_Col_arlock[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_arcache(axi_Xi_Col_arcache[`getvec(4,2)]),
-        .Kernel2_m_axi_colIndex_arprot(axi_Xi_Col_arprot[`getvec(3,2)]),
-        .Kernel2_m_axi_colIndex_arqos(axi_Xi_Col_arqos[`getvec(4,2)]),
-        .Kernel2_m_axi_colIndex_arvalid(axi_Xi_Col_arvalid[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_arready(axi_Xi_Col_arready[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_rid(axi_Xi_Col_rid[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_rdata(axi_Xi_Col_rdata[`getvec(256,2)]),
-        .Kernel2_m_axi_colIndex_rresp(axi_Xi_Col_rresp[`getvec(2,2)]),
-        .Kernel2_m_axi_colIndex_rlast(axi_Xi_Col_rlast[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_rvalid(axi_Xi_Col_rvalid[`getvec(1,2)]),
-        .Kernel2_m_axi_colIndex_rready(axi_Xi_Col_rready[`getvec(1,2)]),
+        .Kernel2_m_axi_colIndex_arid(axi_demux_Col_arid[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_araddr(axi_demux_Col_araddr[`getvec(48,2/2)]),
+        .Kernel2_m_axi_colIndex_arlen(axi_demux_Col_arlen[`getvec(8,2/2)]),
+        .Kernel2_m_axi_colIndex_arsize(axi_demux_Col_arsize[`getvec(3,2/2)]),
+        .Kernel2_m_axi_colIndex_arburst(axi_demux_Col_arburst[`getvec(2,2/2)]),
+        .Kernel2_m_axi_colIndex_arlock(axi_demux_Col_arlock[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_arcache(axi_demux_Col_arcache[`getvec(4,2/2)]),
+        .Kernel2_m_axi_colIndex_arprot(axi_demux_Col_arprot[`getvec(3,2/2)]),
+        .Kernel2_m_axi_colIndex_arqos(axi_demux_Col_arqos[`getvec(4,2/2)]),
+        .Kernel2_m_axi_colIndex_arvalid(axi_demux_Col_arvalid[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_arready(axi_demux_Col_arready[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_rid(axi_demux_Col_rid[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_rdata(axi_demux_Col_rdata[`getvec(256,2/2)]),
+        .Kernel2_m_axi_colIndex_rresp(axi_demux_Col_rresp[`getvec(2,2/2)]),
+        .Kernel2_m_axi_colIndex_rlast(axi_demux_Col_rlast[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_rvalid(axi_demux_Col_rvalid[`getvec(1,2/2)]),
+        .Kernel2_m_axi_colIndex_rready(axi_demux_Col_rready[`getvec(1,2/2)]),
 
         //Xi Buffer
         .Kernel2_m_axi_Xi_arid(axi_Xi_Col_arid[`getvec(1,3)]),
@@ -241,23 +261,23 @@ module spmv_calc_kernel #(
         .Kernel2_m_axi_Xi_rready(axi_Xi_Col_rready[`getvec(1,3)]),
 
         //colIndex Buffer
-        .Kernel3_m_axi_colIndex_arid(axi_Xi_Col_arid[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_araddr(axi_Xi_Col_araddr[`getvec(48,4)]),
-        .Kernel3_m_axi_colIndex_arlen(axi_Xi_Col_arlen[`getvec(8,4)]),
-        .Kernel3_m_axi_colIndex_arsize(axi_Xi_Col_arsize[`getvec(3,4)]),
-        .Kernel3_m_axi_colIndex_arburst(axi_Xi_Col_arburst[`getvec(2,4)]),
-        .Kernel3_m_axi_colIndex_arlock(axi_Xi_Col_arlock[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_arcache(axi_Xi_Col_arcache[`getvec(4,4)]),
-        .Kernel3_m_axi_colIndex_arprot(axi_Xi_Col_arprot[`getvec(3,4)]),
-        .Kernel3_m_axi_colIndex_arqos(axi_Xi_Col_arqos[`getvec(4,4)]),
-        .Kernel3_m_axi_colIndex_arvalid(axi_Xi_Col_arvalid[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_arready(axi_Xi_Col_arready[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_rid(axi_Xi_Col_rid[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_rdata(axi_Xi_Col_rdata[`getvec(256,4)]),
-        .Kernel3_m_axi_colIndex_rresp(axi_Xi_Col_rresp[`getvec(2,4)]),
-        .Kernel3_m_axi_colIndex_rlast(axi_Xi_Col_rlast[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_rvalid(axi_Xi_Col_rvalid[`getvec(1,4)]),
-        .Kernel3_m_axi_colIndex_rready(axi_Xi_Col_rready[`getvec(1,4)]),
+        .Kernel3_m_axi_colIndex_arid(axi_demux_Col_arid[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_araddr(axi_demux_Col_araddr[`getvec(48,4/2)]),
+        .Kernel3_m_axi_colIndex_arlen(axi_demux_Col_arlen[`getvec(8,4/2)]),
+        .Kernel3_m_axi_colIndex_arsize(axi_demux_Col_arsize[`getvec(3,4/2)]),
+        .Kernel3_m_axi_colIndex_arburst(axi_demux_Col_arburst[`getvec(2,4/2)]),
+        .Kernel3_m_axi_colIndex_arlock(axi_demux_Col_arlock[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_arcache(axi_demux_Col_arcache[`getvec(4,4/2)]),
+        .Kernel3_m_axi_colIndex_arprot(axi_demux_Col_arprot[`getvec(3,4/2)]),
+        .Kernel3_m_axi_colIndex_arqos(axi_demux_Col_arqos[`getvec(4,4/2)]),
+        .Kernel3_m_axi_colIndex_arvalid(axi_demux_Col_arvalid[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_arready(axi_demux_Col_arready[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_rid(axi_demux_Col_rid[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_rdata(axi_demux_Col_rdata[`getvec(256,4/2)]),
+        .Kernel3_m_axi_colIndex_rresp(axi_demux_Col_rresp[`getvec(2,4/2)]),
+        .Kernel3_m_axi_colIndex_rlast(axi_demux_Col_rlast[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_rvalid(axi_demux_Col_rvalid[`getvec(1,4/2)]),
+        .Kernel3_m_axi_colIndex_rready(axi_demux_Col_rready[`getvec(1,4/2)]),
 
         //Xi Buffer
         .Kernel3_m_axi_Xi_arid(axi_Xi_Col_arid[`getvec(1,5)]),
@@ -279,23 +299,23 @@ module spmv_calc_kernel #(
         .Kernel3_m_axi_Xi_rready(axi_Xi_Col_rready[`getvec(1,5)]),
 
         //colIndex Buffer
-        .Kernel4_m_axi_colIndex_arid(axi_Xi_Col_arid[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_araddr(axi_Xi_Col_araddr[`getvec(48,6)]),
-        .Kernel4_m_axi_colIndex_arlen(axi_Xi_Col_arlen[`getvec(8,6)]),
-        .Kernel4_m_axi_colIndex_arsize(axi_Xi_Col_arsize[`getvec(3,6)]),
-        .Kernel4_m_axi_colIndex_arburst(axi_Xi_Col_arburst[`getvec(2,6)]),
-        .Kernel4_m_axi_colIndex_arlock(axi_Xi_Col_arlock[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_arcache(axi_Xi_Col_arcache[`getvec(4,6)]),
-        .Kernel4_m_axi_colIndex_arprot(axi_Xi_Col_arprot[`getvec(3,6)]),
-        .Kernel4_m_axi_colIndex_arqos(axi_Xi_Col_arqos[`getvec(4,6)]),
-        .Kernel4_m_axi_colIndex_arvalid(axi_Xi_Col_arvalid[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_arready(axi_Xi_Col_arready[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_rid(axi_Xi_Col_rid[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_rdata(axi_Xi_Col_rdata[`getvec(256,6)]),
-        .Kernel4_m_axi_colIndex_rresp(axi_Xi_Col_rresp[`getvec(2,6)]),
-        .Kernel4_m_axi_colIndex_rlast(axi_Xi_Col_rlast[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_rvalid(axi_Xi_Col_rvalid[`getvec(1,6)]),
-        .Kernel4_m_axi_colIndex_rready(axi_Xi_Col_rready[`getvec(1,6)]),
+        .Kernel4_m_axi_colIndex_arid(axi_demux_Col_arid[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_araddr(axi_demux_Col_araddr[`getvec(48,6/2)]),
+        .Kernel4_m_axi_colIndex_arlen(axi_demux_Col_arlen[`getvec(8,6/2)]),
+        .Kernel4_m_axi_colIndex_arsize(axi_demux_Col_arsize[`getvec(3,6/2)]),
+        .Kernel4_m_axi_colIndex_arburst(axi_demux_Col_arburst[`getvec(2,6/2)]),
+        .Kernel4_m_axi_colIndex_arlock(axi_demux_Col_arlock[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_arcache(axi_demux_Col_arcache[`getvec(4,6/2)]),
+        .Kernel4_m_axi_colIndex_arprot(axi_demux_Col_arprot[`getvec(3,6/2)]),
+        .Kernel4_m_axi_colIndex_arqos(axi_demux_Col_arqos[`getvec(4,6/2)]),
+        .Kernel4_m_axi_colIndex_arvalid(axi_demux_Col_arvalid[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_arready(axi_demux_Col_arready[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_rid(axi_demux_Col_rid[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_rdata(axi_demux_Col_rdata[`getvec(256,6/2)]),
+        .Kernel4_m_axi_colIndex_rresp(axi_demux_Col_rresp[`getvec(2,6/2)]),
+        .Kernel4_m_axi_colIndex_rlast(axi_demux_Col_rlast[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_rvalid(axi_demux_Col_rvalid[`getvec(1,6/2)]),
+        .Kernel4_m_axi_colIndex_rready(axi_demux_Col_rready[`getvec(1,6/2)]),
 
         //Xi Buffer
         .Kernel4_m_axi_Xi_arid(axi_Xi_Col_arid[`getvec(1,7)]),
