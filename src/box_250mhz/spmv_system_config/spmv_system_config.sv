@@ -1,7 +1,7 @@
 `include "open_nic_shell_macros.vh"
 `timescale 1ns/1ps
 // 负责矩阵乘法的参数写入
-module spmv_vector_loader #(
+module spmv_system_config #(
     parameter int CONF_NUM_KERNEL = 32'h4,
     parameter int CTRL_OFFSET = 32'h00,
     parameter int ROW_OFFSET = 32'h04,

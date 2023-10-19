@@ -24,7 +24,8 @@ module open_nic_shell #(
   parameter int    USE_PHYS_FUNC   = 1,
   parameter int    NUM_PHYS_FUNC   = 1,
   parameter int    NUM_QUEUE       = 512,
-  parameter int    NUM_CMAC_PORT   = 1
+  parameter int    NUM_CMAC_PORT   = 1,
+  parameter int CONF_NUM_KERNEL = 32'h4
 ) (
 `ifdef __au280__
   output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
@@ -157,8 +158,48 @@ module open_nic_shell #(
   wire                   [1:0] axil_box0_rresp;
   wire                         axil_box0_rready;
 
+
+  wire axi_pcie_hbm_awready;
+  wire axi_pcie_hbm_wready;
+  wire [3 : 0] axi_pcie_hbm_bid;
+  wire [1 : 0] axi_pcie_hbm_bresp;
+  wire axi_pcie_hbm_bvalid;
+  wire axi_pcie_hbm_arready;
+  wire [3 : 0] axi_pcie_hbm_rid;
+  wire [511 : 0] axi_pcie_hbm_rdata;
+  wire [1 : 0] axi_pcie_hbm_rresp;
+  wire axi_pcie_hbm_rlast;
+  wire axi_pcie_hbm_rvalid;
+  wire [3 : 0] axi_pcie_hbm_awid;
+  wire [63 : 0] axi_pcie_hbm_awaddr;
+  wire [31 : 0] axi_pcie_hbm_awuser;
+  wire [7 : 0] axi_pcie_hbm_awlen;
+  wire [2 : 0] axi_pcie_hbm_awsize;
+  wire [1 : 0] axi_pcie_hbm_awburst;
+  wire [2 : 0] axi_pcie_hbm_awprot;
+  wire axi_pcie_hbm_awvalid;
+  wire axi_pcie_hbm_awlock;
+  wire [3 : 0] axi_pcie_hbm_awcache;
+  wire [511 : 0] axi_pcie_hbm_wdata;
+  wire [63 : 0] axi_pcie_hbm_wuser;
+  wire [63 : 0] axi_pcie_hbm_wstrb;
+  wire axi_pcie_hbm_wlast;
+  wire axi_pcie_hbm_wvalid;
+  wire axi_pcie_hbm_bready;
+  wire [3 : 0] axi_pcie_hbm_arid;
+  wire [63 : 0] axi_pcie_hbm_araddr;
+  wire [31 : 0] axi_pcie_hbm_aruser;
+  wire [7 : 0] axi_pcie_hbm_arlen;
+  wire [2 : 0] axi_pcie_hbm_arsize;
+  wire [1 : 0] axi_pcie_hbm_arburst;
+  wire [2 : 0] axi_pcie_hbm_arprot;
+  wire axi_pcie_hbm_arvalid;
+  wire axi_pcie_hbm_arlock;
+  wire [3 : 0] axi_pcie_hbm_arcache;
+  wire axi_pcie_hbm_rready;
+
   // QDMA subsystem interfaces to the box running at 250MHz
-  (* MARK_DEBUG="true" *)
+  // (* MARK_DEBUG="true" *)
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tvalid;
   // (* MARK_DEBUG="true" *)
   wire [512*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tdata;
@@ -172,7 +213,7 @@ module open_nic_shell #(
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_src;
   // (* MARK_DEBUG="true" *)
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_dst;
-  (* MARK_DEBUG="true" *)
+  // (* MARK_DEBUG="true" *)
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tready;
 
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_c2h_tvalid;
@@ -199,6 +240,97 @@ module open_nic_shell #(
 
   wire                         axil_aclk;
   wire                         axis_aclk;
+
+
+  wire [32*1-1:0] axi_hbm_aclk;
+  wire [32*1-1:0] axi_hbm_areset_n;
+  wire [32*33-1:0] axi_hbm_araddr;
+  wire [32*2-1:0] axi_hbm_arburst;
+  wire [32*6-1:0] axi_hbm_arid;
+  wire [32*4-1:0] axi_hbm_arlen;
+  wire [32*3-1:0] axi_hbm_arsize;
+  wire [32*1-1:0] axi_hbm_arvalid;
+  wire [32*32-1:0] axi_hbm_awaddr;
+  wire [32*2-1:0] axi_hbm_awburst;
+  wire [32*6-1:0] axi_hbm_awid;
+  wire [32*4-1:0] axi_hbm_awlen;
+  wire [32*3-1:0] axi_hbm_awsize;
+  wire [32*1-1:0] axi_hbm_awvalid;
+  wire [32*1-1:0] axi_hbm_rready;
+  wire [32*1-1:0] axi_hbm_bready;
+  wire [32*256-1:0] axi_hbm_wdata;
+  wire [32*1-1:0] axi_hbm_wlast;
+  wire [32*32-1:0] axi_hbm_wstrb;
+  wire [32*32-1:0] axi_hbm_wdata_parity;
+  wire [32*1-1:0] axi_hbm_wvalid;
+  wire [32*1-1:0] axi_hbm_arready;
+  wire [32*1-1:0] axi_hbm_awready;
+  wire [32*32-1:0] axi_hbm_rdata_parity;
+  wire [32*256-1:0] axi_hbm_rdata;
+  wire [32*6-1:0] axi_hbm_rid;
+  wire [32*1-1:0] axi_hbm_rlast;
+  wire [32*2-1:0] axi_hbm_rresp;
+  wire [32*1-1:0] axi_hbm_rvalid;
+  wire [32*1-1:0] axi_hbm_wready;
+  wire [32*6-1:0] axi_hbm_bid;
+  wire [32*2-1:0] axi_hbm_bresp;
+  wire [32*1-1:0] axi_hbm_bvalid;
+
+
+
+  wire [(CONF_NUM_KERNEL*4+1)*48-1 : 0] axi_box_araddr;
+  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_box_arburst;
+  wire [(CONF_NUM_KERNEL*4+1)*8-1 : 0] axi_box_arlen;
+  wire [(CONF_NUM_KERNEL*4+1)*3-1 : 0] axi_box_arsize;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0]axi_box_arvalid;
+  wire [(CONF_NUM_KERNEL*4+1)*48-1 : 0] axi_box_awaddr;
+  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_box_awburst;
+  wire [(CONF_NUM_KERNEL*4+1)*8-1 : 0] axi_box_awlen;
+  wire [(CONF_NUM_KERNEL*4+1)*3-1 : 0] axi_box_awsize;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_awvalid;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_rready;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_bready;
+  wire [(CONF_NUM_KERNEL*4+1)*256-1 : 0] axi_box_wdata;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_wlast;
+  wire [(CONF_NUM_KERNEL*4+1)*32-1 : 0] axi_box_wstrb;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_wvalid;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_arready;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_awready;
+  wire [(CONF_NUM_KERNEL*4+1)*256-1 : 0] axi_box_rdata;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_rlast;
+  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_box_rresp;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_rvalid;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_wready;
+  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_box_bresp;
+  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_box_bvalid;
+
+
+  wire [48-1 : 0] axi_hbm_width_araddr;
+  wire [2-1 : 0] axi_hbm_width_arburst;
+  wire [8-1 : 0] axi_hbm_width_arlen;
+  wire [3-1 : 0] axi_hbm_width_arsize;
+  wire [1-1 : 0]axi_hbm_width_arvalid;
+  wire [48-1 : 0] axi_hbm_width_awaddr;
+  wire [2-1 : 0] axi_hbm_width_awburst;
+  wire [8-1 : 0] axi_hbm_width_awlen;
+  wire [3-1 : 0] axi_hbm_width_awsize;
+  wire [1-1 : 0] axi_hbm_width_awvalid;
+  wire [1-1 : 0] axi_hbm_width_rready;
+  wire [1-1 : 0] axi_hbm_width_bready;
+  wire [256-1 : 0] axi_hbm_width_wdata;
+  wire [1-1 : 0] axi_hbm_width_wlast;
+  wire [32-1 : 0] axi_hbm_width_wstrb;
+  wire [1-1 : 0] axi_hbm_width_wvalid;
+  wire [1-1 : 0] axi_hbm_width_arready;
+  wire [1-1 : 0] axi_hbm_width_awready;
+  wire [256-1 : 0] axi_hbm_width_rdata;
+  wire [1-1 : 0] axi_hbm_width_rlast;
+  wire [2-1 : 0] axi_hbm_width_rresp;
+  wire [1-1 : 0] axi_hbm_width_rvalid;
+  wire [1-1 : 0] axi_hbm_width_wready;
+  wire [2-1 : 0] axi_hbm_width_bresp;
+  wire [1-1 : 0] axi_hbm_width_bvalid;
+
 
   // Unused reset pairs must have their "reset_done" tied to 1
 
@@ -318,6 +450,47 @@ module open_nic_shell #(
     .s_axil_rresp                         (axil_qdma_rresp),
     .s_axil_rready                        (axil_qdma_rready),
 
+
+    .m_axi_awready(axi_pcie_hbm_awready),                                                // input wire m_axi_awready
+    .m_axi_wready(axi_pcie_hbm_wready),                                                  // input wire m_axi_wready
+    .m_axi_bid(axi_pcie_hbm_bid),                                                        // input wire [3 : 0] m_axi_bid
+    .m_axi_bresp(axi_pcie_hbm_bresp),                                                    // input wire [1 : 0] m_axi_bresp
+    .m_axi_bvalid(axi_pcie_hbm_bvalid),                                                  // input wire m_axi_bvalid
+    .m_axi_arready(axi_pcie_hbm_arready),                                                // input wire m_axi_arready
+    .m_axi_rid(axi_pcie_hbm_rid),                                                        // input wire [3 : 0] m_axi_rid
+    .m_axi_rdata(axi_pcie_hbm_rdata),                                                    // input wire [511 : 0] m_axi_rdata
+    .m_axi_rresp(axi_pcie_hbm_rresp),                                                    // input wire [1 : 0] m_axi_rresp
+    .m_axi_rlast(axi_pcie_hbm_rlast),                                                    // input wire m_axi_rlast
+    .m_axi_rvalid(axi_pcie_hbm_rvalid),                                                  // input wire m_axi_rvalid
+    .m_axi_awid(axi_pcie_hbm_awid),                                                      // output wire [3 : 0] m_axi_awid
+    .m_axi_awaddr(axi_pcie_hbm_awaddr),                                                  // output wire [63 : 0] m_axi_awaddr
+    .m_axi_awuser(axi_pcie_hbm_awuser),                                                  // output wire [31 : 0] m_axi_awuser
+    .m_axi_awlen(axi_pcie_hbm_awlen),                                                    // output wire [7 : 0] m_axi_awlen
+    .m_axi_awsize(axi_pcie_hbm_awsize),                                                  // output wire [2 : 0] m_axi_awsize
+    .m_axi_awburst(axi_pcie_hbm_awburst),                                                // output wire [1 : 0] m_axi_awburst
+    .m_axi_awprot(axi_pcie_hbm_awprot),                                                  // output wire [2 : 0] m_axi_awprot
+    .m_axi_awvalid(axi_pcie_hbm_awvalid),                                                // output wire m_axi_awvalid
+    .m_axi_awlock(axi_pcie_hbm_awlock),                                                  // output wire m_axi_awlock
+    .m_axi_awcache(axi_pcie_hbm_awcache),                                                // output wire [3 : 0] m_axi_awcache
+    .m_axi_wdata(axi_pcie_hbm_wdata),                                                    // output wire [511 : 0] m_axi_wdata
+    .m_axi_wuser(axi_pcie_hbm_wuser),                                                    // output wire [63 : 0] m_axi_wuser
+    .m_axi_wstrb(axi_pcie_hbm_wstrb),                                                    // output wire [63 : 0] m_axi_wstrb
+    .m_axi_wlast(axi_pcie_hbm_wlast),                                                    // output wire m_axi_wlast
+    .m_axi_wvalid(axi_pcie_hbm_wvalid),                                                  // output wire m_axi_wvalid
+    .m_axi_bready(axi_pcie_hbm_bready),                                                  // output wire m_axi_bready
+    .m_axi_arid(axi_pcie_hbm_arid),                                                      // output wire [3 : 0] m_axi_arid
+    .m_axi_araddr(axi_pcie_hbm_araddr),                                                  // output wire [63 : 0] m_axi_araddr
+    .m_axi_aruser(axi_pcie_hbm_aruser),                                                  // output wire [31 : 0] m_axi_aruser
+    .m_axi_arlen(axi_pcie_hbm_arlen),                                                    // output wire [7 : 0] m_axi_arlen
+    .m_axi_arsize(axi_pcie_hbm_arsize),                                                  // output wire [2 : 0] m_axi_arsize
+    .m_axi_arburst(axi_pcie_hbm_arburst),                                                // output wire [1 : 0] m_axi_arburst
+    .m_axi_arprot(axi_pcie_hbm_arprot),                                                  // output wire [2 : 0] m_axi_arprot
+    .m_axi_arvalid(axi_pcie_hbm_arvalid),                                                // output wire m_axi_arvalid
+    .m_axi_arlock(axi_pcie_hbm_arlock),                                                  // output wire m_axi_arlock
+    .m_axi_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] m_axi_arcache
+    .m_axi_rready(axi_pcie_hbm_rready),                                                  // output wire m_axi_rready
+
+
     .m_axis_h2c_tvalid                    (axis_qdma_h2c_tvalid),
     .m_axis_h2c_tdata                     (axis_qdma_h2c_tdata),
     .m_axis_h2c_tkeep                     (axis_qdma_h2c_tkeep),
@@ -374,14 +547,188 @@ module open_nic_shell #(
     .axis_aclk                            (axis_aclk)
   );
 
+  spmv_vector_loader spmv_vector_loader(
+    .s_axi_awready(axi_pcie_hbm_awready),                                                // input wire s_axi_awready
+    .s_axi_wready(axi_pcie_hbm_wready),                                                  // input wire s_axi_wready
+    .s_axi_bid(axi_pcie_hbm_bid),                                                        // input wire [3 : 0] s_axi_bid
+    .s_axi_bresp(axi_pcie_hbm_bresp),                                                    // input wire [1 : 0] s_axi_bresp
+    .s_axi_bvalid(axi_pcie_hbm_bvalid),                                                  // input wire s_axi_bvalid
+    .s_axi_arready(axi_pcie_hbm_arready),                                                // input wire s_axi_arready
+    .s_axi_rid(axi_pcie_hbm_rid),                                                        // input wire [3 : 0] s_axi_rid
+    .s_axi_rdata(axi_pcie_hbm_rdata),                                                    // input wire [511 : 0] s_axi_rdata
+    .s_axi_rresp(axi_pcie_hbm_rresp),                                                    // input wire [1 : 0] s_axi_rresp
+    .s_axi_rlast(axi_pcie_hbm_rlast),                                                    // input wire s_axi_rlast
+    .s_axi_rvalid(axi_pcie_hbm_rvalid),                                                  // input wire s_axi_rvalid
+    .s_axi_awid(axi_pcie_hbm_awid),                                                      // output wire [3 : 0] s_axi_awid
+    .s_axi_awaddr(axi_pcie_hbm_awaddr),                                                  // output wire [63 : 0] s_axi_awaddr
+    .s_axi_awuser(axi_pcie_hbm_awuser),                                                  // output wire [31 : 0] s_axi_awuser
+    .s_axi_awlen(axi_pcie_hbm_awlen),                                                    // output wire [7 : 0] s_axi_awlen
+    .s_axi_awsize(axi_pcie_hbm_awsize),                                                  // output wire [2 : 0] s_axi_awsize
+    .s_axi_awburst(axi_pcie_hbm_awburst),                                                // output wire [1 : 0] s_axi_awburst
+    .s_axi_awprot(axi_pcie_hbm_awprot),                                                  // output wire [2 : 0] s_axi_awprot
+    .s_axi_awvalid(axi_pcie_hbm_awvalid),                                                // output wire s_axi_awvalid
+    .s_axi_awlock(axi_pcie_hbm_awlock),                                                  // output wire s_axi_awlock
+    .s_axi_awcache(axi_pcie_hbm_awcache),                                                // output wire [3 : 0] s_axi_awcache
+    .s_axi_wdata(axi_pcie_hbm_wdata),                                                    // output wire [511 : 0] s_axi_wdata
+    .s_axi_wuser(axi_pcie_hbm_wuser),                                                    // output wire [63 : 0] s_axi_wuser
+    .s_axi_wstrb(axi_pcie_hbm_wstrb),                                                    // output wire [63 : 0] s_axi_wstrb
+    .s_axi_wlast(axi_pcie_hbm_wlast),                                                    // output wire s_axi_wlast
+    .s_axi_wvalid(axi_pcie_hbm_wvalid),                                                  // output wire s_axi_wvalid
+    .s_axi_bready(axi_pcie_hbm_bready),                                                  // output wire s_axi_bready
+    .s_axi_arid(axi_pcie_hbm_arid),                                                      // output wire [3 : 0] s_axi_arid
+    .s_axi_araddr(axi_pcie_hbm_araddr),                                                  // output wire [63 : 0] s_axi_araddr
+    .s_axi_aruser(axi_pcie_hbm_aruser),                                                  // output wire [31 : 0] s_axi_aruser
+    .s_axi_arlen(axi_pcie_hbm_arlen),                                                    // output wire [7 : 0] s_axi_arlen
+    .s_axi_arsize(axi_pcie_hbm_arsize),                                                  // output wire [2 : 0] s_axi_arsize
+    .s_axi_arburst(axi_pcie_hbm_arburst),                                                // output wire [1 : 0] s_axi_arburst
+    .s_axi_arprot(axi_pcie_hbm_arprot),                                                  // output wire [2 : 0] s_axi_arprot
+    .s_axi_arvalid(axi_pcie_hbm_arvalid),                                                // output wire s_axi_arvalid
+    .s_axi_arlock(axi_pcie_hbm_arlock),                                                  // output wire s_axi_arlock
+    .s_axi_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] s_axi_arcache
+    .s_axi_rready(axi_pcie_hbm_rready),                                                  // output wire s_axi_rready
 
+
+    .m_axi_hbm_araddr(axi_hbm_width_araddr),
+    .m_axi_hbm_arburst(axi_hbm_width_arburst),
+    .m_axi_hbm_arlen(axi_hbm_width_arlen),
+    .m_axi_hbm_arsize(axi_hbm_width_arsize),
+    .m_axi_hbm_arvalid(axi_hbm_width_arvalid),
+    .m_axi_hbm_awaddr(axi_hbm_width_awaddr),
+    .m_axi_hbm_awburst(axi_hbm_width_awburst),
+    .m_axi_hbm_awlen(axi_hbm_width_awlen),
+    .m_axi_hbm_awsize(axi_hbm_width_awsize),
+    .m_axi_hbm_awvalid(axi_hbm_width_awvalid),
+    .m_axi_hbm_rready(axi_hbm_width_rready),
+    .m_axi_hbm_bready(axi_hbm_width_bready),
+    .m_axi_hbm_wdata(axi_hbm_width_wdata),
+    .m_axi_hbm_wlast(axi_hbm_width_wlast),
+    .m_axi_hbm_wstrb(axi_hbm_width_wstrb),
+    .m_axi_hbm_wvalid(axi_hbm_width_wvalid),
+    .m_axi_hbm_arready(axi_hbm_width_arready),
+    .m_axi_hbm_awready(axi_hbm_width_awready),
+    .m_axi_hbm_rdata(axi_hbm_width_rdata),
+    .m_axi_hbm_rlast(axi_hbm_width_rlast),
+    .m_axi_hbm_rresp(axi_hbm_width_rresp),
+    .m_axi_hbm_rvalid(axi_hbm_width_rvalid),
+    .m_axi_hbm_wready(axi_hbm_width_wready),
+    .m_axi_hbm_bvalid(axi_hbm_width_bvalid),
+    .m_axi_hbm_bresp(axi_hbm_width_bresp),
+
+
+    .pcie_aclk(),
+    .pcie_aresetn()
+  );
+
+  generate for (genvar i = 0; i < 32; i++) 
+    if (i == 31)begin // assign pcie rw
+      
+      assign axi_hbm_araddr[`getvec(33,i)] = axi_hbm_width_araddr;
+      assign axi_hbm_arburst[`getvec(2,i)] = axi_hbm_width_arburst;
+      assign axi_hbm_arlen[`getvec(4,i)] = axi_hbm_width_arlen;
+      assign axi_hbm_arsize[`getvec(3,i)] = axi_hbm_width_arsize;
+      assign axi_hbm_arvalid[`getvec(1,i)] = axi_hbm_width_arvalid;
+      assign axi_hbm_awaddr[`getvec(32,i)] = axi_hbm_width_awaddr;
+      assign axi_hbm_awburst[`getvec(2,i)] = axi_hbm_width_awburst;
+      assign axi_hbm_awlen[`getvec(4,i)] = axi_hbm_width_awlen;
+      assign axi_hbm_awsize[`getvec(3,i)] = axi_hbm_width_awsize;
+      assign axi_hbm_awvalid[`getvec(1,i)] = axi_hbm_width_awvalid;
+      assign axi_hbm_rready[`getvec(1,i)] = axi_hbm_width_rready;
+      assign axi_hbm_bready[`getvec(1,i)] = axi_hbm_width_bready;
+      assign axi_hbm_wdata[`getvec(256,i)] = axi_hbm_width_wdata;
+      assign axi_hbm_wlast[`getvec(1,i)] = axi_hbm_width_wlast;
+      assign axi_hbm_wstrb[`getvec(32,i)] = axi_hbm_width_wstrb;
+      assign axi_hbm_wvalid[`getvec(1,i)] = axi_hbm_width_wvalid;
+      assign axi_hbm_arready[`getvec(1,i)] = axi_hbm_width_arready;
+      assign axi_hbm_awready[`getvec(1,i)] = axi_hbm_width_awready;
+      assign axi_hbm_rdata[`getvec(256,i)] = axi_hbm_width_rdata;
+      assign axi_hbm_rlast[`getvec(1,i)] = axi_hbm_width_rlast;
+      assign axi_hbm_rresp[`getvec(2,i)] = axi_hbm_width_rresp;
+      assign axi_hbm_rvalid[`getvec(1,i)] = axi_hbm_width_rvalid;
+      assign axi_hbm_wready[`getvec(1,i)] = axi_hbm_width_wready;
+      assign axi_hbm_bresp[`getvec(2,i)] = axi_hbm_width_bresp;
+      assign axi_hbm_bvalid[`getvec(1,i)] = axi_hbm_width_bvalid;
+
+
+    end
+    else if(i<4*CONF_NUM_KERNEL + 1)begin //assign Xi Kernel
+
+      assign axi_hbm_araddr[`getvec(33,i)] = axi_box_araddr[`getvec(48,i)];
+      assign axi_hbm_arburst[`getvec(2,i)] = axi_box_arburst[`getvec(2,i)];
+      assign axi_hbm_arlen[`getvec(4,i)] = axi_box_arlen[`getvec(8,i)];
+      assign axi_hbm_arsize[`getvec(3,i)] = axi_box_arsize[`getvec(3,i)];
+      assign axi_hbm_arvalid[`getvec(1,i)] = axi_box_arvalid[`getvec(1,i)];
+      assign axi_hbm_awaddr[`getvec(32,i)] = axi_box_awaddr[`getvec(48,i)];
+      assign axi_hbm_awburst[`getvec(2,i)] = axi_box_awburst[`getvec(2,i)];
+      assign axi_hbm_awlen[`getvec(4,i)] = axi_box_awlen[`getvec(8,i)];
+      assign axi_hbm_awsize[`getvec(3,i)] = axi_box_awsize[`getvec(3,i)];
+      assign axi_hbm_awvalid[`getvec(1,i)] = axi_box_awvalid[`getvec(1,i)];
+      assign axi_hbm_rready[`getvec(1,i)] = axi_box_rready[`getvec(1,i)];
+      assign axi_hbm_bready[`getvec(1,i)] = axi_box_bready[`getvec(1,i)];
+      assign axi_hbm_wdata[`getvec(256,i)] = axi_box_wdata[`getvec(256,i)];
+      assign axi_hbm_wlast[`getvec(1,i)] = axi_box_wlast[`getvec(1,i)];
+      assign axi_hbm_wstrb[`getvec(32,i)] = axi_box_wstrb[`getvec(32,i)];
+      assign axi_hbm_wvalid[`getvec(1,i)] = axi_box_wvalid[`getvec(1,i)];
+      assign axi_hbm_arready[`getvec(1,i)] = axi_box_arready[`getvec(1,i)];
+      assign axi_hbm_awready[`getvec(1,i)] = axi_box_awready[`getvec(1,i)];
+      assign axi_hbm_rdata[`getvec(256,i)] = axi_box_rdata[`getvec(256,i)];
+      assign axi_hbm_rlast[`getvec(1,i)] = axi_box_rlast[`getvec(1,i)];
+      assign axi_hbm_rresp[`getvec(2,i)] = axi_box_rresp[`getvec(2,i)];
+      assign axi_hbm_rvalid[`getvec(1,i)] = axi_box_rvalid[`getvec(1,i)];
+      assign axi_hbm_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
+      assign axi_hbm_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
+      assign axi_hbm_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
+
+    end
+
+  endgenerate
+
+  hbm_ctrl hbm_ctrl(
+    
+    .AXI_ACLK(axi_hbm_aclk),
+    .AXI_ARESET_N(axi_hbm_areset_n),
+    .AXI_ARADDR(axi_hbm_araddr),
+    .AXI_ARBURST(axi_hbm_arburst),
+    .AXI_ARID(axi_hbm_arid),
+    .AXI_ARLEN(axi_hbm_arlen),
+    .AXI_ARSIZE(axi_hbm_arsize),
+    .AXI_ARVALID(axi_hbm_arvalid),
+    .AXI_AWADDR(axi_hbm_awaddr),
+    .AXI_AWBURST(axi_hbm_awburst),
+    .AXI_AWID(axi_hbm_awid),
+    .AXI_AWLEN(axi_hbm_awlen),
+    .AXI_AWSIZE(axi_hbm_awsize),
+    .AXI_AWVALID(axi_hbm_awvalid),
+    .AXI_RREADY(axi_hbm_rready),
+    .AXI_BREADY(axi_hbm_bready),
+    .AXI_WDATA(axi_hbm_wdata),
+    .AXI_WLAST(axi_hbm_wlast),
+    .AXI_WSTRB(axi_hbm_wstrb),
+    .AXI_WDATA_PARITY(axi_hbm_wdata_parity),
+    .AXI_WVALID(axi_hbm_wvalid),
+    .AXI_ARREADY(axi_hbm_arready),
+    .AXI_AWREADY(axi_hbm_awready),
+    .AXI_RDATA_PARITY(axi_hbm_rdata_parity),
+    .AXI_RDATA(axi_hbm_rdata),
+    .AXI_RID(axi_hbm_rid),
+    .AXI_RLAST(axi_hbm_rlast),
+    .AXI_RRESP(axi_hbm_rresp),
+    .AXI_RVALID(axi_hbm_rvalid),
+    .AXI_WREADY(axi_hbm_wready),
+    .AXI_BID(axi_hbm_bid),
+    .AXI_BRESP(axi_hbm_bresp),
+    .AXI_BVALID(axi_hbm_bvalid),
+
+    .HBM_REF_CLK_0(clk),
+    .HBM_REF_CLK_1(clk)
+  );
 
   box_250mhz #(
     .MIN_PKT_LEN   (MIN_PKT_LEN),
     .MAX_PKT_LEN   (MAX_PKT_LEN),
     .USE_PHYS_FUNC (USE_PHYS_FUNC),
     .NUM_PHYS_FUNC (NUM_PHYS_FUNC),
-    .NUM_CMAC_PORT (NUM_CMAC_PORT)
+    .NUM_CMAC_PORT (NUM_CMAC_PORT),
+    .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
   ) box_250mhz_inst (
     .s_axil_awvalid                   (axil_box0_awvalid),
     .s_axil_awaddr                    (axil_box0_awaddr),
@@ -399,6 +746,33 @@ module open_nic_shell #(
     .s_axil_rdata                     (axil_box0_rdata),
     .s_axil_rresp                     (axil_box0_rresp),
     .s_axil_rready                    (axil_box0_rready),
+
+
+    .m_axi_ker_araddr(axi_box_araddr),
+    .m_axi_ker_arburst(axi_box_arburst),
+    .m_axi_ker_arlen(axi_box_arlen),
+    .m_axi_ker_arsize(axi_box_arsize),
+    .m_axi_ker_arvalid(axi_box_arvalid),
+    .m_axi_ker_awaddr(axi_box_awaddr),
+    .m_axi_ker_awburst(axi_box_awburst),
+    .m_axi_ker_awlen(axi_box_awlen),
+    .m_axi_ker_awsize(axi_box_awsize),
+    .m_axi_ker_awvalid(axi_box_awvalid),
+    .m_axi_ker_rready(axi_box_rready),
+    .m_axi_ker_bready(axi_box_bready),
+    .m_axi_ker_wdata(axi_box_wdata),
+    .m_axi_ker_wlast(axi_box_wlast),
+    .m_axi_ker_wstrb(axi_box_wstrb),
+    .m_axi_ker_wvalid(axi_box_wvalid),
+    .m_axi_ker_arready(axi_box_arready),
+    .m_axi_ker_awready(axi_box_awready),
+    .m_axi_ker_rdata(axi_box_rdata),
+    .m_axi_ker_rlast(axi_box_rlast),
+    .m_axi_ker_rresp(axi_box_rresp),
+    .m_axi_ker_rvalid(axi_box_rvalid),
+    .m_axi_ker_wready(axi_box_wready),
+    .m_axi_ker_bresp(axi_box_bresp),
+    .m_axi_ker_bvalid(axi_box_bvalid),
 
     .s_axis_qdma_h2c_tvalid           (axis_qdma_h2c_tvalid),
     .s_axis_qdma_h2c_tdata            (axis_qdma_h2c_tdata),

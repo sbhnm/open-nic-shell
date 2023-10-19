@@ -2,7 +2,7 @@
 vivado*.jou
 vivado*.log
 vivado*.str
-
+*.log
 # Ignore .Xil directory
 .Xil
 

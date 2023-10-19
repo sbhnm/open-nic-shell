@@ -1,5 +1,6 @@
 //Col Xi 直接接到hbm上
 //Val 接 cross bar 后在拉出来
+//该模块描述了参数配置模块，并实例化了多个计算核心。并对数据传输总线进行了整理。
 module spmv_calc_top #(
     parameter int CONF_NUM_KERNEL = 32'h4
 ) (
@@ -103,9 +104,70 @@ module spmv_calc_top #(
     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Val_bresp;
     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Val_bvalid;
     //TODO 实例化cross bar，将所有的Val 连接起来
-    spmv_system_config spmv_system_config #(
+
+    axi_hbm_val_crossbar axi_hbm_val_crossbar (
+    .aclk(clk),                      // input wire aclk
+    .aresetn(rstn),                // input wire aresetn
+
+
+    .s_axi_araddr(axi_Val_araddr),
+    .s_axi_arburst(axi_Val_arburst),
+    .s_axi_arlen(axi_Val_arlen),
+    .s_axi_arsize(axi_Val_arsize),
+    .s_axi_arvalid(axi_Val_arvalid),
+    .s_axi_awaddr(axi_Val_awaddr),
+    .s_axi_awburst(axi_Val_awburst),
+    .s_axi_awlen(axi_Val_awlen),
+    .s_axi_awsize(axi_Val_awsize),
+    .s_axi_awvalid(axi_Val_awvalid),
+    .s_axi_rready(axi_Val_rready),
+    .s_axi_bready(axi_Val_bready),
+    .s_axi_wdata(axi_Val_wdata),
+    .s_axi_wlast(axi_Val_wlast),
+    .s_axi_wstrb(axi_Val_wstrb),
+    .s_axi_wvalid(axi_Val_wvalid),
+    .s_axi_arready(axi_Val_arready),
+    .s_axi_awready(axi_Val_awready),
+    .s_axi_rdata(axi_Val_rdata),
+    .s_axi_rlast(axi_Val_rlast),
+    .s_axi_rresp(axi_Val_rresp),
+    .s_axi_rvalid(axi_Val_rvalid),
+    .s_axi_wready(axi_Val_wready),
+    .s_axi_bresp(axi_Val_bresp),
+    .s_axi_bvalid(axi_Val_bvalid),
+
+
+    .m_axi_araddr(m_axi_hbm_Val_araddr),
+    .m_axi_arburst(m_axi_hbm_Val_arburst),
+    .m_axi_arlen(m_axi_hbm_Val_arlen),
+    .m_axi_arsize(m_axi_hbm_Val_arsize),
+    .m_axi_arvalid(m_axi_hbm_Val_arvalid),
+    .m_axi_awaddr(m_axi_hbm_Val_awaddr),
+    .m_axi_awburst(m_axi_hbm_Val_awburst),
+    .m_axi_awlen(m_axi_hbm_Val_awlen),
+    .m_axi_awsize(m_axi_hbm_Val_awsize),
+    .m_axi_awvalid(m_axi_hbm_Val_awvalid),
+    .m_axi_rready(m_axi_hbm_Val_rready),
+    .m_axi_bready(m_axi_hbm_Val_bready),
+    .m_axi_wdata(m_axi_hbm_Val_wdata),
+    .m_axi_wlast(m_axi_hbm_Val_wlast),
+    .m_axi_wstrb(m_axi_hbm_Val_wstrb),
+    .m_axi_wvalid(m_axi_hbm_Val_wvalid),
+    .m_axi_arready(m_axi_hbm_Val_arready),
+    .m_axi_awready(m_axi_hbm_Val_awready),
+    .m_axi_rdata(m_axi_hbm_Val_rdata),
+    .m_axi_rlast(m_axi_hbm_Val_rlast),
+    .m_axi_rresp(m_axi_hbm_Val_rresp),
+    .m_axi_rvalid(m_axi_hbm_Val_rvalid),
+    .m_axi_wready(m_axi_hbm_Val_wready),
+    .m_axi_bresp(m_axi_hbm_Val_bresp),
+    .m_axi_bvalid(m_axi_hbm_Val_bvalid)
+);
+
+    spmv_system_config  #(
         .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
-    )(
+    )
+    spmv_system_config(
         .s_axil_awvalid (s_axil_awvalid),
         .s_axil_awaddr  (s_axil_awaddr),
         .s_axil_awready (s_axil_awready),
@@ -128,9 +190,9 @@ module spmv_calc_top #(
         .aclk(rstn)
     );
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
-        spmv_calc_kernel spmv_calc_kernel #(
+        spmv_calc_kernel #(
 
-        )(
+        )spmv_calc_kernel (
             .clk(clk),
             .rstn(rstn),
             .config_wire(config_wire[`getvec(32*3,i)]),

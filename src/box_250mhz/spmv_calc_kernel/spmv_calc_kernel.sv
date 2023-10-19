@@ -166,9 +166,7 @@ module spmv_calc_kernel #(
     wire [3*1-1 : 0] axi_Yi_bvalid;
     wire [3*1-1 : 0] axi_Yi_bready;
   
-    Row_Top Row_Top#(
-
-    )
+    Row_Top #()Row_Top
     (
         .clk(clk),
         .rstn(rstn&config_wire[0]),

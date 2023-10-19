@@ -41,6 +41,45 @@ module qdma_subsystem #(
   output                   [1:0] s_axil_rresp,
   input                          s_axil_rready,
 
+  input m_axi_awready,
+  input m_axi_wready,
+  input [3 : 0] m_axi_bid,
+  input [1 : 0] m_axi_bresp,
+  input m_axi_bvalid,
+  input m_axi_arready,
+  input [3 : 0] m_axi_rid,
+  input [511 : 0] m_axi_rdata,
+  input [1 : 0] m_axi_rresp,
+  input m_axi_rlast,
+  input m_axi_rvalid,
+  output [3 : 0] m_axi_awid,
+  output [63 : 0] m_axi_awaddr,
+  output [31 : 0] m_axi_awuser,
+  output [7 : 0] m_axi_awlen,
+  output [2 : 0] m_axi_awsize,
+  output [1 : 0] m_axi_awburst,
+  output [2 : 0] m_axi_awprot,
+  output m_axi_awvalid,
+  output m_axi_awlock,
+  output [3 : 0] m_axi_awcache,
+  output [511 : 0] m_axi_wdata,
+  output [63 : 0] m_axi_wuser,
+  output [63 : 0] m_axi_wstrb,
+  output m_axi_wlast,
+  output m_axi_wvalid,
+  output m_axi_bready,
+  output [3 : 0] m_axi_arid,
+  output [63 : 0] m_axi_araddr,
+  output [31 : 0] m_axi_aruser,
+  output [7 : 0] m_axi_arlen,
+  output [2 : 0] m_axi_arsize,
+  output [1 : 0] m_axi_arburst,
+  output [2 : 0] m_axi_arprot,
+  output m_axi_arvalid,
+  output m_axi_arlock,
+  output [3 : 0] m_axi_arcache,
+  output m_axi_rready,
+  
   output     [NUM_PHYS_FUNC-1:0] m_axis_h2c_tvalid,
   output [512*NUM_PHYS_FUNC-1:0] m_axis_h2c_tdata,
   output  [64*NUM_PHYS_FUNC-1:0] m_axis_h2c_tkeep,
@@ -307,6 +346,46 @@ module qdma_subsystem #(
     .m_axil_rdata                    (m_axil_pcie_rdata),
     .m_axil_rresp                    (m_axil_pcie_rresp),
     .m_axil_rready                   (m_axil_pcie_rready),
+
+
+    .m_axi_awready(m_axi_awready),                                                // input wire m_axi_awready
+    .m_axi_wready(m_axi_wready),                                                  // input wire m_axi_wready
+    .m_axi_bid(m_axi_bid),                                                        // input wire [3 : 0] m_axi_bid
+    .m_axi_bresp(m_axi_bresp),                                                    // input wire [1 : 0] m_axi_bresp
+    .m_axi_bvalid(m_axi_bvalid),                                                  // input wire m_axi_bvalid
+    .m_axi_arready(m_axi_arready),                                                // input wire m_axi_arready
+    .m_axi_rid(m_axi_rid),                                                        // input wire [3 : 0] m_axi_rid
+    .m_axi_rdata(m_axi_rdata),                                                    // input wire [511 : 0] m_axi_rdata
+    .m_axi_rresp(m_axi_rresp),                                                    // input wire [1 : 0] m_axi_rresp
+    .m_axi_rlast(m_axi_rlast),                                                    // input wire m_axi_rlast
+    .m_axi_rvalid(m_axi_rvalid),                                                  // input wire m_axi_rvalid
+    .m_axi_awid(m_axi_awid),                                                      // output wire [3 : 0] m_axi_awid
+    .m_axi_awaddr(m_axi_awaddr),                                                  // output wire [63 : 0] m_axi_awaddr
+    .m_axi_awuser(m_axi_awuser),                                                  // output wire [31 : 0] m_axi_awuser
+    .m_axi_awlen(m_axi_awlen),                                                    // output wire [7 : 0] m_axi_awlen
+    .m_axi_awsize(m_axi_awsize),                                                  // output wire [2 : 0] m_axi_awsize
+    .m_axi_awburst(m_axi_awburst),                                                // output wire [1 : 0] m_axi_awburst
+    .m_axi_awprot(m_axi_awprot),                                                  // output wire [2 : 0] m_axi_awprot
+    .m_axi_awvalid(m_axi_awvalid),                                                // output wire m_axi_awvalid
+    .m_axi_awlock(m_axi_awlock),                                                  // output wire m_axi_awlock
+    .m_axi_awcache(m_axi_awcache),                                                // output wire [3 : 0] m_axi_awcache
+    .m_axi_wdata(m_axi_wdata),                                                    // output wire [511 : 0] m_axi_wdata
+    .m_axi_wuser(m_axi_wuser),                                                    // output wire [63 : 0] m_axi_wuser
+    .m_axi_wstrb(m_axi_wstrb),                                                    // output wire [63 : 0] m_axi_wstrb
+    .m_axi_wlast(m_axi_wlast),                                                    // output wire m_axi_wlast
+    .m_axi_wvalid(m_axi_wvalid),                                                  // output wire m_axi_wvalid
+    .m_axi_bready(m_axi_bready),                                                  // output wire m_axi_bready
+    .m_axi_arid(m_axi_arid),                                                      // output wire [3 : 0] m_axi_arid
+    .m_axi_araddr(m_axi_araddr),                                                  // output wire [63 : 0] m_axi_araddr
+    .m_axi_aruser(m_axi_aruser),                                                  // output wire [31 : 0] m_axi_aruser
+    .m_axi_arlen(m_axi_arlen),                                                    // output wire [7 : 0] m_axi_arlen
+    .m_axi_arsize(m_axi_arsize),                                                  // output wire [2 : 0] m_axi_arsize
+    .m_axi_arburst(m_axi_arburst),                                                // output wire [1 : 0] m_axi_arburst
+    .m_axi_arprot(m_axi_arprot),                                                  // output wire [2 : 0] m_axi_arprot
+    .m_axi_arvalid(m_axi_arvalid),                                                // output wire m_axi_arvalid
+    .m_axi_arlock(m_axi_arlock),                                                  // output wire m_axi_arlock
+    .m_axi_arcache(m_axi_arcache),                                                // output wire [3 : 0] m_axi_arcache
+    .m_axi_rready(m_axi_rready),  
 
     .m_axis_h2c_tvalid               (axis_qdma_h2c_tvalid),
     .m_axis_h2c_tdata                (axis_qdma_h2c_tdata),

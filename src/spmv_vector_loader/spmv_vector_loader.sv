@@ -66,7 +66,7 @@ module spmv_vector_loader #(
     input m_axi_hbm_rvalid,
     input m_axi_hbm_wready,
     input m_axi_hbm_bvalid,
-    input [1 : 0] m_axi_hbm_bresp
+    input [1 : 0] m_axi_hbm_bresp,
 
 
     input pcie_aclk,

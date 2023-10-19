@@ -21,7 +21,8 @@ module box_250mhz #(
   parameter int MAX_PKT_LEN   = 1518,
   parameter int USE_PHYS_FUNC = 1,
   parameter int NUM_PHYS_FUNC = 1,
-  parameter int NUM_CMAC_PORT = 1
+  parameter int NUM_CMAC_PORT = 1,
+  parameter int CONF_NUM_KERNEL = 32'h4
 ) (
   input                          s_axil_awvalid,
   input                   [31:0] s_axil_awaddr,
@@ -39,6 +40,33 @@ module box_250mhz #(
   output                  [31:0] s_axil_rdata,
   output                   [1:0] s_axil_rresp,
   input                          s_axil_rready,
+
+
+  output [(CONF_NUM_KERNEL*4+1)*48-1 : 0] m_axi_ker_araddr,
+  output [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_arburst,
+  output [(CONF_NUM_KERNEL*4+1)*8-1 : 0] m_axi_ker_arlen,
+  output [(CONF_NUM_KERNEL*4+1)*3-1 : 0] m_axi_ker_arsize,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0]m_axi_ker_arvalid,
+  output [(CONF_NUM_KERNEL*4+1)*48-1 : 0] m_axi_ker_awaddr,
+  output [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_awburst,
+  output [(CONF_NUM_KERNEL*4+1)*8-1 : 0] m_axi_ker_awlen,
+  output [(CONF_NUM_KERNEL*4+1)*3-1 : 0] m_axi_ker_awsize,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_awvalid,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_rready,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_bready,
+  output [(CONF_NUM_KERNEL*4+1)*256-1 : 0] m_axi_ker_wdata,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_wlast,
+  output [(CONF_NUM_KERNEL*4+1)*32-1 : 0] m_axi_ker_wstrb,
+  output [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_wvalid,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_arready,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_awready,
+  input [(CONF_NUM_KERNEL*4+1)*256-1 : 0] m_axi_ker_rdata,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_rlast,
+  input [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_rresp,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_rvalid,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_wready,
+  input [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_bresp,
+  input [(CONF_NUM_KERNEL*4+1)*1-1 : 0] m_axi_ker_bvalid,
 
   (* MARK_DEBUG="true" *)
   input      [NUM_PHYS_FUNC-1:0] s_axis_qdma_h2c_tvalid,
@@ -100,6 +128,83 @@ module box_250mhz #(
     assign m_axis_qdma_c2h_tuser_src  = 0;
     assign m_axis_qdma_c2h_tuser_dst  = 0;
 
-  
+    spmv_calc_top #(
+      .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
+    )spmv_calc_top(
+
+        .clk(axil_aclk),
+        .rstn(box_rstn),
+
+        .s_axil_awvalid (s_axil_awvalid),
+        .s_axil_awaddr  (s_axil_awaddr),
+        .s_axil_awready (s_axil_awready),
+        .s_axil_wvalid  (s_axil_wvalid),
+        .s_axil_wdata   (s_axil_wdata),
+        .s_axil_wready  (s_axil_wready),
+        .s_axil_bvalid  (s_axil_bvalid),
+        .s_axil_bresp   (s_axil_bresp),
+        .s_axil_bready  (s_axil_bready),
+        .s_axil_arvalid (s_axil_arvalid),
+        .s_axil_araddr  (s_axil_araddr),
+        .s_axil_arready (s_axil_arready),
+        .s_axil_rvalid  (s_axil_rvalid),
+        .s_axil_rdata   (s_axil_rdata),
+        .s_axil_rresp   (s_axil_rresp),
+        .s_axil_rready  (s_axil_rready),
+
+        .m_axi_ColXi_araddr(m_axi_ker_araddr[4*CONF_NUM_KERNEL*48-1:0]),
+        .m_axi_ColXi_arburst(m_axi_ker_arburst[4*CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_ColXi_arlen(m_axi_ker_arlen[4*CONF_NUM_KERNEL*8-1:0]),
+        .m_axi_ColXi_arsize(m_axi_ker_arsize[4*CONF_NUM_KERNEL*3-1:0]),
+        .m_axi_ColXi_arvalid(m_axi_ker_arvalid[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_awaddr(m_axi_ker_awaddr[4*CONF_NUM_KERNEL*48-1:0]),
+        .m_axi_ColXi_awburst(m_axi_ker_awburst[4*CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_ColXi_awlen(m_axi_ker_awlen[4*CONF_NUM_KERNEL*8-1:0]),
+        .m_axi_ColXi_awsize(m_axi_ker_awsize[4*CONF_NUM_KERNEL*3-1:0]),
+        .m_axi_ColXi_awvalid(m_axi_ker_awvalid[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_rready(m_axi_ker_rready[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_bready(m_axi_ker_bready[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_wdata(m_axi_ker_wdata[4*CONF_NUM_KERNEL*256-1:0]),
+        .m_axi_ColXi_wlast(m_axi_ker_wlast[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_wstrb(m_axi_ker_wstrb[4*CONF_NUM_KERNEL*32-1:0]),
+        .m_axi_ColXi_wvalid(m_axi_ker_wvalid[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_arready(m_axi_ker_arready[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_awready(m_axi_ker_awready[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_rdata(m_axi_ker_rdata[4*CONF_NUM_KERNEL*256-1:0]),
+        .m_axi_ColXi_rlast(m_axi_ker_rlast[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_rresp(m_axi_ker_rresp[4*CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_ColXi_rvalid(m_axi_ker_rvalid[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_wready(m_axi_ker_wready[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_ColXi_bresp(m_axi_ker_bresp[4*CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_ColXi_bvalid(m_axi_ker_bvalid[4*CONF_NUM_KERNEL*1-1:0]),
+
+        .m_axi_hbm_Val_araddr(m_axi_ker_araddr[(4*CONF_NUM_KERNEL)*48 +: 48]),
+        .m_axi_hbm_Val_arburst(m_axi_ker_arburst[(4*CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_arlen(m_axi_ker_arlen[(4*CONF_NUM_KERNEL)*8 +: 8]),
+        .m_axi_hbm_Val_arsize(m_axi_ker_arsize[(4*CONF_NUM_KERNEL)*3 +: 3]),
+        .m_axi_hbm_Val_arvalid(m_axi_ker_arvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_awaddr(m_axi_ker_awaddr[(4*CONF_NUM_KERNEL)*48 +: 48]),
+        .m_axi_hbm_Val_awburst(m_axi_ker_awburst[(4*CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_awlen(m_axi_ker_awlen[(4*CONF_NUM_KERNEL)*8 +: 8]),
+        .m_axi_hbm_Val_awsize(m_axi_ker_awsize[(4*CONF_NUM_KERNEL)*3 +: 3]),
+        .m_axi_hbm_Val_awvalid(m_axi_ker_awvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rready(m_axi_ker_rready[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_bready(m_axi_ker_bready[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wdata(m_axi_ker_wdata[(4*CONF_NUM_KERNEL)*256 +: 256]),
+        .m_axi_hbm_Val_wlast(m_axi_ker_wlast[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wstrb(m_axi_ker_wstrb[(4*CONF_NUM_KERNEL)*32 +: 32]),
+        .m_axi_hbm_Val_wvalid(m_axi_ker_wvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_arready(m_axi_ker_arready[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_awready(m_axi_ker_awready[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rdata(m_axi_ker_rdata[(4*CONF_NUM_KERNEL)*256 +: 256]),
+        .m_axi_hbm_Val_rlast(m_axi_ker_rlast[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rresp(m_axi_ker_rresp[(4*CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_rvalid(m_axi_ker_rvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wready(m_axi_ker_wready[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_bresp(m_axi_ker_bresp[(4*CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+
+
+    );
 
 endmodule: box_250mhz
