@@ -548,44 +548,43 @@ module open_nic_shell #(
   );
 
   spmv_vector_loader spmv_vector_loader(
-    .s_axi_awready(axi_pcie_hbm_awready),                                                // input wire s_axi_awready
-    .s_axi_wready(axi_pcie_hbm_wready),                                                  // input wire s_axi_wready
-    .s_axi_bid(axi_pcie_hbm_bid),                                                        // input wire [3 : 0] s_axi_bid
-    .s_axi_bresp(axi_pcie_hbm_bresp),                                                    // input wire [1 : 0] s_axi_bresp
-    .s_axi_bvalid(axi_pcie_hbm_bvalid),                                                  // input wire s_axi_bvalid
-    .s_axi_arready(axi_pcie_hbm_arready),                                                // input wire s_axi_arready
-    .s_axi_rid(axi_pcie_hbm_rid),                                                        // input wire [3 : 0] s_axi_rid
-    .s_axi_rdata(axi_pcie_hbm_rdata),                                                    // input wire [511 : 0] s_axi_rdata
-    .s_axi_rresp(axi_pcie_hbm_rresp),                                                    // input wire [1 : 0] s_axi_rresp
-    .s_axi_rlast(axi_pcie_hbm_rlast),                                                    // input wire s_axi_rlast
-    .s_axi_rvalid(axi_pcie_hbm_rvalid),                                                  // input wire s_axi_rvalid
-    .s_axi_awid(axi_pcie_hbm_awid),                                                      // output wire [3 : 0] s_axi_awid
-    .s_axi_awaddr(axi_pcie_hbm_awaddr),                                                  // output wire [63 : 0] s_axi_awaddr
-    .s_axi_awuser(axi_pcie_hbm_awuser),                                                  // output wire [31 : 0] s_axi_awuser
-    .s_axi_awlen(axi_pcie_hbm_awlen),                                                    // output wire [7 : 0] s_axi_awlen
-    .s_axi_awsize(axi_pcie_hbm_awsize),                                                  // output wire [2 : 0] s_axi_awsize
-    .s_axi_awburst(axi_pcie_hbm_awburst),                                                // output wire [1 : 0] s_axi_awburst
-    .s_axi_awprot(axi_pcie_hbm_awprot),                                                  // output wire [2 : 0] s_axi_awprot
-    .s_axi_awvalid(axi_pcie_hbm_awvalid),                                                // output wire s_axi_awvalid
-    .s_axi_awlock(axi_pcie_hbm_awlock),                                                  // output wire s_axi_awlock
-    .s_axi_awcache(axi_pcie_hbm_awcache),                                                // output wire [3 : 0] s_axi_awcache
-    .s_axi_wdata(axi_pcie_hbm_wdata),                                                    // output wire [511 : 0] s_axi_wdata
-    .s_axi_wuser(axi_pcie_hbm_wuser),                                                    // output wire [63 : 0] s_axi_wuser
-    .s_axi_wstrb(axi_pcie_hbm_wstrb),                                                    // output wire [63 : 0] s_axi_wstrb
-    .s_axi_wlast(axi_pcie_hbm_wlast),                                                    // output wire s_axi_wlast
-    .s_axi_wvalid(axi_pcie_hbm_wvalid),                                                  // output wire s_axi_wvalid
-    .s_axi_bready(axi_pcie_hbm_bready),                                                  // output wire s_axi_bready
-    .s_axi_arid(axi_pcie_hbm_arid),                                                      // output wire [3 : 0] s_axi_arid
-    .s_axi_araddr(axi_pcie_hbm_araddr),                                                  // output wire [63 : 0] s_axi_araddr
-    .s_axi_aruser(axi_pcie_hbm_aruser),                                                  // output wire [31 : 0] s_axi_aruser
-    .s_axi_arlen(axi_pcie_hbm_arlen),                                                    // output wire [7 : 0] s_axi_arlen
-    .s_axi_arsize(axi_pcie_hbm_arsize),                                                  // output wire [2 : 0] s_axi_arsize
-    .s_axi_arburst(axi_pcie_hbm_arburst),                                                // output wire [1 : 0] s_axi_arburst
-    .s_axi_arprot(axi_pcie_hbm_arprot),                                                  // output wire [2 : 0] s_axi_arprot
-    .s_axi_arvalid(axi_pcie_hbm_arvalid),                                                // output wire s_axi_arvalid
-    .s_axi_arlock(axi_pcie_hbm_arlock),                                                  // output wire s_axi_arlock
-    .s_axi_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] s_axi_arcache
-    .s_axi_rready(axi_pcie_hbm_rready),                                                  // output wire s_axi_rready
+    .s_axi_pcie_wready(axi_pcie_hbm_wready),                                                  // input wire s_axi_pcie_wready
+    .s_axi_pcie_bid(axi_pcie_hbm_bid),                                                        // input wire [3 : 0] s_axi_pcie_bid
+    .s_axi_pcie_bresp(axi_pcie_hbm_bresp),                                                    // input wire [1 : 0] s_axi_pcie_bresp
+    .s_axi_pcie_bvalid(axi_pcie_hbm_bvalid),                                                  // input wire s_axi_pcie_bvalid
+    .s_axi_pcie_arready(axi_pcie_hbm_arready),                                                // input wire s_axi_pcie_arready
+    .s_axi_pcie_rid(axi_pcie_hbm_rid),                                                        // input wire [3 : 0] s_axi_pcie_rid
+    .s_axi_pcie_rdata(axi_pcie_hbm_rdata),                                                    // input wire [511 : 0] s_axi_pcie_rdata
+    .s_axi_pcie_rresp(axi_pcie_hbm_rresp),                                                    // input wire [1 : 0] s_axi_pcie_rresp
+    .s_axi_pcie_rlast(axi_pcie_hbm_rlast),                                                    // input wire s_axi_pcie_rlast
+    .s_axi_pcie_rvalid(axi_pcie_hbm_rvalid),                                                  // input wire s_axi_pcie_rvalid
+    .s_axi_pcie_awid(axi_pcie_hbm_awid),                                                      // output wire [3 : 0] s_axi_pcie_awid
+    .s_axi_pcie_awaddr(axi_pcie_hbm_awaddr),                                                  // output wire [63 : 0] s_axi_pcie_awaddr
+    .s_axi_pcie_awuser(axi_pcie_hbm_awuser),                                                  // output wire [31 : 0] s_axi_pcie_awuser
+    .s_axi_pcie_awlen(axi_pcie_hbm_awlen),                                                    // output wire [7 : 0] s_axi_pcie_awlen
+    .s_axi_pcie_awsize(axi_pcie_hbm_awsize),                                                  // output wire [2 : 0] s_axi_pcie_awsize
+    .s_axi_pcie_awburst(axi_pcie_hbm_awburst),                                                // output wire [1 : 0] s_axi_pcie_awburst
+    .s_axi_pcie_awprot(axi_pcie_hbm_awprot),                                                  // output wire [2 : 0] s_axi_pcie_awprot
+    .s_axi_pcie_awvalid(axi_pcie_hbm_awvalid),                                                // output wire s_axi_pcie_awvalid
+    .s_axi_pcie_awlock(axi_pcie_hbm_awlock),                                                  // output wire s_axi_pcie_awlock
+    .s_axi_pcie_awcache(axi_pcie_hbm_awcache),                                                // output wire [3 : 0] s_axi_pcie_awcache
+    .s_axi_pcie_wdata(axi_pcie_hbm_wdata),                                                    // output wire [511 : 0] s_axi_pcie_wdata
+    .s_axi_pcie_wuser(axi_pcie_hbm_wuser),                                                    // output wire [63 : 0] s_axi_pcie_wuser
+    .s_axi_pcie_wstrb(axi_pcie_hbm_wstrb),                                                    // output wire [63 : 0] s_axi_pcie_wstrb
+    .s_axi_pcie_wlast(axi_pcie_hbm_wlast),                                                    // output wire s_axi_pcie_wlast
+    .s_axi_pcie_wvalid(axi_pcie_hbm_wvalid),                                                  // output wire s_axi_pcie_wvalid
+    .s_axi_pcie_bready(axi_pcie_hbm_bready),                                                  // output wire s_axi_pcie_bready
+    .s_axi_pcie_arid(axi_pcie_hbm_arid),                                                      // output wire [3 : 0] s_axi_pcie_arid
+    .s_axi_pcie_araddr(axi_pcie_hbm_araddr),                                                  // output wire [63 : 0] s_axi_pcie_araddr
+    .s_axi_pcie_aruser(axi_pcie_hbm_aruser),                                                  // output wire [31 : 0] s_axi_pcie_aruser
+    .s_axi_pcie_arlen(axi_pcie_hbm_arlen),                                                    // output wire [7 : 0] s_axi_pcie_arlen
+    .s_axi_pcie_arsize(axi_pcie_hbm_arsize),                                                  // output wire [2 : 0] s_axi_pcie_arsize
+    .s_axi_pcie_arburst(axi_pcie_hbm_arburst),                                                // output wire [1 : 0] s_axi_pcie_arburst
+    .s_axi_pcie_arprot(axi_pcie_hbm_arprot),                                                  // output wire [2 : 0] s_axi_pcie_arprot
+    .s_axi_pcie_arvalid(axi_pcie_hbm_arvalid),                                                // output wire s_axi_pcie_arvalid
+    .s_axi_pcie_arlock(axi_pcie_hbm_arlock),                                                  // output wire s_axi_pcie_arlock
+    .s_axi_pcie_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] s_axi_pcie_arcache
+    .s_axi_pcie_rready(axi_pcie_hbm_rready),                                                  // output wire s_axi_pcie_rready
 
 
     .m_axi_hbm_araddr(axi_hbm_width_araddr),

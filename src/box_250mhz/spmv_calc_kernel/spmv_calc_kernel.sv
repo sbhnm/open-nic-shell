@@ -169,7 +169,7 @@ module spmv_calc_kernel #(
     Row_Top #()Row_Top
     (
         .clk(clk),
-        .rstn(rstn&config_wire[0]),
+        .rstn( rstn),
         .Ctrl_sig_Val(config_wire[2:1]),
         .Ctrl_sig_Xi(config_wire[4:3]),
         .Ctrl_sig_Yi(config_wire[6:5]),
@@ -545,11 +545,16 @@ module spmv_calc_kernel #(
         .m03_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,7)]),
         .m03_axi_rready(axi_Xi_Col_rready[`getvec(1,7)]),
 
-        .Load_Balancer_ready(),
+        .Load_Balancer_ready()
     );
 
     generate for (genvar i = 0; i < 4; i++) begin
-        axi_demux_r axi_demux_r(
+        axi_demux_r #(    
+            .C_M_AXI_BURST_LEN(16),
+            .C_M_AXI_ID_WIDTH(1),
+            .C_M_AXI_ADDR_WIDTH(48),
+            .C_M_AXI_DATA_WIDTH(32)
+    )axi_demux_r(
         .clk(clk),
         .rstn(rstn),
 
@@ -596,6 +601,22 @@ module spmv_calc_kernel #(
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
 
+        .s_axi_awid(0),          // input wire [1 : 0] s_axi_awid
+        .s_axi_awaddr(0),      // input wire [95 : 0] s_axi_awaddr
+        .s_axi_awlen(0),        // input wire [15 : 0] s_axi_awlen
+        .s_axi_awsize(0),      // input wire [5 : 0] s_axi_awsize
+        .s_axi_awburst(0),    // input wire [3 : 0] s_axi_awburst
+        .s_axi_awlock(0),      // input wire [1 : 0] s_axi_awlock
+        .s_axi_awcache(0),    // input wire [7 : 0] s_axi_awcache
+        .s_axi_awprot(0),      // input wire [5 : 0] s_axi_awprot
+        .s_axi_awqos(0),        // input wire [7 : 0] s_axi_awqos
+        .s_axi_awvalid(0),    // input wire [1 : 0] s_axi_awvalid
+        .s_axi_wdata(0),        // input wire [511 : 0] s_axi_wdata
+        .s_axi_wstrb(0),        // input wire [63 : 0] s_axi_wstrb
+        .s_axi_wlast(0),        // input wire [1 : 0] s_axi_wlast
+        .s_axi_wvalid(0),      // input wire [1 : 0] s_axi_wvalid
+        .s_axi_bready(0),      // input wire [1 : 0] s_axi_bready
+
         .s_axi_arid(axi_Xi_Col_arid[`getvec(1*2,i)]),          // input wire [1 : 0] s_axi_arid
         .s_axi_araddr(axi_Xi_Col_araddr[`getvec(48*2,i)]),      // input wire [65 : 0] s_axi_araddr
         .s_axi_arlen(axi_Xi_Col_arlen[`getvec(8*2,i)]),        // input wire [15 : 0] s_axi_arlen
@@ -612,7 +633,8 @@ module spmv_calc_kernel #(
         .s_axi_rresp(axi_Xi_Col_rresp[`getvec(2*2,i)]),        // output wire [3 : 0] s_axi_rresp
         .s_axi_rlast(axi_Xi_Col_rlast[`getvec(1*2,i)]),        // output wire [1 : 0] s_axi_rlast
         .s_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1*2,i)]),      // output wire [1 : 0] s_axi_rvalid
-        .s_axi_rready(axi_Xi_Col_rready[`getvec(1*2,i)]),      // input wire [1 : 0] s_axi_rready
+        .s_axi_rready(axi_Xi_Col_rready[`getvec(1*2,i)]),      // input wire [1 : 0] s_axi_rready,
+
 
 
         .m_axi_awaddr(m_axi_ColXi_awaddr[`getvec(48,i)]),      // output wire [32 : 0] m_axi_awaddr
@@ -641,6 +663,95 @@ module spmv_calc_kernel #(
         .m_axi_rvalid(m_axi_ColXi_rvalid[`getvec(1,i)]),      // input wire [0 : 0] m_axi_rvalid
         .m_axi_rready(m_axi_ColXi_rready[`getvec(1,i)])      // output wire [0 : 0] m_axi_rready
     );
+
+
+    // axi_colxi_crossbar axi_colxi_crossbar (
+    //     .aclk(aclk),                      // input wire aclk
+    //     .aresetn(aresetn),                // input wire aresetn
+    //     .s_axi_awid(s_axi_awid),          // input wire [1 : 0] s_axi_awid
+    //     .s_axi_awaddr(s_axi_awaddr),      // input wire [95 : 0] s_axi_awaddr
+    //     .s_axi_awlen(s_axi_awlen),        // input wire [15 : 0] s_axi_awlen
+    //     .s_axi_awsize(s_axi_awsize),      // input wire [5 : 0] s_axi_awsize
+    //     .s_axi_awburst(s_axi_awburst),    // input wire [3 : 0] s_axi_awburst
+    //     .s_axi_awlock(s_axi_awlock),      // input wire [1 : 0] s_axi_awlock
+    //     .s_axi_awcache(s_axi_awcache),    // input wire [7 : 0] s_axi_awcache
+    //     .s_axi_awprot(s_axi_awprot),      // input wire [5 : 0] s_axi_awprot
+    //     .s_axi_awqos(s_axi_awqos),        // input wire [7 : 0] s_axi_awqos
+    //     .s_axi_awvalid(s_axi_awvalid),    // input wire [1 : 0] s_axi_awvalid
+    //     .s_axi_awready(s_axi_awready),    // output wire [1 : 0] s_axi_awready
+    //     .s_axi_wdata(s_axi_wdata),        // input wire [511 : 0] s_axi_wdata
+    //     .s_axi_wstrb(s_axi_wstrb),        // input wire [63 : 0] s_axi_wstrb
+    //     .s_axi_wlast(s_axi_wlast),        // input wire [1 : 0] s_axi_wlast
+    //     .s_axi_wvalid(s_axi_wvalid),      // input wire [1 : 0] s_axi_wvalid
+    //     .s_axi_wready(s_axi_wready),      // output wire [1 : 0] s_axi_wready
+    //     .s_axi_bid(s_axi_bid),            // output wire [1 : 0] s_axi_bid
+    //     .s_axi_bresp(s_axi_bresp),        // output wire [3 : 0] s_axi_bresp
+    //     .s_axi_bvalid(s_axi_bvalid),      // output wire [1 : 0] s_axi_bvalid
+    //     .s_axi_bready(s_axi_bready),      // input wire [1 : 0] s_axi_bready
+        
+    //     .s_axi_arid(s_axi_arid),          // input wire [1 : 0] s_axi_arid
+    //     .s_axi_araddr(s_axi_araddr),      // input wire [95 : 0] s_axi_araddr
+    //     .s_axi_arlen(s_axi_arlen),        // input wire [15 : 0] s_axi_arlen
+    //     .s_axi_arsize(s_axi_arsize),      // input wire [5 : 0] s_axi_arsize
+    //     .s_axi_arburst(s_axi_arburst),    // input wire [3 : 0] s_axi_arburst
+    //     .s_axi_arlock(s_axi_arlock),      // input wire [1 : 0] s_axi_arlock
+    //     .s_axi_arcache(s_axi_arcache),    // input wire [7 : 0] s_axi_arcache
+    //     .s_axi_arprot(s_axi_arprot),      // input wire [5 : 0] s_axi_arprot
+    //     .s_axi_arqos(s_axi_arqos),        // input wire [7 : 0] s_axi_arqos
+    //     .s_axi_arvalid(s_axi_arvalid),    // input wire [1 : 0] s_axi_arvalid
+    //     .s_axi_arready(s_axi_arready),    // output wire [1 : 0] s_axi_arready
+    //     .s_axi_rid(s_axi_rid),            // output wire [1 : 0] s_axi_rid
+    //     .s_axi_rdata(s_axi_rdata),        // output wire [511 : 0] s_axi_rdata
+    //     .s_axi_rresp(s_axi_rresp),        // output wire [3 : 0] s_axi_rresp
+    //     .s_axi_rlast(s_axi_rlast),        // output wire [1 : 0] s_axi_rlast
+    //     .s_axi_rvalid(s_axi_rvalid),      // output wire [1 : 0] s_axi_rvalid
+    //     .s_axi_rready(s_axi_rready),      // input wire [1 : 0] s_axi_rready
+
+
+    //     .m_axi_awid(m_axi_awid),          // output wire [0 : 0] m_axi_awid
+    //     .m_axi_awaddr(m_axi_awaddr),      // output wire [47 : 0] m_axi_awaddr
+    //     .m_axi_awlen(m_axi_awlen),        // output wire [7 : 0] m_axi_awlen
+    //     .m_axi_awsize(m_axi_awsize),      // output wire [2 : 0] m_axi_awsize
+    //     .m_axi_awburst(m_axi_awburst),    // output wire [1 : 0] m_axi_awburst
+    //     .m_axi_awlock(m_axi_awlock),      // output wire [0 : 0] m_axi_awlock
+    //     .m_axi_awcache(m_axi_awcache),    // output wire [3 : 0] m_axi_awcache
+    //     .m_axi_awprot(m_axi_awprot),      // output wire [2 : 0] m_axi_awprot
+    //     .m_axi_awregion(m_axi_awregion),  // output wire [3 : 0] m_axi_awregion
+    //     .m_axi_awqos(m_axi_awqos),        // output wire [3 : 0] m_axi_awqos
+    //     .m_axi_awvalid(m_axi_awvalid),    // output wire [0 : 0] m_axi_awvalid
+    //     .m_axi_awready(m_axi_awready),    // input wire [0 : 0] m_axi_awready
+    //     .m_axi_wdata(m_axi_wdata),        // output wire [255 : 0] m_axi_wdata
+    //     .m_axi_wstrb(m_axi_wstrb),        // output wire [31 : 0] m_axi_wstrb
+    //     .m_axi_wlast(m_axi_wlast),        // output wire [0 : 0] m_axi_wlast
+    //     .m_axi_wvalid(m_axi_wvalid),      // output wire [0 : 0] m_axi_wvalid
+    //     .m_axi_wready(m_axi_wready),      // input wire [0 : 0] m_axi_wready
+    //     .m_axi_bid(m_axi_bid),            // input wire [0 : 0] m_axi_bid
+    //     .m_axi_bresp(m_axi_bresp),        // input wire [1 : 0] m_axi_bresp
+    //     .m_axi_bvalid(m_axi_bvalid),      // input wire [0 : 0] m_axi_bvalid
+    //     .m_axi_bready(m_axi_bready),      // output wire [0 : 0] m_axi_bready
+        
+    //     .m_axi_arid(m_axi_arid),          // output wire [0 : 0] m_axi_arid
+    //     .m_axi_araddr(m_axi_araddr),      // output wire [47 : 0] m_axi_araddr
+    //     .m_axi_arlen(m_axi_arlen),        // output wire [7 : 0] m_axi_arlen
+    //     .m_axi_arsize(m_axi_arsize),      // output wire [2 : 0] m_axi_arsize
+    //     .m_axi_arburst(m_axi_arburst),    // output wire [1 : 0] m_axi_arburst
+    //     .m_axi_arlock(m_axi_arlock),      // output wire [0 : 0] m_axi_arlock
+    //     .m_axi_arcache(m_axi_arcache),    // output wire [3 : 0] m_axi_arcache
+    //     .m_axi_arprot(m_axi_arprot),      // output wire [2 : 0] m_axi_arprot
+    //     .m_axi_arregion(m_axi_arregion),  // output wire [3 : 0] m_axi_arregion
+    //     .m_axi_arqos(m_axi_arqos),        // output wire [3 : 0] m_axi_arqos
+    //     .m_axi_arvalid(m_axi_arvalid),    // output wire [0 : 0] m_axi_arvalid
+    //     .m_axi_arready(m_axi_arready),    // input wire [0 : 0] m_axi_arready
+    //     .m_axi_rid(m_axi_rid),            // input wire [0 : 0] m_axi_rid
+    //     .m_axi_rdata(m_axi_rdata),        // input wire [255 : 0] m_axi_rdata
+    //     .m_axi_rresp(m_axi_rresp),        // input wire [1 : 0] m_axi_rresp
+    //     .m_axi_rlast(m_axi_rlast),        // input wire [0 : 0] m_axi_rlast
+    //     .m_axi_rvalid(m_axi_rvalid),      // input wire [0 : 0] m_axi_rvalid
+    //     .m_axi_rready(m_axi_rready)      // output wire [0 : 0] m_axi_rready
+
+
+    //     );
+
   end
   endgenerate
 

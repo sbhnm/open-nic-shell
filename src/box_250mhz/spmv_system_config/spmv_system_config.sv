@@ -122,7 +122,7 @@ module spmv_system_config #(
             end  
         end
     end
-    always @(posedge clk ) begin
+    always @(posedge aclk ) begin
         if(~aresetn)begin
             ctrl_reg<=0;
             row_num<=0;

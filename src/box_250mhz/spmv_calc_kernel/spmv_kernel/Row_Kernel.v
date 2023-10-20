@@ -111,7 +111,7 @@ module Row_Kernel#(
     wire [63:0] Fifo_Xi_data_out;
     wire Fifo_Xi_rd_en;
 
-    design_3 vector_dot_inst (
+    vector_dot vector_dot_inst (
         .M_AXIS_OUT_tdata(Radix_Converter_INV_Yi_input_data),
         .M_AXIS_OUT_tready(Radix_Converter_INV_Yi_input_ready),
         .M_AXIS_OUT_tvalid(Radix_Converter_INV_Yi_input_valid),

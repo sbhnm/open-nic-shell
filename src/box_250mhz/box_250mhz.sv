@@ -202,9 +202,11 @@ module box_250mhz #(
         .m_axi_hbm_Val_rvalid(m_axi_ker_rvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
         .m_axi_hbm_Val_wready(m_axi_ker_wready[(4*CONF_NUM_KERNEL)*1 +: 1]),
         .m_axi_hbm_Val_bresp(m_axi_ker_bresp[(4*CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(4*CONF_NUM_KERNEL)*1 +: 1])
 
 
     );
+    
+
 
 endmodule: box_250mhz
