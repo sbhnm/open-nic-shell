@@ -82,7 +82,7 @@ module spmv_calc_top #(
     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Val_arburst;
     wire [CONF_NUM_KERNEL*8-1 : 0] axi_Val_arlen;
     wire [CONF_NUM_KERNEL*3-1 : 0] axi_Val_arsize;
-    reg [CONF_NUM_KERNEL*1-1 : 0]axi_Val_arvalid;
+    wire [CONF_NUM_KERNEL*1-1 : 0]axi_Val_arvalid;
     wire [CONF_NUM_KERNEL*48-1 : 0] axi_Val_awaddr;
     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Val_awburst;
     wire [CONF_NUM_KERNEL*8-1 : 0] axi_Val_awlen;
@@ -109,7 +109,7 @@ module spmv_calc_top #(
     .aclk(clk),                      // input wire aclk
     .aresetn(rstn),                // input wire aresetn
 
-    .s_axi_arid(0),
+    // .s_axi_arid(0),
     .s_axi_araddr(axi_Val_araddr),
     .s_axi_arburst(axi_Val_arburst),
     .s_axi_arlen(axi_Val_arlen),
@@ -135,12 +135,12 @@ module spmv_calc_top #(
     .s_axi_wready(axi_Val_wready),
     .s_axi_bresp(axi_Val_bresp),
     .s_axi_bvalid(axi_Val_bvalid),
-    .s_axi_arcache({4'b0010,4'b0010,4'b0010,4'b0010}),
-    .s_axi_arlock(0),
-    .s_axi_arprot(0),
-    .s_axi_arqos(0),
+    // .s_axi_arcache({4'b0010,4'b0010,4'b0010,4'b0010}),
+    // .s_axi_arlock(0),
+    // .s_axi_arprot(0),
+    // .s_axi_arqos(0),
 
-    .m_axi_rid(0),
+    // .m_axi_rid(0),
     .m_axi_araddr(m_axi_hbm_Val_araddr),
     .m_axi_arburst(m_axi_hbm_Val_arburst),
     .m_axi_arlen(m_axi_hbm_Val_arlen),
@@ -167,13 +167,13 @@ module spmv_calc_top #(
     .m_axi_bresp(m_axi_hbm_Val_bresp),
     .m_axi_bvalid(m_axi_hbm_Val_bvalid)
 );
-    initial begin
-        axi_Val_arvalid<=0;
-        #1500
-        axi_Val_arvalid<=1;
-        #500;
-        axi_Val_arvalid<=0;
-    end
+    // initial begin
+    //     axi_Val_arvalid<=0;
+    //     #1500
+    //     axi_Val_arvalid<=1;
+    //     #500;
+    //     axi_Val_arvalid<=0;
+    // end
     spmv_system_config  #(
         .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )
@@ -239,7 +239,7 @@ module spmv_calc_top #(
             .m_axi_Val_arburst(axi_Val_arburst[`getvec(2,i)]),
             .m_axi_Val_arlen(axi_Val_arlen[`getvec(8,i)]),
             .m_axi_Val_arsize(axi_Val_arsize[`getvec(3,i)]),
-            // .m_axi_Val_arvalid(axi_Val_arvalid[`getvec(1,i)]),
+            .m_axi_Val_arvalid(axi_Val_arvalid[`getvec(1,i)]),
             .m_axi_Val_awaddr(axi_Val_awaddr[`getvec(48,i)]),
             .m_axi_Val_awburst(axi_Val_awburst[`getvec(2,i)]),
             .m_axi_Val_awlen(axi_Val_awlen[`getvec(8,i)]),

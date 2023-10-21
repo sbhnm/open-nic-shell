@@ -392,6 +392,7 @@ module spmv_calc_kernel #(
         .m_axi_Yi_bready(axi_Yi_bready[`getvec(1,2)])
 
     );
+
     //连线
     Load_Balancer Load_Balancer(
         .clk(clk),
@@ -754,7 +755,42 @@ module spmv_calc_kernel #(
 
   end
   endgenerate
+    generate
+        for(genvar i = 0;i<3;i++)begin
+            if(i<2)begin
+                assign axi_Yi_awid[`getvec(2,i)] = 0;
+                assign axi_Yi_awaddr[`getvec(48,i)] = 0;
+                assign axi_Yi_awlen[`getvec(8,i)] = 0;
+                assign axi_Yi_awsize[`getvec(3,i)] = 0;
+                assign axi_Yi_awburst[`getvec(2,i)] = 0;
+                assign axi_Yi_awlock[`getvec(1,i)] = 0;
+                assign axi_Yi_awcache[`getvec(4,i)] = 0;
+                assign axi_Yi_awprot[`getvec(3,i)] = 0;
+                assign axi_Yi_awqos[`getvec(4,i)] = 0;
+                assign axi_Yi_awvalid[`getvec(1,i)] = 0;
+                assign axi_Yi_wdata[`getvec(256,i)] = 0;
+                assign axi_Yi_wstrb[`getvec(32,i)] = 0;
+                assign axi_Yi_wlast[`getvec(1,i)] = 0;
+                assign axi_Yi_wvalid[`getvec(1,i)] = 0;
+                assign axi_Yi_bready[`getvec(1,i)] = 0;
+            end
+            else begin
+                assign axi_NNZWB_arid[`getvec(2,i)]=0;          // input wire [5 : 0] s_axi_arid
+                assign axi_NNZWB_araddr[`getvec(48,i)]=0;      // input wire [98 : 0] s_axi_araddr
+                assign axi_NNZWB_arlen[`getvec(8,i)]=0;        // input wire [23 : 0] s_axi_arlen
+                assign axi_NNZWB_arsize[`getvec(3,i)]=0;      // input wire [8 : 0] s_axi_arsize
+                assign axi_NNZWB_arburst[`getvec(2,i)]=0;    // input wire [5 : 0] s_axi_arburst
+                assign axi_NNZWB_arlock[`getvec(1,i)]=0;      // input wire [2 : 0] s_axi_arlock
+                assign axi_NNZWB_arcache[`getvec(4,i)]=0;    // input wire [11 : 0] s_axi_arcache
+                assign axi_NNZWB_arprot[`getvec(3,i)]=0;      // input wire [8 : 0] s_axi_arprot
+                assign axi_NNZWB_arqos[`getvec(4,i)]=0;        // input wire [11 : 0] s_axi_arqos
+                assign axi_NNZWB_arvalid[`getvec(1,i)]=0;    // input wire [2 : 0] s_axi_arvalid
+                assign axi_NNZWB_rready[`getvec(1,i)]=0;      // input wire [2 : 0] s_axi_rready
 
+            end
+
+        end
+    endgenerate
     axi_matwb_crossbar axi_matwb_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
