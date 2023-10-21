@@ -548,6 +548,8 @@ module open_nic_shell #(
   );
 
   spmv_vector_loader spmv_vector_loader(
+    
+    .s_axi_pcie_awready(axi_pcie_hbm_awready),
     .s_axi_pcie_wready(axi_pcie_hbm_wready),                                                  // input wire s_axi_pcie_wready
     .s_axi_pcie_bid(axi_pcie_hbm_bid),                                                        // input wire [3 : 0] s_axi_pcie_bid
     .s_axi_pcie_bresp(axi_pcie_hbm_bresp),                                                    // input wire [1 : 0] s_axi_pcie_bresp
