@@ -284,9 +284,9 @@ module Row_Top#(
     .clk(clk),
 
     //Config
-    .Ctrl_sig_Val(Ctrl_sig_Val),
-    .Ctrl_sig_Xi(Ctrl_sig_Xi),
-    .Ctrl_sig_Yi(Ctrl_sig_Yi),
+    .Ctrl_sig_Val({0,Ctrl_sig_Val}),
+    .Ctrl_sig_Xi({0,Ctrl_sig_Xi}),
+    .Ctrl_sig_Yi({0,Ctrl_sig_Yi}),
 
     .Read_Begin(Kernel_Begin_1),
     .Read_Length(NNZ_Num),
@@ -352,9 +352,9 @@ module Row_Top#(
     .clk(clk),
 
     //Config
-    .Ctrl_sig_Val(Ctrl_sig_Val),
-    .Ctrl_sig_Xi(Ctrl_sig_Xi),
-    .Ctrl_sig_Yi(Ctrl_sig_Yi),
+    .Ctrl_sig_Val({0,Ctrl_sig_Val}),
+    .Ctrl_sig_Xi({0,Ctrl_sig_Xi}),
+    .Ctrl_sig_Yi({0,Ctrl_sig_Yi}),
 
     .Read_Begin(Kernel_Begin_2),
     .Read_Length(NNZ_Num),
@@ -422,9 +422,9 @@ module Row_Top#(
     .clk(clk),
 
     //Config
-    .Ctrl_sig_Val(Ctrl_sig_Val),
-    .Ctrl_sig_Xi(Ctrl_sig_Xi),
-    .Ctrl_sig_Yi(Ctrl_sig_Yi),
+    .Ctrl_sig_Val({0,Ctrl_sig_Val}),
+    .Ctrl_sig_Xi({0,Ctrl_sig_Xi}),
+    .Ctrl_sig_Yi({0,Ctrl_sig_Yi}),
 
     .Read_Begin(Kernel_Begin_3),
     .Read_Length(NNZ_Num),
@@ -492,9 +492,9 @@ module Row_Top#(
     .clk(clk),
 
     //Config
-    .Ctrl_sig_Val(Ctrl_sig_Val),
-    .Ctrl_sig_Xi(Ctrl_sig_Xi),
-    .Ctrl_sig_Yi(Ctrl_sig_Yi),
+    .Ctrl_sig_Val({0,Ctrl_sig_Val}),
+    .Ctrl_sig_Xi({0,Ctrl_sig_Xi}),
+    .Ctrl_sig_Yi({0,Ctrl_sig_Yi}),
 
     .Read_Begin(Kernel_Begin_4),
     .Read_Length(NNZ_Num),
@@ -592,8 +592,11 @@ module Row_Top#(
         .wr_en(Fifo_wait_for_data ==1 & m_axi_NNZ_rvalid),        
         .rd_en(Row_Kernel_1_S_AXIS_TIMES_tready & Ctrl_State ==2),        
         //HXZ
-        .data_in(m_axi_NNZ_rdata),  
-        // .data_in(15),
+        `ifdef __synthesis__
+        .data_in(m_axi_NNZ_rdata),
+        `else  
+        .data_in(15),
+        `endif 
         .data_out(Row_Kernel_1_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_1_empty),   
         .full(NNZ_fifo_1_full)     
@@ -604,8 +607,11 @@ module Row_Top#(
         .wr_en(Fifo_wait_for_data ==2 & m_axi_NNZ_rvalid),        
         .rd_en(Row_Kernel_2_S_AXIS_TIMES_tready & Ctrl_State ==2),        
         //HXZ
+        `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
-        // .data_in(15),   
+        `else  
+        .data_in(15),
+        `endif   
         .data_out(Row_Kernel_2_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_2_empty),   
         .full(NNZ_fifo_2_full)     
@@ -616,8 +622,11 @@ module Row_Top#(
         .wr_en(Fifo_wait_for_data ==3 & m_axi_NNZ_rvalid),        
         .rd_en(Row_Kernel_3_S_AXIS_TIMES_tready & Ctrl_State ==2),        
         //HXZ
+        `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
-        // .data_in(15),   
+        `else  
+        .data_in(15),
+        `endif   
         .data_out(Row_Kernel_3_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_3_empty),   
         .full(NNZ_fifo_3_full)     
@@ -628,8 +637,11 @@ module Row_Top#(
         .wr_en(Fifo_wait_for_data ==4 & m_axi_NNZ_rvalid),        
         .rd_en(Row_Kernel_4_S_AXIS_TIMES_tready & Ctrl_State ==2),        
         //HXZ
+        `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
-        // .data_in(15),   
+        `else  
+        .data_in(15),
+        `endif 
         .data_out(Row_Kernel_4_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_4_empty),   
         .full(NNZ_fifo_4_full)     
@@ -1077,7 +1089,7 @@ module Row_Top#(
         end
         else begin
             if(write_state==0)begin
-                if(Yi_Fifo_ready !=0 &  m_axi_Yi_wready)begin
+                if(Yi_Fifo_ready !=0)begin
                     write_begin <=1;
                 end
                 else begin
@@ -1104,7 +1116,7 @@ module Row_Top#(
         end
         else begin
             if(write_state ==0)begin
-                if(Yi_Fifo_ready!=0 & m_axi_Yi_wready)begin
+                if(Yi_Fifo_ready!=0)begin
                     write_state<=1;
                     write_addr <= write_addr_demux[Yi_Fifo_ready -1];
                     write_addr_demux[Yi_Fifo_ready -1]<=write_addr_demux[Yi_Fifo_ready -1]+8;

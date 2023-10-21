@@ -92,7 +92,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'hffffffff;
+        s_axil_wdata<=32'b0101011;
         #2
         s_axil_wvalid<=0;
         #20
@@ -101,7 +101,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'hffffffff;
+        s_axil_wdata<=32'h00a;
         #2
         s_axil_wvalid<=0;
         #20
@@ -110,7 +110,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'hffffffff;
+        s_axil_wdata<=32'h1000;
         #2
         s_axil_wvalid<=0;
         #20
@@ -132,31 +132,31 @@ module sim_Multi_Kernel #(
             .s_aresetn(rstn),          // input wire s_aresetn
 
 
-                .s_axi_araddr(axi_hbm_araddr[i*48 +: 48]),
-                .s_axi_arburst(axi_hbm_arburst[i*2 +: 2]),
-                .s_axi_arlen(axi_hbm_arlen[i*8 +: 8]),
-                .s_axi_arsize(axi_hbm_arsize[i*3 +: 3]),
-                .s_axi_arvalid(axi_hbm_arvalid[i*1 +: 1]),
-                .s_axi_awaddr(axi_hbm_awaddr[i*48 +: 48]),
-                .s_axi_awburst(axi_hbm_awburst[i*2 +: 2]),
-                .s_axi_awlen(axi_hbm_awlen[i*8 +: 8]),
-                .s_axi_awsize(axi_hbm_awsize[i*3 +: 3]),
-                .s_axi_awvalid(axi_hbm_awvalid[i*1 +: 1]),
-                .s_axi_rready(axi_hbm_rready[i*1 +: 1]),
-                .s_axi_bready(axi_hbm_bready[i*1 +: 1]),
-                .s_axi_wdata(axi_hbm_wdata[i*256 +: 256]),
-                .s_axi_wlast(axi_hbm_wlast[i*1 +: 1]),
-                .s_axi_wstrb(axi_hbm_wstrb[i*32 +: 32]),
-                .s_axi_wvalid(axi_hbm_wvalid[i*1 +: 1]),
-                .s_axi_arready(axi_hbm_arready[i*1 +: 1]),
-                .s_axi_awready(axi_hbm_awready[i*1 +: 1]),
-                .s_axi_rdata(axi_hbm_rdata[i*256 +: 256]),
-                .s_axi_rlast(axi_hbm_rlast[i*1 +: 1]),
-                .s_axi_rresp(axi_hbm_rresp[i*2 +: 2]),
-                .s_axi_rvalid(axi_hbm_rvalid[i*1 +: 1]),
-                .s_axi_wready(axi_hbm_wready[i*1 +: 1]),
-                .s_axi_bresp(axi_hbm_bresp[i*2 +: 2]),
-                .s_axi_bvalid(axi_hbm_bvalid[i*1 +: 1])
+            .s_axi_araddr(axi_hbm_araddr[i*48 +: 48]),
+            .s_axi_arburst(axi_hbm_arburst[i*2 +: 2]),
+            .s_axi_arlen(axi_hbm_arlen[i*8 +: 8]),
+            .s_axi_arsize(axi_hbm_arsize[i*3 +: 3]),
+            .s_axi_arvalid(axi_hbm_arvalid[i*1 +: 1]),
+            .s_axi_awaddr(axi_hbm_awaddr[i*48 +: 48]),
+            .s_axi_awburst(axi_hbm_awburst[i*2 +: 2]),
+            .s_axi_awlen(axi_hbm_awlen[i*8 +: 8]),
+            .s_axi_awsize(axi_hbm_awsize[i*3 +: 3]),
+            .s_axi_awvalid(axi_hbm_awvalid[i*1 +: 1]),
+            .s_axi_rready(axi_hbm_rready[i*1 +: 1]),
+            .s_axi_bready(axi_hbm_bready[i*1 +: 1]),
+            .s_axi_wdata(axi_hbm_wdata[i*256 +: 256]),
+            .s_axi_wlast(axi_hbm_wlast[i*1 +: 1]),
+            .s_axi_wstrb(axi_hbm_wstrb[i*32 +: 32]),
+            .s_axi_wvalid(axi_hbm_wvalid[i*1 +: 1]),
+            .s_axi_arready(axi_hbm_arready[i*1 +: 1]),
+            .s_axi_awready(axi_hbm_awready[i*1 +: 1]),
+            .s_axi_rdata(axi_hbm_rdata[i*256 +: 256]),
+            .s_axi_rlast(axi_hbm_rlast[i*1 +: 1]),
+            .s_axi_rresp(axi_hbm_rresp[i*2 +: 2]),
+            .s_axi_rvalid(axi_hbm_rvalid[i*1 +: 1]),
+            .s_axi_wready(axi_hbm_wready[i*1 +: 1]),
+            .s_axi_bresp(axi_hbm_bresp[i*2 +: 2]),
+            .s_axi_bvalid(axi_hbm_bvalid[i*1 +: 1])
             );
         end
     endgenerate

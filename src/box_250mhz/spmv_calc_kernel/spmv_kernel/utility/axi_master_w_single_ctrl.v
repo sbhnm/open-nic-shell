@@ -149,11 +149,11 @@
 	assign M_AXI_WSTRB	= {(C_M_AXI_DATA_WIDTH/8){1'b1}};
 
 
-	assign M_AXI_WLAST	= M_AXI_WVALID;
+	assign M_AXI_WLAST	= wvalid;
 
-	assign M_AXI_WVALID	= ~Pre_INIT_AXI_WRITE & INIT_AXI_WRITE;
+	assign M_AXI_WVALID	= wvalid;
 	
-	assign M_AXI_AWVALID = M_AXI_WVALID;
+	assign M_AXI_AWVALID = awvalid;
 
 	assign M_AXI_AWADDR	= C_M_TARGET_SLAVE_BASE_ADDR + write_base_addr;
 
@@ -163,6 +163,32 @@
 
 	reg Pre_INIT_AXI_WRITE;
 
+	reg wvalid;
+	reg awvalid;
+	always @(posedge M_AXI_ACLK ) begin
+		if(~M_AXI_ARESETN)begin
+			wvalid<=0;
+		end
+		else if(~Pre_INIT_AXI_WRITE & INIT_AXI_WRITE)begin
+			wvalid <= 1;	
+		end
+		else if(M_AXI_WREADY)begin
+			wvalid <= 0;
+		end
+		
+	end
+	always @(posedge M_AXI_ACLK ) begin
+		if(~M_AXI_ARESETN)begin
+			awvalid<=0;
+		end
+		else if(~Pre_INIT_AXI_WRITE & INIT_AXI_WRITE)begin
+			awvalid <= 1;	
+		end
+		else if(M_AXI_AWREADY)begin
+			awvalid <= 0;
+		end
+		
+	end
 
 	//Write Response (B)
 	assign M_AXI_BREADY	= axi_bready;

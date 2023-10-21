@@ -1,6 +1,9 @@
 module vector_dot #(
     
 ) (
+    input clk,
+    input rstn,
+
     output [255:0] M_AXIS_OUT_tdata,
     input M_AXIS_OUT_tready,
     output M_AXIS_OUT_tvalid,
@@ -15,10 +18,8 @@ module vector_dot #(
     
     input [31:0] S_AXIS_TIMES_tdata,
     output S_AXIS_TIMES_tready,
-    input S_AXIS_TIMES_tvalid,
-    
-    input clk,
-    input rstn
+    input S_AXIS_TIMES_tvalid
+
 );
     wire [63:0] axis_mul_res_tdata;
     wire axis_mul_res_tvalid;
@@ -55,19 +56,20 @@ module vector_dot #(
     .m_axis_result_tdata(axis_conv_fix_tdata)    // output wire [63 : 0] m_axis_result_tdata
     );
     clr_ctrl clr_ctrl(
-        .times_valid(S_AXIS_TIMES_valid),
+        .times_valid(S_AXIS_TIMES_tvalid),
         .times_data(S_AXIS_TIMES_tdata),
-        .times_ready(S_AXIS_TIMES_ready),
+        .times_ready(S_AXIS_TIMES_tready),
         .vaild_sig(axis_conv_fix_tvalid & axis_conv_fix_tready),
         .disable_all(),
         .clr(clr),
         .clk(clk),
-        .rstn(rtsn)
+        .rstn(rstn)
     );
     assign axis_conv_fix_tready = ~clr;
     
     Accumlator Accumlator (
-    .B(axis_conv_fix_tdata),        // input wire [63 : 0] B
+    // .B(axis_conv_fix_tdata),        // input wire [63 : 0] B
+    .B(1),
     .CLK(clk),    // input wire CLK
     .CE(axis_conv_fix_tvalid & axis_conv_fix_tready),      // input wire CE
     .SCLR(clr),  // input wire SCLR

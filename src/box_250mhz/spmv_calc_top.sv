@@ -109,7 +109,8 @@ module spmv_calc_top #(
     .aclk(clk),                      // input wire aclk
     .aresetn(rstn),                // input wire aresetn
 
-    // .s_axi_arid(0),
+    .s_axi_arid(0),
+    .s_axi_awid(0),
     .s_axi_araddr(axi_Val_araddr),
     .s_axi_arburst(axi_Val_arburst),
     .s_axi_arlen(axi_Val_arlen),
@@ -135,12 +136,18 @@ module spmv_calc_top #(
     .s_axi_wready(axi_Val_wready),
     .s_axi_bresp(axi_Val_bresp),
     .s_axi_bvalid(axi_Val_bvalid),
-    // .s_axi_arcache({4'b0010,4'b0010,4'b0010,4'b0010}),
-    // .s_axi_arlock(0),
-    // .s_axi_arprot(0),
-    // .s_axi_arqos(0),
+    .s_axi_arcache({4'b0010,4'b0010,4'b0010,4'b0010}),
+    .s_axi_arlock(0),
+    .s_axi_arprot(0),
+    .s_axi_arqos(0),
 
-    // .m_axi_rid(0),
+    .s_axi_awcache({4'b0010,4'b0010,4'b0010,4'b0010}),
+    .s_axi_awlock(0),
+    .s_axi_awprot(0),
+    .s_axi_awqos(0),
+
+    .m_axi_rid(0),
+    .m_axi_bid(0),
     .m_axi_araddr(m_axi_hbm_Val_araddr),
     .m_axi_arburst(m_axi_hbm_Val_arburst),
     .m_axi_arlen(m_axi_hbm_Val_arlen),
