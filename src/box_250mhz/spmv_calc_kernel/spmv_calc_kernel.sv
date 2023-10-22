@@ -69,6 +69,8 @@ module spmv_calc_kernel #(
     input rstn
 
 );
+    wire [4*1-1:0] m_axi_ColXi_bid;
+    wire [4*1-1:0] m_axi_ColXi_rid;
     wire [8*1-1 : 0]        axi_Xi_Col_arid;
     wire [8*48-1 : 0]       axi_Xi_Col_araddr;
     wire [8*8-1 : 0]        axi_Xi_Col_arlen;
@@ -165,7 +167,10 @@ module spmv_calc_kernel #(
     wire [3*2-1 : 0] axi_Yi_bresp;
     wire [3*1-1 : 0] axi_Yi_bvalid;
     wire [3*1-1 : 0] axi_Yi_bready;
-  
+    
+    assign m_axi_ColXi_rid = 2'b11;
+    assign m_axi_ColXi_bid = 2'b11;
+
     Row_Top #()Row_Top
     (
         .clk(clk),
@@ -664,8 +669,8 @@ module spmv_calc_kernel #(
         .m_axi_rvalid(m_axi_ColXi_rvalid[`getvec(1,i)]),      // input wire [0 : 0] m_axi_rvalid
         .m_axi_rready(m_axi_ColXi_rready[`getvec(1,i)]),      // output wire [0 : 0] m_axi_rready
 
-        .m_axi_bid(0),
-        .m_axi_rid(0)
+        .m_axi_bid(m_axi_ColXi_bid[`getvec(1,i)]),
+        .m_axi_rid(m_axi_ColXi_rid[`getvec(1,i)])
     );
 
 
@@ -707,6 +712,10 @@ module spmv_calc_kernel #(
 
         end
     endgenerate
+    wire [1:0]  m_axi_Val_bid;
+    wire [1:0]  m_axi_Val_rid;
+    assign m_axi_Val_bid=0;
+    assign m_axi_Val_rid=0;
     axi_matwb_crossbar axi_matwb_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
@@ -778,8 +787,8 @@ module spmv_calc_kernel #(
         .m_axi_rready(m_axi_Val_rready),      // output wire [0 : 0] m_axi_rready
 
 
-        // .m_axi_bid(0),
-        // .m_axi_rid(0)
+        .m_axi_bid(m_axi_Val_bid),
+        .m_axi_rid(m_axi_Val_rid)
 );
 
 endmodule
