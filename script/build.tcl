@@ -57,6 +57,7 @@ set constr_dir ${root_dir}/constr
 set plugin_dir ${root_dir}/plugin
 set script_dir ${root_dir}/script
 set src_dir ${root_dir}/src
+set sim_src_dir ${root_dir}/sim_src_dir
 
 # Build options
 #   board_repo   Path to the Xilinx board store repository
@@ -204,6 +205,11 @@ if {[string equal $board_repo ""]} {
 foreach name [glob -tails -directory ${src_dir} -type d *] {
     if {![string equal $name "shell"]} {
         dict append module_dict $name "${src_dir}/${name}"
+    }
+}
+foreach name [glob -tails -directory ${sim_src_dir} -type d *] {
+    if {![string equal $name "shell"]} {
+        dict append module_dict $name "${sim_src_dir}/${name}"
     }
 }
 
