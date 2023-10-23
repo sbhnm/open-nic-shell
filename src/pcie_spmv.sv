@@ -15,9 +15,9 @@
 // limitations under the License.
 //
 // *************************************************************************
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
-module open_nic_shell #(
+module pcie_spmv #(
   parameter [31:0] BUILD_TIMESTAMP = 32'h01010000,
   parameter int    MIN_PKT_LEN     = 64,
   parameter int    MAX_PKT_LEN     = 1518,
@@ -804,5 +804,5 @@ module open_nic_shell #(
     .axis_aclk                        (axis_aclk)
   );
 
-endmodule: open_nic_shell
+endmodule: pcie_spmv
 // vivado -mode batch -source build.tcl -tclargs -board au50 -overwrite 1

@@ -1,4 +1,4 @@
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 
 module hbm_ctrl #(

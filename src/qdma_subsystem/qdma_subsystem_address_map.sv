@@ -32,7 +32,7 @@
 // --------------------------------------------------
 //    0x4000  |   0x4FFF  |  Subsystem registers
 // --------------------------------------------------
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module qdma_subsystem_address_map #(
   parameter int NUM_PHYS_FUNC = 1

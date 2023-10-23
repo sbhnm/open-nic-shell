@@ -48,7 +48,7 @@
 //   0x908  |  RO  | RX bytes into function
 //   0x90C  |      |
 // -----------------------------------------------------------------------------
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module qdma_subsystem_function_register (
   input           s_axil_awvalid,

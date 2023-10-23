@@ -1,4 +1,4 @@
-# *************************************************************************
+# *************************************************************************module_dict
 #
 # Copyright 2020 Xilinx, Inc.
 #
@@ -54,10 +54,9 @@ proc _do_post_impl {build_dir top impl_run {zynq_family 0}} {
 # Directory variables
 set root_dir [file normalize ..]
 set constr_dir ${root_dir}/constr
-set plugin_dir ${root_dir}/plugin
 set script_dir ${root_dir}/script
 set src_dir ${root_dir}/src
-set sim_src_dir ${root_dir}/sim_src_dir
+set sim_src_dir ${root_dir}/sim_src
 
 # Build options
 #   board_repo   Path to the Xilinx board store repository
@@ -69,7 +68,6 @@ set sim_src_dir ${root_dir}/sim_src_dir
 #   synth_ip     Synthesize IPs before creating design project
 #   impl         Run implementation after creating design project
 #   post_impl    Perform post implementation actions
-#   user_plugin  Path to the user plugin repo
 #   bitstream_userid       Bitstream.config userid
 #   bitstream_usr_access   Bitstream.config usr_access
 #
@@ -84,19 +82,17 @@ set sim_src_dir ${root_dir}/sim_src_dir
 
 array set build_options {
     -board_repo  ""
-    -board       au250
+    -board       au50
     -tag         ""
     -overwrite   0
     -rebuild     0
     -jobs        8
-    -synth_ip    1
+    -synth_ip    0
     -impl        0
     -post_impl   0
-    -user_plugin ""
     -bitstream_userid  "0xDEADC0DE"
     -bitstream_usr_access "0x66669999"
 }
-set build_options(-user_plugin) ${plugin_dir}/p2p
 
 array set design_params {
     -build_timestamp  0
@@ -205,11 +201,6 @@ if {[string equal $board_repo ""]} {
 foreach name [glob -tails -directory ${src_dir} -type d *] {
     if {![string equal $name "shell"]} {
         dict append module_dict $name "${src_dir}/${name}"
-    }
-}
-foreach name [glob -tails -directory ${sim_src_dir} -type d *] {
-    if {![string equal $name "shell"]} {
-        dict append module_dict $name "${sim_src_dir}/${name}"
     }
 }
 
@@ -330,27 +321,7 @@ dict for {ip ip_dir} $ip_dict {
 
 # Read user plugin files
 set include_dirs [get_property include_dirs [current_fileset]]
-foreach freq [list 250mhz 322mhz] {
-    set box "box_$freq"
-    set box_plugin ${user_plugin}/${box}
-    
-    if {![file exists $box_plugin] || ![file exists ${user_plugin}/build_${box}.tcl]} {
-        set box_plugin ${plugin_dir}/p2p/${box}
-    }
 
-    source ${box_plugin}/${box}_axi_crossbar.tcl
-    read_verilog -quiet ${box_plugin}/${box}_address_map.v
-    lappend include_dirs $box_plugin
-
-    if {![file exists ${user_plugin}/build_${box}.tcl]} {
-        cd ${plugin_dir}/p2p
-        source build_${box}.tcl
-    } else {
-        cd $user_plugin
-        source build_${box}.tcl
-    }
-    cd $script_dir
-}
 set_property include_dirs $include_dirs [current_fileset]
 
 # Read the source files from each module

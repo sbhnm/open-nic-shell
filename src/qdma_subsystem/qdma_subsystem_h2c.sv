@@ -19,7 +19,7 @@
 // - Cross-check packet size
 // - Parity check
 // - Drop error packets
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module qdma_subsystem_h2c #(
   parameter int NUM_PHYS_FUNC = 1

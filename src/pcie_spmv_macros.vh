@@ -15,8 +15,8 @@
 // limitations under the License.
 //
 // *************************************************************************
-`ifndef __OPEN_NIC_SHELL_MACROS_VH__
-`define __OPEN_NIC_SHELL_MACROS_VH__
+`ifndef __PCIE_SPMV_VH__
+`define __PCIE_SPMV_VH__
 
 `define getbit(width, index, offset)    ((index)*(width) + (offset))
 `define getvec(width, index)            ((index)*(width)) +: (width)

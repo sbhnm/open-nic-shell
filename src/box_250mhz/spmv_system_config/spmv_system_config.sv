@@ -1,4 +1,4 @@
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 // 负责矩阵乘法的参数写入
 module spmv_system_config #(

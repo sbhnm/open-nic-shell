@@ -39,7 +39,7 @@
 //   0x200000  |  0x2FFFFF |  Box1 @ 322MHz
 // --------------------------------------------------
 
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module system_config_address_map #(
   parameter int NUM_CMAC_PORT = 1

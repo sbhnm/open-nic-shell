@@ -15,7 +15,7 @@
 // limitations under the License.
 //
 // *************************************************************************
-`include "open_nic_shell_macros.vh"
+`include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module p2p_250mhz #(
   parameter int NUM_INTF = 1
