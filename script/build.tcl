@@ -157,7 +157,7 @@ if {$num_cmac_port != 1 && $num_cmac_port != 2} {
 source ${script_dir}/board_settings/${board}.tcl
 
 # Set build directory and dump the current design parameters
-set top open_nic_shell
+set top pcie_spmv
 set build_name ${board}
 if {![string equal $tag ""]} {
     set build_name ${build_name}_${tag}
