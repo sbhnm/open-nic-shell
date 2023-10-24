@@ -89,7 +89,7 @@ module axi_demux_r #(
 					m_axi_arvalid<=1;
 				end
 			end
-			else begin
+			else if(m_axi_arready)begin
 				m_axi_arvalid<=0;	
 			end
 			
