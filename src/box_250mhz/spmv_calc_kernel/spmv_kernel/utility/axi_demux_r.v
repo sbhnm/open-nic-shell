@@ -3,14 +3,16 @@ module axi_demux_r #(
     parameter integer C_M_AXI_BURST_LEN	= 16,
     parameter integer C_M_AXI_ID_WIDTH	= 1,
     parameter integer C_M_AXI_ADDR_WIDTH	= 48,
-    parameter integer C_M_AXI_DATA_WIDTH	= 32
+    parameter integer C_S_AXI_DATA_WIDTH	= 32,
+	parameter integer C_M_AXI_DATA_WIDTH	= 256
+
 ) (
         input wire  clk,
 		input wire  rstn,
 		output wire [C_M_AXI_ID_WIDTH-1 : 0] m_axi_arid,
 		output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m_axi_araddr,
 		output wire [7 : 0] m_axi_arlen,
-		output wire [2 : 0] m_axi_arsize,
+		output wire [5 : 0] m_axi_arsize,
 		output wire [1 : 0] m_axi_arburst,
 		output wire  m_axi_arlock,
 		output wire [3 : 0] m_axi_arcache,
@@ -37,14 +39,14 @@ module axi_demux_r #(
 		input wire  s_axi_arvalid,
 		output wire  s_axi_arready,
 		output wire [C_M_AXI_ID_WIDTH-1 : 0] s_axi_rid,
-		output wire [C_M_AXI_DATA_WIDTH-1 : 0] s_axi_rdata,
+		output wire [C_S_AXI_DATA_WIDTH-1 : 0] s_axi_rdata,
 		output wire [1 : 0] s_axi_rresp,
 		output wire  s_axi_rlast,
 		output reg  s_axi_rvalid,
 		input wire  s_axi_rready
         
 );
-	
+	integer i;
 	wire addr_hit;
 	assign addr_hit = (s_axi_araddr >= m_axi_read_addr & s_axi_araddr < m_axi_araddr + addr_gap);
 
@@ -98,15 +100,15 @@ module axi_demux_r #(
 
 	reg [16:0] BurstIndex;
 	// reg []
-	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) / (C_M_AXI_DATA_WIDTH /8)];
+	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
 	
-	reg [C_M_AXI_DATA_WIDTH-1:0] BurstDataBuffer [C_M_AXI_BURST_LEN-1:0];
+	reg [C_S_AXI_DATA_WIDTH-1:0] BurstDataBuffer [(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN) -1 :0];
 
 	reg [C_M_AXI_ADDR_WIDTH-1:0] Req_addr;
 
 	// reg Rea_en;
 
-	reg [C_M_AXI_BURST_LEN-1:0] BufferValidMap;
+	reg [(C_M_AXI_BURST_LEN) -1:0] BufferValidMap;
 
 	assign m_axi_rready = 1;
 	//RDATA Valid,索引控制逻辑
@@ -132,7 +134,10 @@ module axi_demux_r #(
 		end
 		if(m_axi_rready & m_axi_rvalid)begin
 			BufferValidMap[BurstIndex]<=1;
-			BurstDataBuffer[BurstIndex]<=m_axi_rdata;
+
+			for(i = 0;i< C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH;i=i+1)
+				BurstDataBuffer[(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH) * BurstIndex +  i]<=m_axi_rdata[C_S_AXI_DATA_WIDTH * i +: C_S_AXI_DATA_WIDTH];
+
 		end
 	end
 
@@ -144,7 +149,7 @@ module axi_demux_r #(
 			s_axi_rvalid <= 0;
 		end
 		else if(Req_en)begin
-			if(BufferValidMap[(Req_addr-m_axi_read_addr) / (C_M_AXI_DATA_WIDTH /8)])begin
+			if(BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap])begin
 				s_axi_rvalid <= 1;
 				Req_en<=0;
 			end

@@ -69,12 +69,11 @@ module spmv_calc_kernel #(
     input rstn
 
 );
-    wire [4*1-1:0] m_axi_ColXi_bid;
-    wire [4*1-1:0] m_axi_ColXi_rid;
+    wire [3:0] axi_Xi_Width_arregion;
     wire [8*1-1 : 0]        axi_Xi_Col_arid;
     wire [8*48-1 : 0]       axi_Xi_Col_araddr;
     wire [8*8-1 : 0]        axi_Xi_Col_arlen;
-    wire [8*3-1 : 0]        axi_Xi_Col_arsize;
+    wire [8*6-1 : 0]        axi_Xi_Col_arsize;
     wire [8*2-1 : 0]        axi_Xi_Col_arburst;
     wire [8*1-1:0]          axi_Xi_Col_arlock;
     wire [8*4-1 : 0]        axi_Xi_Col_arcache;
@@ -126,6 +125,23 @@ module spmv_calc_kernel #(
     wire [4*1-1:0]          axi_bl_ker_rvalid;
     wire [4*1-1:0]          axi_bl_ker_rready;
 
+    wire [4*1-1 : 0]        axi_bl_wc_arid;
+    wire [4*48-1 : 0]       axi_bl_wc_araddr;
+    wire [4*8-1 : 0]        axi_bl_wc_arlen;
+    wire [4*6-1 : 0]        axi_bl_wc_arsize;
+    wire [4*2-1 : 0]        axi_bl_wc_arburst;
+    wire [4*1-1:0]          axi_bl_wc_arlock;
+    wire [4*4-1 : 0]        axi_bl_wc_arcache;
+    wire [4*3-1 : 0]        axi_bl_wc_arprot;
+    wire [4*4-1 : 0]        axi_bl_wc_arqos;
+    wire [4*1-1:0]          axi_bl_wc_arvalid;
+    wire [4*1-1:0]          axi_bl_wc_arready;
+    wire [4*1-1 : 0]        axi_bl_wc_rid;
+    wire [4*64-1 : 0]       axi_bl_wc_rdata;
+    wire [4*2-1 : 0]        axi_bl_wc_rresp;
+    wire [4*1-1:0]          axi_bl_wc_rlast;
+    wire [4*1-1:0]          axi_bl_wc_rvalid;
+    wire [4*1-1:0]          axi_bl_wc_rready;
 
     wire [3*2-1 : 0]        axi_NNZWB_arid;
     wire [3*48-1 : 0]       axi_NNZWB_araddr;
@@ -168,9 +184,7 @@ module spmv_calc_kernel #(
     wire [3*1-1 : 0] axi_Yi_bvalid;
     wire [3*1-1 : 0] axi_Yi_bready;
     
-    assign m_axi_ColXi_rid = 2'b11;
-    assign m_axi_ColXi_bid = 2'b11;
-
+    assign axi_Xi_Width_arregion = 4'b1111;
     Row_Top #()Row_Top
     (
         .clk(clk),
@@ -479,95 +493,97 @@ module spmv_calc_kernel #(
 
 
         
-        .m00_axi_arid(axi_Xi_Col_arid[`getvec(1,1)]),
-        .m00_axi_araddr(axi_Xi_Col_araddr[`getvec(48,1)]),
-        .m00_axi_arlen(axi_Xi_Col_arlen[`getvec(8,1)]),
-        .m00_axi_arsize(axi_Xi_Col_arsize[`getvec(3,1)]),
-        .m00_axi_arburst(axi_Xi_Col_arburst[`getvec(2,1)]),
-        .m00_axi_arlock(axi_Xi_Col_arlock[`getvec(1,1)]),
-        .m00_axi_arcache(axi_Xi_Col_arcache[`getvec(4,1)]),
-        .m00_axi_arprot(axi_Xi_Col_arprot[`getvec(3,1)]),
-        .m00_axi_arqos(axi_Xi_Col_arqos[`getvec(4,1)]),
-        .m00_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1,1)]),
-        .m00_axi_arready(axi_Xi_Col_arready[`getvec(1,1)]),
-        .m00_axi_rid(axi_Xi_Col_rid[`getvec(1,1)]),
-        .m00_axi_rdata(axi_Xi_Col_rdata[`getvec(256,1)]),
-        .m00_axi_rresp(axi_Xi_Col_rresp[`getvec(2,1)]),
-        .m00_axi_rlast(axi_Xi_Col_rlast[`getvec(1,1)]),
-        .m00_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,1)]),
-        .m00_axi_rready(axi_Xi_Col_rready[`getvec(1,1)]),
+        .m00_axi_arid(axi_bl_wc_arid[`getvec(1,0)]),
+        .m00_axi_araddr(axi_bl_wc_araddr[`getvec(48,0)]),
+        .m00_axi_arlen(axi_bl_wc_arlen[`getvec(8,0)]),
+        .m00_axi_arsize(axi_bl_wc_arsize[`getvec(6,0)]),
+        .m00_axi_arburst(axi_bl_wc_arburst[`getvec(2,0)]),
+        .m00_axi_arlock(axi_bl_wc_arlock[`getvec(1,0)]),
+        .m00_axi_arcache(axi_bl_wc_arcache[`getvec(4,0)]),
+        .m00_axi_arprot(axi_bl_wc_arprot[`getvec(3,0)]),
+        .m00_axi_arqos(axi_bl_wc_arqos[`getvec(4,0)]),
+        .m00_axi_arvalid(axi_bl_wc_arvalid[`getvec(1,0)]),
+        .m00_axi_arready(axi_bl_wc_arready[`getvec(1,0)]),
+        .m00_axi_rid(axi_bl_wc_rid[`getvec(1,0)]),
+        .m00_axi_rdata(axi_bl_wc_rdata[`getvec(64,0)]),
+        .m00_axi_rresp(axi_bl_wc_rresp[`getvec(2,0)]),
+        .m00_axi_rlast(axi_bl_wc_rlast[`getvec(1,0)]),
+        .m00_axi_rvalid(axi_bl_wc_rvalid[`getvec(1,0)]),
+        .m00_axi_rready(axi_bl_wc_rready[`getvec(1,0)]),
 
-        .m01_axi_arid(axi_Xi_Col_arid[`getvec(1,3)]),
-        .m01_axi_araddr(axi_Xi_Col_araddr[`getvec(48,3)]),
-        .m01_axi_arlen(axi_Xi_Col_arlen[`getvec(8,3)]),
-        .m01_axi_arsize(axi_Xi_Col_arsize[`getvec(3,3)]),
-        .m01_axi_arburst(axi_Xi_Col_arburst[`getvec(2,3)]),
-        .m01_axi_arlock(axi_Xi_Col_arlock[`getvec(1,3)]),
-        .m01_axi_arcache(axi_Xi_Col_arcache[`getvec(4,3)]),
-        .m01_axi_arprot(axi_Xi_Col_arprot[`getvec(3,3)]),
-        .m01_axi_arqos(axi_Xi_Col_arqos[`getvec(4,3)]),
-        .m01_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1,3)]),
-        .m01_axi_arready(axi_Xi_Col_arready[`getvec(1,3)]),
-        .m01_axi_rid(axi_Xi_Col_rid[`getvec(1,3)]),
-        .m01_axi_rdata(axi_Xi_Col_rdata[`getvec(256,3)]),
-        .m01_axi_rresp(axi_Xi_Col_rresp[`getvec(2,3)]),
-        .m01_axi_rlast(axi_Xi_Col_rlast[`getvec(1,3)]),
-        .m01_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,3)]),
-        .m01_axi_rready(axi_Xi_Col_rready[`getvec(1,3)]),
+        .m01_axi_arid(axi_bl_wc_arid[`getvec(1,1)]),
+        .m01_axi_araddr(axi_bl_wc_araddr[`getvec(48,1)]),
+        .m01_axi_arlen(axi_bl_wc_arlen[`getvec(8,1)]),
+        .m01_axi_arsize(axi_bl_wc_arsize[`getvec(6,1)]),
+        .m01_axi_arburst(axi_bl_wc_arburst[`getvec(2,1)]),
+        .m01_axi_arlock(axi_bl_wc_arlock[`getvec(1,1)]),
+        .m01_axi_arcache(axi_bl_wc_arcache[`getvec(4,1)]),
+        .m01_axi_arprot(axi_bl_wc_arprot[`getvec(3,1)]),
+        .m01_axi_arqos(axi_bl_wc_arqos[`getvec(4,1)]),
+        .m01_axi_arvalid(axi_bl_wc_arvalid[`getvec(1,1)]),
+        .m01_axi_arready(axi_bl_wc_arready[`getvec(1,1)]),
+        .m01_axi_rid(axi_bl_wc_rid[`getvec(1,1)]),
+        .m01_axi_rdata(axi_bl_wc_rdata[`getvec(64,1)]),
+        .m01_axi_rresp(axi_bl_wc_rresp[`getvec(2,1)]),
+        .m01_axi_rlast(axi_bl_wc_rlast[`getvec(1,1)]),
+        .m01_axi_rvalid(axi_bl_wc_rvalid[`getvec(1,1)]),
+        .m01_axi_rready(axi_bl_wc_rready[`getvec(1,1)]),
 
-        .m02_axi_arid(axi_Xi_Col_arid[`getvec(1,5)]),
-        .m02_axi_araddr(axi_Xi_Col_araddr[`getvec(48,5)]),
-        .m02_axi_arlen(axi_Xi_Col_arlen[`getvec(8,5)]),
-        .m02_axi_arsize(axi_Xi_Col_arsize[`getvec(3,5)]),
-        .m02_axi_arburst(axi_Xi_Col_arburst[`getvec(2,5)]),
-        .m02_axi_arlock(axi_Xi_Col_arlock[`getvec(1,5)]),
-        .m02_axi_arcache(axi_Xi_Col_arcache[`getvec(4,5)]),
-        .m02_axi_arprot(axi_Xi_Col_arprot[`getvec(3,5)]),
-        .m02_axi_arqos(axi_Xi_Col_arqos[`getvec(4,5)]),
-        .m02_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1,5)]),
-        .m02_axi_arready(axi_Xi_Col_arready[`getvec(1,5)]),
-        .m02_axi_rid(axi_Xi_Col_rid[`getvec(1,5)]),
-        .m02_axi_rdata(axi_Xi_Col_rdata[`getvec(256,5)]),
-        .m02_axi_rresp(axi_Xi_Col_rresp[`getvec(2,5)]),
-        .m02_axi_rlast(axi_Xi_Col_rlast[`getvec(1,5)]),
-        .m02_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,5)]),
-        .m02_axi_rready(axi_Xi_Col_rready[`getvec(1,5)]),
+        .m02_axi_arid(axi_bl_wc_arid[`getvec(1,2)]),
+        .m02_axi_araddr(axi_bl_wc_araddr[`getvec(48,2)]),
+        .m02_axi_arlen(axi_bl_wc_arlen[`getvec(8,2)]),
+        .m02_axi_arsize(axi_bl_wc_arsize[`getvec(6,2)]),
+        .m02_axi_arburst(axi_bl_wc_arburst[`getvec(2,2)]),
+        .m02_axi_arlock(axi_bl_wc_arlock[`getvec(1,2)]),
+        .m02_axi_arcache(axi_bl_wc_arcache[`getvec(4,2)]),
+        .m02_axi_arprot(axi_bl_wc_arprot[`getvec(3,2)]),
+        .m02_axi_arqos(axi_bl_wc_arqos[`getvec(4,2)]),
+        .m02_axi_arvalid(axi_bl_wc_arvalid[`getvec(1,2)]),
+        .m02_axi_arready(axi_bl_wc_arready[`getvec(1,2)]),
+        .m02_axi_rid(axi_bl_wc_rid[`getvec(1,2)]),
+        .m02_axi_rdata(axi_bl_wc_rdata[`getvec(64,2)]),
+        .m02_axi_rresp(axi_bl_wc_rresp[`getvec(2,2)]),
+        .m02_axi_rlast(axi_bl_wc_rlast[`getvec(1,2)]),
+        .m02_axi_rvalid(axi_bl_wc_rvalid[`getvec(1,2)]),
+        .m02_axi_rready(axi_bl_wc_rready[`getvec(1,2)]),
         
-        .m03_axi_arid(axi_Xi_Col_arid[`getvec(1,7)]),
-        .m03_axi_araddr(axi_Xi_Col_araddr[`getvec(48,7)]),
-        .m03_axi_arlen(axi_Xi_Col_arlen[`getvec(8,7)]),
-        .m03_axi_arsize(axi_Xi_Col_arsize[`getvec(3,7)]),
-        .m03_axi_arburst(axi_Xi_Col_arburst[`getvec(2,7)]),
-        .m03_axi_arlock(axi_Xi_Col_arlock[`getvec(1,7)]),
-        .m03_axi_arcache(axi_Xi_Col_arcache[`getvec(4,7)]),
-        .m03_axi_arprot(axi_Xi_Col_arprot[`getvec(3,7)]),
-        .m03_axi_arqos(axi_Xi_Col_arqos[`getvec(4,7)]),
-        .m03_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1,7)]),
-        .m03_axi_arready(axi_Xi_Col_arready[`getvec(1,7)]),
-        .m03_axi_rid(axi_Xi_Col_rid[`getvec(1,7)]),
-        .m03_axi_rdata(axi_Xi_Col_rdata[`getvec(256,7)]),
-        .m03_axi_rresp(axi_Xi_Col_rresp[`getvec(2,7)]),
-        .m03_axi_rlast(axi_Xi_Col_rlast[`getvec(1,7)]),
-        .m03_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,7)]),
-        .m03_axi_rready(axi_Xi_Col_rready[`getvec(1,7)]),
+        .m03_axi_arid(axi_bl_wc_arid[`getvec(1,3)]),
+        .m03_axi_araddr(axi_bl_wc_araddr[`getvec(48,3)]),
+        .m03_axi_arlen(axi_bl_wc_arlen[`getvec(8,3)]),
+        .m03_axi_arsize(axi_bl_wc_arsize[`getvec(6,3)]),
+        .m03_axi_arburst(axi_bl_wc_arburst[`getvec(2,3)]),
+        .m03_axi_arlock(axi_bl_wc_arlock[`getvec(1,3)]),
+        .m03_axi_arcache(axi_bl_wc_arcache[`getvec(4,3)]),
+        .m03_axi_arprot(axi_bl_wc_arprot[`getvec(3,3)]),
+        .m03_axi_arqos(axi_bl_wc_arqos[`getvec(4,3)]),
+        .m03_axi_arvalid(axi_bl_wc_arvalid[`getvec(1,3)]),
+        .m03_axi_arready(axi_bl_wc_arready[`getvec(1,3)]),
+        .m03_axi_rid(axi_bl_wc_rid[`getvec(1,3)]),
+        .m03_axi_rdata(axi_bl_wc_rdata[`getvec(64,3)]),
+        .m03_axi_rresp(axi_bl_wc_rresp[`getvec(2,3)]),
+        .m03_axi_rlast(axi_bl_wc_rlast[`getvec(1,3)]),
+        .m03_axi_rvalid(axi_bl_wc_rvalid[`getvec(1,3)]),
+        .m03_axi_rready(axi_bl_wc_rready[`getvec(1,3)]),
 
         .Load_Balancer_ready()
     );
 
     generate for (genvar i = 0; i < 4; i++) begin
         axi_demux_r #(    
-            .C_M_AXI_BURST_LEN(16),
+            .C_M_AXI_BURST_LEN(2),
             .C_M_AXI_ID_WIDTH(1),
             .C_M_AXI_ADDR_WIDTH(48),
-            .C_M_AXI_DATA_WIDTH(32)
+            .C_S_AXI_DATA_WIDTH(32),
+            .C_M_AXI_DATA_WIDTH(256)
     )axi_demux_r(
         .clk(clk),
         .rstn(rstn),
 
+
         .m_axi_arid(axi_Xi_Col_arid[`getvec(1,2*i)]),          // input wire [1 : 0] m_axi_arid
         .m_axi_araddr(axi_Xi_Col_araddr[`getvec(48,2*i)]),      // input wire [65 : 0] m_axi_araddr
         .m_axi_arlen(axi_Xi_Col_arlen[`getvec(8,2*i)]),        // input wire [15 : 0] m_axi_arlen
-        .m_axi_arsize(axi_Xi_Col_arsize[`getvec(3,2*i)]),      // input wire [5 : 0] m_axi_arsize
+        .m_axi_arsize(axi_Xi_Col_arsize[`getvec(6,2*i)]),      // input wire [5 : 0] m_axi_arsize
         .m_axi_arburst(axi_Xi_Col_arburst[`getvec(2,2*i)]),    // input wire [3 : 0] m_axi_arburst
         .m_axi_arlock(axi_Xi_Col_arlock[`getvec(1,2*i)]),      // input wire [1 : 0] m_axi_arlock
         .m_axi_arcache(axi_Xi_Col_arcache[`getvec(4,2*i)]),    // input wire [7 : 0] m_axi_arcache
@@ -581,6 +597,8 @@ module spmv_calc_kernel #(
         .m_axi_rlast(axi_Xi_Col_rlast[`getvec(1,2*i)]),        // output wire [1 : 0] m_axi_rlast
         .m_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,2*i)]),      // output wire [1 : 0] m_axi_rvalid
         .m_axi_rready(axi_Xi_Col_rready[`getvec(1,2*i)]),      // input wire [1 : 0] m_axi_rready
+
+
 
  //TODO 连线 axi demux 连线
         .s_axi_arid(axi_demux_Col_arid[`getvec(1,i)]),
@@ -603,11 +621,55 @@ module spmv_calc_kernel #(
         );
 
 
+    axi_Xi_Width_Converter axi_Xi_Width_Converter (
+
+        .s_axi_arregion(axi_Xi_Width_arregion),
+
+        .s_axi_arid(axi_bl_wc_arid[`getvec(1,i)]),          // input wire [1 : 0] s_axi_arid
+        .s_axi_araddr(axi_bl_wc_araddr[`getvec(48,i)]),      // input wire [65 : 0] s_axi_araddr
+        .s_axi_arlen(axi_bl_wc_arlen[`getvec(8,i)]),        // input wire [15 : 0] s_axi_arlen
+        .s_axi_arsize(axi_bl_wc_arsize[`getvec(6,i)]),      // input wire [5 : 0] s_axi_arsize
+        .s_axi_arburst(axi_bl_wc_arburst[`getvec(2,i)]),    // input wire [3 : 0] s_axi_arburst
+        .s_axi_arlock(axi_bl_wc_arlock[`getvec(1,i)]),      // input wire [1 : 0] s_axi_arlock
+        .s_axi_arcache(axi_bl_wc_arcache[`getvec(4,i)]),    // input wire [7 : 0] s_axi_arcache
+        .s_axi_arprot(axi_bl_wc_arprot[`getvec(3,i)]),      // input wire [5 : 0] s_axi_arprot
+        .s_axi_arqos(axi_bl_wc_arqos[`getvec(4,i)]),        // input wire [7 : 0] s_axi_arqos
+        .s_axi_arvalid(axi_bl_wc_arvalid[`getvec(1,i)]),    // input wire [1 : 0] s_axi_arvalid
+        .s_axi_arready(axi_bl_wc_arready[`getvec(1,i)]),    // output wire [1 : 0] s_axi_arready
+        .s_axi_rid(axi_bl_wc_rid[`getvec(1,i)]),            // output wire [1 : 0] s_axi_rid
+        .s_axi_rdata(axi_bl_wc_rdata[`getvec(64,i)]),        // output wire [511 : 0] s_axi_rdata
+        .s_axi_rresp(axi_bl_wc_rresp[`getvec(2,i)]),        // output wire [3 : 0] s_axi_rresp
+        .s_axi_rlast(axi_bl_wc_rlast[`getvec(1,i)]),        // output wire [1 : 0] s_axi_rlast
+        .s_axi_rvalid(axi_bl_wc_rvalid[`getvec(1,i)]),      // output wire [1 : 0] s_axi_rvalid
+        .s_axi_rready(axi_bl_wc_rready[`getvec(1,i)]),      // input wire [1 : 0] s_axi_rready,
+
+        // .m_axi_arid(axi_Xi_Col_arid[`getvec(1,2*i+1)]),          // input wire [1 : 0] m_axi_arid
+        .m_axi_araddr(axi_Xi_Col_araddr[`getvec(48,2*i+1)]),      // input wire [65 : 0] m_axi_araddr
+        .m_axi_arlen(axi_Xi_Col_arlen[`getvec(8,2*i+1)]),        // input wire [15 : 0] m_axi_arlen
+        .m_axi_arsize(axi_Xi_Col_arsize[`getvec(6,2*i+1)]),      // input wire [5 : 0] m_axi_arsize
+        .m_axi_arburst(axi_Xi_Col_arburst[`getvec(2,2*i+1)]),    // input wire [3 : 0] m_axi_arburst
+        .m_axi_arlock(axi_Xi_Col_arlock[`getvec(1,2*i+1)]),      // input wire [1 : 0] m_axi_arlock
+        .m_axi_arcache(axi_Xi_Col_arcache[`getvec(4,2*i+1)]),    // input wire [7 : 0] m_axi_arcache
+        .m_axi_arprot(axi_Xi_Col_arprot[`getvec(3,2*i+1)]),      // input wire [5 : 0] m_axi_arprot
+        .m_axi_arqos(axi_Xi_Col_arqos[`getvec(4,2*i+1)]),        // input wire [7 : 0] m_axi_arqos
+        .m_axi_arvalid(axi_Xi_Col_arvalid[`getvec(1,2*i+1)]),    // input wire [1 : 0] m_axi_arvalid
+        .m_axi_arready(axi_Xi_Col_arready[`getvec(1,2*i+1)]),    // output wire [1 : 0] m_axi_arready
+        // .m_axi_rid(axi_Xi_Col_rid[`getvec(1,2*i+1)]),            // output wire [1 : 0] m_axi_rid
+        .m_axi_rdata(axi_Xi_Col_rdata[`getvec(256,2*i+1)]),        // output wire [511 : 0] m_axi_rdata
+        .m_axi_rresp(axi_Xi_Col_rresp[`getvec(2,2*i+1)]),        // output wire [3 : 0] m_axi_rresp
+        .m_axi_rlast(axi_Xi_Col_rlast[`getvec(1,2*i+1)]),        // output wire [1 : 0] m_axi_rlast
+        .m_axi_rvalid(axi_Xi_Col_rvalid[`getvec(1,2*i+1)]),      // output wire [1 : 0] m_axi_rvalid
+        .m_axi_rready(axi_Xi_Col_rready[`getvec(1,2*i+1)]),      // input wire [1 : 0] m_axi_rready,
+
+        .s_axi_aclk(clk),          // input wire s_axi_aclk
+        .s_axi_aresetn(rstn)    // input wire s_axi_aresetn
+        
+        );
         axi_colxi_crossbar axi_colxi_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
 
-        .s_axi_awid(0),          // input wire [1 : 0] s_axi_awid
+        .s_axi_awid(2'b01),          // input wire [1 : 0] s_axi_awid
         .s_axi_awaddr(0),      // input wire [95 : 0] s_axi_awaddr
         .s_axi_awlen(0),        // input wire [15 : 0] s_axi_awlen
         .s_axi_awsize(0),      // input wire [5 : 0] s_axi_awsize
@@ -623,10 +685,10 @@ module spmv_calc_kernel #(
         .s_axi_wvalid(0),      // input wire [1 : 0] s_axi_wvalid
         .s_axi_bready(0),      // input wire [1 : 0] s_axi_bready
 
-        .s_axi_arid(axi_Xi_Col_arid[`getvec(1*2,i)]),          // input wire [1 : 0] s_axi_arid
+        .s_axi_arid(2'b01),          // input wire [1 : 0] s_axi_arid
         .s_axi_araddr(axi_Xi_Col_araddr[`getvec(48*2,i)]),      // input wire [65 : 0] s_axi_araddr
         .s_axi_arlen(axi_Xi_Col_arlen[`getvec(8*2,i)]),        // input wire [15 : 0] s_axi_arlen
-        .s_axi_arsize(axi_Xi_Col_arsize[`getvec(3*2,i)]),      // input wire [5 : 0] s_axi_arsize
+        .s_axi_arsize(axi_Xi_Col_arsize[`getvec(6*2,i)]),      // input wire [5 : 0] s_axi_arsize
         .s_axi_arburst(axi_Xi_Col_arburst[`getvec(2*2,i)]),    // input wire [3 : 0] s_axi_arburst
         .s_axi_arlock(axi_Xi_Col_arlock[`getvec(1*2,i)]),      // input wire [1 : 0] s_axi_arlock
         .s_axi_arcache(axi_Xi_Col_arcache[`getvec(4*2,i)]),    // input wire [7 : 0] s_axi_arcache
@@ -667,10 +729,10 @@ module spmv_calc_kernel #(
         .m_axi_rresp(m_axi_ColXi_rresp[`getvec(2,i)]),        // input wire [1 : 0] m_axi_rresp
         .m_axi_rlast(m_axi_ColXi_rlast[`getvec(1,i)]),        // input wire [0 : 0] m_axi_rlast
         .m_axi_rvalid(m_axi_ColXi_rvalid[`getvec(1,i)]),      // input wire [0 : 0] m_axi_rvalid
-        .m_axi_rready(m_axi_ColXi_rready[`getvec(1,i)]),      // output wire [0 : 0] m_axi_rready
+        .m_axi_rready(m_axi_ColXi_rready[`getvec(1,i)])      // output wire [0 : 0] m_axi_rready
 
-        .m_axi_bid(m_axi_ColXi_bid[`getvec(1,i)]),
-        .m_axi_rid(m_axi_ColXi_rid[`getvec(1,i)])
+        // .m_axi_bid(1'b0),
+        // .m_axi_rid(1'b0)
     );
 
 
@@ -784,11 +846,11 @@ module spmv_calc_kernel #(
         .m_axi_rresp(m_axi_Val_rresp),        // input wire [1 : 0] m_axi_rresp
         .m_axi_rlast(m_axi_Val_rlast),        // input wire [0 : 0] m_axi_rlast
         .m_axi_rvalid(m_axi_Val_rvalid),      // input wire [0 : 0] m_axi_rvalid
-        .m_axi_rready(m_axi_Val_rready),      // output wire [0 : 0] m_axi_rready
+        .m_axi_rready(m_axi_Val_rready)      // output wire [0 : 0] m_axi_rready
 
 
-        .m_axi_bid(m_axi_Val_bid),
-        .m_axi_rid(m_axi_Val_rid)
+        // .m_axi_bid(m_axi_Val_bid),
+        // .m_axi_rid(m_axi_Val_rid)
 );
 
 endmodule

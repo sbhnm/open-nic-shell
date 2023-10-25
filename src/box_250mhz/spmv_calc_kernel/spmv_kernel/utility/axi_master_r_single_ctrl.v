@@ -170,7 +170,7 @@
 	assign M_AXI_ARCACHE	= 4'b0010;
 	assign M_AXI_ARPROT	= 3'h0;
 	assign M_AXI_ARQOS	= 4'h0;
-	// assign M_AXI_ARVALID	= axi_arvalid;
+	assign M_AXI_ARVALID	= axi_arvalid;
 	//Read and Read Response (R)
 	// assign M_AXI_RREADY	= axi_rready;
     // assign M_AXI_RREADY	= M_AXI_RVALID;
@@ -183,9 +183,19 @@
 
 	assign init_r_pulse	= (!init_r_ff2) && init_r_ff;
 
-
+	always @(posedge M_AXI_ACLK ) begin
+		if(~M_AXI_ARESETN)begin
+			axi_arvalid<=0;
+		end
+		else if(INIT_AXI_READ)begin
+			axi_arvalid<=1;
+		end 
+		else if(axi_arvalid& M_AXI_ARREADY)begin
+			axi_arvalid<=0;
+		end
+	end
 	// assign M_AXI_ARVALID = M_AXI_ARREADY & INIT_AXI_READ;
-	 assign M_AXI_ARVALID = INIT_AXI_READ;
+	//  assign M_AXI_ARVALID = INIT_AXI_READ;
 
 
 	assign M_AXI_ARADDR =  C_M_TARGET_SLAVE_BASE_ADDR + read_base_addr;

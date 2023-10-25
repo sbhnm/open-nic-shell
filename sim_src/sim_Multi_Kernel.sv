@@ -101,7 +101,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'h00a;
+        s_axil_wdata<=32'h0010;
         #2
         s_axil_wvalid<=0;
         #20
@@ -110,16 +110,12 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'h1000;
+        s_axil_wdata<=32'ha000;
         #2
         s_axil_wvalid<=0;
         #20
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 12;
-        #2
-        s_axil_awvalid<=0;
-        s_axil_wvalid<=1;
-        s_axil_wdata<=32'hffffffff;
         #2
         s_axil_wvalid<=0;
 
@@ -131,7 +127,7 @@ module sim_Multi_Kernel #(
             .s_aclk(clk),                // input wire s_aclk
             .s_aresetn(rstn),          // input wire s_aresetn
 
-
+            .s_axi_arid(0),
             .s_axi_araddr(axi_hbm_araddr[i*48 +: 48]),
             .s_axi_arburst(axi_hbm_arburst[i*2 +: 2]),
             .s_axi_arlen(axi_hbm_arlen[i*8 +: 8]),
@@ -162,7 +158,10 @@ module sim_Multi_Kernel #(
     endgenerate
 
 
-    spmv_calc_top spmv_calc_top(
+    spmv_calc_top #(
+        .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
+    )
+        spmv_calc_top(
         .clk(clk),
         .rstn(rstn),
 

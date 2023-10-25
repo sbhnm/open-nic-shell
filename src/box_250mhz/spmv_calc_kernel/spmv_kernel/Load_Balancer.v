@@ -10,7 +10,6 @@ module Load_Balancer #(
     input wire  rstn,
 
     input wire [1:0] Config_Port, 
-
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s00_axi_arid,
     input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s00_axi_araddr,
     input wire [7 : 0] s00_axi_arlen,
@@ -87,7 +86,7 @@ module Load_Balancer #(
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m00_axi_arid,
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m00_axi_araddr,
     output wire [7 : 0] m00_axi_arlen,
-    output wire [2 : 0] m00_axi_arsize,
+    output wire [5 : 0] m00_axi_arsize,
     output wire [1 : 0] m00_axi_arburst,
     output wire  m00_axi_arlock,
     output wire [3 : 0] m00_axi_arcache,
@@ -105,7 +104,7 @@ module Load_Balancer #(
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m01_axi_arid,
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m01_axi_araddr,
     output wire [7 : 0] m01_axi_arlen,
-    output wire [2 : 0] m01_axi_arsize,
+    output wire [5 : 0] m01_axi_arsize,
     output wire [1 : 0] m01_axi_arburst,
     output wire  m01_axi_arlock,
     output wire [3 : 0] m01_axi_arcache,
@@ -123,7 +122,7 @@ module Load_Balancer #(
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m02_axi_arid,
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m02_axi_araddr,
     output wire [7 : 0] m02_axi_arlen,
-    output wire [2 : 0] m02_axi_arsize,
+    output wire [5 : 0] m02_axi_arsize,
     output wire [1 : 0] m02_axi_arburst,
     output wire  m02_axi_arlock,
     output wire [3 : 0] m02_axi_arcache,
@@ -141,7 +140,7 @@ module Load_Balancer #(
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m03_axi_arid,
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m03_axi_araddr,
     output wire [7 : 0] m03_axi_arlen,
-    output wire [2 : 0] m03_axi_arsize,
+    output wire [5 : 0] m03_axi_arsize,
     output wire [1 : 0] m03_axi_arburst,
     output wire  m03_axi_arlock,
     output wire [3 : 0] m03_axi_arcache,
@@ -272,6 +271,7 @@ module Load_Balancer #(
 
     wire [C_M_AXI_ADDR_WIDTH + 3-1:0] Fifo_AXI_Req_1_data_out;
     
+
     // Cache_Bank Cache_Bank(
     //     .clk(clk),
     //     .rstn(rstn),
@@ -304,6 +304,11 @@ module Load_Balancer #(
     //     .m_cache_axi_rvalid(m_cache_axi_rvalid),
     //     .m_cache_axi_rready(m_cache_axi_rready)
     // );
+
+
+
+
+
 
     Fifo #(
         .DATA_WIDTH(C_M_AXI_ADDR_WIDTH + 3),
@@ -370,7 +375,6 @@ module Load_Balancer #(
     (*mark_debug = "true"*)
     wire [2:0] Req_Fifo_ServeNum;
 
-
     //Load_Balance
     (*mark_debug = "true"*)
     reg [31:0] Serve_Req_1_Num;
@@ -418,12 +422,11 @@ module Load_Balancer #(
                             ~Issue_3_BUSY ? 3:
                             ~Issue_4_BUSY ? 4:
                             0;
-
     
     (*mark_debug = "true"*)
     wire Tx_En;
     
-    assign Tx_En = Req_Fifo_ServeNum !=0 & Issue_Available!=0;
+    assign Tx_En = Req_Fifo_ServeNum!=0 & Issue_Available!=0;                          
 
     assign min_Req_Seq =    (Config_Port == 2) ? (1) : 0 |
                             (Config_Port == 1) ? (
@@ -450,7 +453,7 @@ module Load_Balancer #(
         if(~rstn)begin
             Serve_Req_1_Num<=0;
         end
-        else if(Req_Fifo_ServeNum == 1 & m00_axi_arvalid & m00_axi_arready)begin
+        else if(Req_Fifo_ServeNum == 1 & Tx_En)begin
             Serve_Req_1_Num<=Serve_Req_1_Num+1;
         end
     end
@@ -459,7 +462,7 @@ module Load_Balancer #(
         if(~rstn)begin
             Serve_Req_2_Num<=0;
         end
-        else if(Req_Fifo_ServeNum == 2 & m01_axi_arvalid & m01_axi_arready)begin
+        else if(Req_Fifo_ServeNum == 2 & Tx_En)begin
             Serve_Req_2_Num<=Serve_Req_2_Num+1;
         end
     end
@@ -468,7 +471,7 @@ module Load_Balancer #(
         if(~rstn)begin
             Serve_Req_3_Num<=0;
         end
-        else if(Req_Fifo_ServeNum == 3 & m02_axi_arvalid & m02_axi_arready)begin
+        else if(Req_Fifo_ServeNum == 3 & Tx_En)begin
             Serve_Req_3_Num<=Serve_Req_3_Num+1;
         end
     end
@@ -477,7 +480,7 @@ module Load_Balancer #(
         if(~rstn)begin
             Serve_Req_4_Num<=0;
         end
-        else if(Req_Fifo_ServeNum == 4 & m03_axi_arvalid & m03_axi_arready)begin
+        else if(Req_Fifo_ServeNum == 4 & Tx_En)begin
             Serve_Req_4_Num<=Serve_Req_4_Num+1;
         end
     end
@@ -517,6 +520,7 @@ module Load_Balancer #(
                         Req_Fifo_ServeNum == 3 ? Fifo_AXI_Req_3_data_out[C_M_AXI_ADDR_WIDTH +3 -1 :3] : 0|
                         Req_Fifo_ServeNum == 4 ? Fifo_AXI_Req_4_data_out[C_M_AXI_ADDR_WIDTH +3 -1 :3] : 0;
 
+
     assign m00_axi_araddr = Issue_Available==1 ? Tx_ADDR :0;
     assign m01_axi_araddr = Issue_Available==2 ? Tx_ADDR :0;
     assign m02_axi_araddr = Issue_Available==3 ? Tx_ADDR :0;
@@ -532,10 +536,12 @@ module Load_Balancer #(
     assign m02_axi_rready = 1;
     assign m03_axi_rready = 1;
 
-    assign Fifo_AXI_Req_1_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 1 & Tx_En & m00_axi_arready;
-    assign Fifo_AXI_Req_2_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 2 & Tx_En & m01_axi_arready;
-    assign Fifo_AXI_Req_3_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 3 & Tx_En & m02_axi_arready;
-    assign Fifo_AXI_Req_4_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 4 & Tx_En & m03_axi_arready;
+
+
+    assign Fifo_AXI_Req_1_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 1;
+    assign Fifo_AXI_Req_2_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 2;
+    assign Fifo_AXI_Req_3_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 3;
+    assign Fifo_AXI_Req_4_rd_en = Issue_Available != 0 & Req_Fifo_ServeNum == 4;
 
 
     // 已经从Req队列中取出，并在分配的发射端口中完成发射，但尚未返回的请求，数据：请求端口号，请求端口的在途序列。 这个队列不会满，因为收到AR_CNT控制
@@ -548,7 +554,7 @@ module Load_Balancer #(
     Issue_Uint  Issue_Uint_1(
         .clk(clk),
         .rstn(rstn),
-        .m_axi_arvalid(m00_axi_arvalid&m00_axi_arready),
+        .m_axi_arvalid(m00_axi_arvalid),
         .m_axi_arready(m00_axi_arready),
         .m_axi_rvalid(m00_axi_rvalid),
         .m_axi_rready(m00_axi_rready),
@@ -566,7 +572,7 @@ module Load_Balancer #(
     Issue_Uint  Issue_Uint_2(
         .clk(clk),
         .rstn(rstn),
-        .m_axi_arvalid(m01_axi_arvalid&m01_axi_arready),
+        .m_axi_arvalid(m01_axi_arvalid),
         .m_axi_arready(m01_axi_arready),
         .m_axi_rvalid(m01_axi_rvalid),
         .m_axi_rready(m01_axi_rready),
@@ -584,7 +590,7 @@ module Load_Balancer #(
     Issue_Uint  Issue_Uint_3(
         .clk(clk),
         .rstn(rstn),
-        .m_axi_arvalid(m02_axi_arvalid&m02_axi_arready),
+        .m_axi_arvalid(m02_axi_arvalid),
         .m_axi_arready(m02_axi_arready),
         .m_axi_rvalid(m02_axi_rvalid),
         .m_axi_rready(m02_axi_rready),
@@ -602,7 +608,7 @@ module Load_Balancer #(
     Issue_Uint  Issue_Uint_4(
         .clk(clk),
         .rstn(rstn),
-        .m_axi_arvalid(m03_axi_arvalid&m03_axi_arready),
+        .m_axi_arvalid(m03_axi_arvalid),
         .m_axi_arready(m03_axi_arready),
         .m_axi_rvalid(m03_axi_rvalid),
         .m_axi_rready(m03_axi_rready),

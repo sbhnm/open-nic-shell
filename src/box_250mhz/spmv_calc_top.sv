@@ -146,8 +146,8 @@ module spmv_calc_top #(
     .s_axi_awprot(0),
     .s_axi_awqos(0),
 
-    .m_axi_rid(0),
-    .m_axi_bid(0),
+    // .m_axi_rid(0),
+    // .m_axi_bid(0),
     .m_axi_araddr(m_axi_hbm_Val_araddr),
     .m_axi_arburst(m_axi_hbm_Val_arburst),
     .m_axi_arlen(m_axi_hbm_Val_arlen),
@@ -234,6 +234,7 @@ module spmv_calc_top #(
             .m_axi_ColXi_arready(m_axi_ColXi_arready[`getvec(1*4,i)]),
             .m_axi_ColXi_awready(m_axi_ColXi_awready[`getvec(1*4,i)]),
             .m_axi_ColXi_rdata(m_axi_ColXi_rdata[`getvec(256*4,i)]),
+            // .m_axi_ColXi_rdata(m_axi_ColXi_rdata[`getvec(256*4,i)]),
             .m_axi_ColXi_rlast(m_axi_ColXi_rlast[`getvec(1*4,i)]),
             .m_axi_ColXi_rresp(m_axi_ColXi_rresp[`getvec(2*4,i)]),
             .m_axi_ColXi_rvalid(m_axi_ColXi_rvalid[`getvec(1*4,i)]),

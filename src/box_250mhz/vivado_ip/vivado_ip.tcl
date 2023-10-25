@@ -11,4 +11,5 @@ set ips {
     half2single
     single2double
     Single2Half
+    sim_blk_ram
 }
