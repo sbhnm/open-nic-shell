@@ -4,12 +4,19 @@
 module spmv_calc_top #(
     parameter int CONF_NUM_KERNEL = 32'h4
 ) (
+    (*mark_debug = "true"*)
     input                          s_axil_awvalid,
+    (*mark_debug = "true"*)
     input                   [31:0] s_axil_awaddr,
+    (*mark_debug = "true"*)
     output                         s_axil_awready,
+    (*mark_debug = "true"*)
     input                          s_axil_wvalid,
+    (*mark_debug = "true"*)
     input                   [31:0] s_axil_wdata,
+    (*mark_debug = "true"*)
     output                         s_axil_wready,
+
     output                         s_axil_bvalid,
     output                   [1:0] s_axil_bresp,
     input                          s_axil_bready,
@@ -73,7 +80,9 @@ module spmv_calc_top #(
     input [1:0]                     m_axi_hbm_Val_bresp,
     input                           m_axi_hbm_Val_bvalid,
 
-    input clk,
+    input axil_clk,
+    input axis_clk,
+
     input rstn
 );
     wire [32*3*CONF_NUM_KERNEL-1:0] config_wire;
@@ -106,7 +115,7 @@ module spmv_calc_top #(
     //TODO 实例化cross bar，将所有的Val 连接起来
 
     axi_hbm_val_crossbar axi_hbm_val_crossbar (
-    .aclk(clk),                      // input wire aclk
+    .aclk(axis_clk),                      // input wire aclk
     .aresetn(rstn),                // input wire aresetn
 
     .s_axi_arid(0),
@@ -204,14 +213,14 @@ module spmv_calc_top #(
 
         .config_wire(config_wire),
 
-        .aclk(clk),
+        .aclk(axil_clk),
         .aresetn(rstn)
     );
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
         spmv_calc_kernel #(
 
         )spmv_calc_kernel (
-            .clk(clk),
+            .clk(axis_clk),
             .rstn(rstn),
             .config_wire(config_wire[`getvec(32*3,i)]),
 

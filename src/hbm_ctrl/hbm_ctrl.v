@@ -38,10 +38,16 @@ module hbm_ctrl #(
     output [32*2 -1: 0]     AXI_BRESP,
     output [32*1-1:0]   AXI_BVALID,
 
-    input wire HBM_REF_CLK_0,
-    input wire HBM_REF_CLK_1
-);
+    input hbm_diff_clk_p,
+  
+    input hbm_diff_clk_n
 
+    // input axi_hbm_clk
+);
+  
+  wire clk;
+  wire HBM_REF_CLK_0;
+  wire HBM_REF_CLK_1;
   wire  [31 : 0] APB_0_PWDATA;
   wire  [21 : 0] APB_0_PADDR;
   wire  APB_0_PCLK;
@@ -61,7 +67,7 @@ module hbm_ctrl #(
   assign APB_0_PADDR=0;
   assign APB_0_PCLK=HBM_REF_CLK_0;
   assign APB_0_PENABLE=0;
-  assign APB_0_PRESET_N=0;
+  assign APB_0_PRESET_N=1;
   assign APB_0_PSEL=0;
   assign APB_0_PWRITE=0;
 
@@ -69,9 +75,21 @@ module hbm_ctrl #(
   assign APB_1_PADDR=0;
   assign APB_1_PCLK=HBM_REF_CLK_0;
   assign APB_1_PENABLE=0;
-  assign APB_1_PRESET_N=0;
+  assign APB_1_PRESET_N=1;
   assign APB_1_PSEL=0;
   assign APB_1_PWRITE=0;
+
+  assign HBM_REF_CLK_0 = clk;
+  assign HBM_REF_CLK_1 = clk;
+
+    hbm_clk_wiz hbm_clk_wiz
+   (
+    // Clock out ports
+    .clk_out1(clk),     // output clk_out1
+   // Clock in ports
+    .clk_in1_p(hbm_diff_clk_p),    // input clk_in1_p
+    .clk_in1_n(hbm_diff_clk_n)    // input clk_in1_n
+);
 
     hbm_0 hbm (
   .HBM_REF_CLK_0(HBM_REF_CLK_0),              // input wire HBM_REF_CLK_0
@@ -1134,20 +1152,13 @@ module hbm_ctrl #(
     .AXI_31_BRESP(AXI_BRESP[`getvec(2,31)]),
     .AXI_31_BVALID(AXI_BVALID[`getvec(1,31)]),
 
-    .APB_0_PWDATA(APB_0_PWDATA),                // input wire [31 : 0] APB_0_PWDATA
-    .APB_0_PADDR(APB_0_PADDR),                  // input wire [21 : 0] APB_0_PADDR
+
     .APB_0_PCLK(APB_0_PCLK),                    // input wire APB_0_PCLK
-    .APB_0_PENABLE(APB_0_PENABLE),              // input wire APB_0_PENABLE
     .APB_0_PRESET_N(APB_0_PRESET_N),            // input wire APB_0_PRESET_N
-    .APB_0_PSEL(APB_0_PSEL),                    // input wire APB_0_PSEL
-    .APB_0_PWRITE(APB_0_PWRITE),                // input wire APB_0_PWRITE
-    .APB_1_PWDATA(APB_1_PWDATA),                // input wire [31 : 0] APB_1_PWDATA
-    .APB_1_PADDR(APB_1_PADDR),                  // input wire [21 : 0] APB_1_PADDR
+
     .APB_1_PCLK(APB_1_PCLK),                    // input wire APB_1_PCLK
-    .APB_1_PENABLE(APB_1_PENABLE),              // input wire APB_1_PENABLE
-    .APB_1_PRESET_N(APB_1_PRESET_N),            // input wire APB_1_PRESET_N
-    .APB_1_PSEL(APB_1_PSEL),                    // input wire APB_1_PSEL
-    .APB_1_PWRITE(APB_1_PWRITE)                // input wire APB_1_PWRITE
+    .APB_1_PRESET_N(APB_1_PRESET_N)            // input wire APB_1_PRESET_N
+
 
 );
 

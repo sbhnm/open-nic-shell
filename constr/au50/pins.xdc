@@ -27,6 +27,12 @@
 set_property PACKAGE_PIN AF8 [get_ports pcie_refclk_n]
 set_property PACKAGE_PIN AF9 [get_ports pcie_refclk_p]
 
+
+#set_property PACKAGE_PIN BB18 [get_ports hbm_diff_clk_p]
+#set_property PACKAGE_PIN G17 [get_ports hbm_diff_clk_n]
+
+
+
 set_property PACKAGE_PIN AW27 [get_ports pcie_rstn]
 set_property IOSTANDARD LVCMOS18 [get_ports pcie_rstn]
 

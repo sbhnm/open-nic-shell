@@ -27,28 +27,24 @@ module pcie_spmv #(
   parameter int    NUM_CMAC_PORT   = 1,
   parameter int CONF_NUM_KERNEL = 32'h4
 ) (
-`ifdef __au280__
-  output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
-`elsif __au50__
-  output                         hbm_cattrip,
-`elsif __au55c__
-  output                         hbm_cattrip,
-`endif
+ `ifdef __au280__
+   output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
+ `elsif __au50__
+   output                         hbm_cattrip,
+ `elsif __au55c__
+   output                         hbm_cattrip,
+ `endif
 
   input                   [15:0] pcie_rxp,
   input                   [15:0] pcie_rxn,
   output                  [15:0] pcie_txp,
   output                  [15:0] pcie_txn,
-  input                          pcie_refclk_p,
+  input                          pcie_refclk_p, // 100Mhz
   input                          pcie_refclk_n,
-  input                          pcie_rstn
+  input                          pcie_rstn,
 
-  //input    [4*NUM_CMAC_PORT-1:0] qsfp_rxp,
-  //input    [4*NUM_CMAC_PORT-1:0] qsfp_rxn,
-  //output   [4*NUM_CMAC_PORT-1:0] qsfp_txp,
-  //output   [4*NUM_CMAC_PORT-1:0] qsfp_txn,
-  //input      [NUM_CMAC_PORT-1:0] qsfp_refclk_p,
-  //input      [NUM_CMAC_PORT-1:0] qsfp_refclk_n
+  input                          hbm_diff_clk_p, // 100Mhz
+  input                          hbm_diff_clk_n
   
 );
 
@@ -106,19 +102,19 @@ module pcie_spmv #(
 `endif
 
 
-`ifdef __au280__
-  // Fix the CATTRIP issue for AU280 custom flow
-  //
-  // This pin must be tied to 0; otherwise the board might be unrecoverable
-  // after programming
-  OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
-`elsif __au50__
-  // Same for AU50
-  OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
-`elsif __au55c__
-  // Same for AU50
-  OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
-`endif
+ `ifdef __au280__
+   // Fix the CATTRIP issue for AU280 custom flow
+   //
+   // This pin must be tied to 0; otherwise the board might be unrecoverable
+   // after programming
+   OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
+ `elsif __au50__
+   // Same for AU50
+   OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
+ `elsif __au55c__
+   // Same for AU50
+   OBUF hbm_cattrip_obuf_inst (.I(1'b0), .O(hbm_cattrip));
+ `endif
 
 `ifdef __zynq_family__
   zynq_usplus_ps zynq_usplus_ps_inst ();
@@ -678,7 +674,7 @@ module pcie_spmv #(
       assign axi_hbm_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
       assign axi_hbm_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
       assign axi_hbm_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
-
+      assign axi_hbm_aclk[`getvec(1,i)] = axis_aclk;
     end
 
   endgenerate
@@ -719,8 +715,9 @@ module pcie_spmv #(
     .AXI_BRESP(axi_hbm_bresp),
     .AXI_BVALID(axi_hbm_bvalid),
 
-    .HBM_REF_CLK_0(clk),
-    .HBM_REF_CLK_1(clk)
+    .hbm_diff_clk_p(hbm_diff_clk_p),
+    .hbm_diff_clk_n(hbm_diff_clk_n)
+    // .axi_hbm_clk(axis_aclk)
   );
 
   box_250mhz #(
