@@ -54,27 +54,34 @@ module spmv_calc_top #(
     input [CONF_NUM_KERNEL*4*2-1 : 0] m_axi_ColXi_bresp,
     input [CONF_NUM_KERNEL*4*1-1 : 0] m_axi_ColXi_bvalid,
 
+
+
+    (*mark_debug = "true"*)
     output [47 : 0]                 m_axi_hbm_Val_araddr,
     output [1 : 0]                  m_axi_hbm_Val_arburst,
     output [7 : 0]                  m_axi_hbm_Val_arlen,
     output [2 : 0]                  m_axi_hbm_Val_arsize,
+    (*mark_debug = "true"*)
     output                          m_axi_hbm_Val_arvalid,
     output [47 : 0]                 m_axi_hbm_Val_awaddr,
     output [1 : 0]                  m_axi_hbm_Val_awburst,
     output [7 : 0]                  m_axi_hbm_Val_awlen,
     output [2 : 0]                  m_axi_hbm_Val_awsize,
     output                          m_axi_hbm_Val_awvalid,
+    (*mark_debug = "true"*)
     output                          m_axi_hbm_Val_rready,
     output                          m_axi_hbm_Val_bready,
     output [255 : 0]                m_axi_hbm_Val_wdata,
     output                          m_axi_hbm_Val_wlast,
     output [31 : 0]                 m_axi_hbm_Val_wstrb,
     output                          m_axi_hbm_Val_wvalid,
+    (*mark_debug = "true"*)
     input                           m_axi_hbm_Val_arready,
     input                           m_axi_hbm_Val_awready,
     input [255 : 0]                 m_axi_hbm_Val_rdata,
     input                           m_axi_hbm_Val_rlast,
     input [1 : 0]                   m_axi_hbm_Val_rresp,
+    (*mark_debug = "true"*)
     input                           m_axi_hbm_Val_rvalid,
     input                           m_axi_hbm_Val_wready,
     input [1:0]                     m_axi_hbm_Val_bresp,
@@ -221,7 +228,8 @@ module spmv_calc_top #(
 
         )spmv_calc_kernel (
             .clk(axis_clk),
-            .rstn(rstn),
+            .rstn(rstn && ~(config_wire[32*3 *i + 7]) ),
+//            .rstn(rstn),
             .config_wire(config_wire[`getvec(32*3,i)]),
 
             .m_axi_ColXi_araddr(m_axi_ColXi_araddr[`getvec(48*4,i)]),

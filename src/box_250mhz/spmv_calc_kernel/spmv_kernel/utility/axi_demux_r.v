@@ -9,7 +9,9 @@ module axi_demux_r #(
 ) (
         input wire  clk,
 		input wire  rstn,
+
 		output wire [C_M_AXI_ID_WIDTH-1 : 0] m_axi_arid,
+		(*mark_debug = "true"*)
 		output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m_axi_araddr,
 		output wire [7 : 0] m_axi_arlen,
 		output wire [5 : 0] m_axi_arsize,
@@ -18,13 +20,19 @@ module axi_demux_r #(
 		output wire [3 : 0] m_axi_arcache,
 		output wire [2 : 0] m_axi_arprot,
 		output wire [3 : 0] m_axi_arqos,
+		(*mark_debug = "true"*)
 		output reg  m_axi_arvalid,
+		(*mark_debug = "true"*)
 		input wire  m_axi_arready,
 		input wire [C_M_AXI_ID_WIDTH-1 : 0] m_axi_rid,
+		(*mark_debug = "true"*)
 		input wire [C_M_AXI_DATA_WIDTH-1 : 0] m_axi_rdata,
 		input wire [1 : 0] m_axi_rresp,
+		(*mark_debug = "true"*)
 		input wire  m_axi_rlast,
+		(*mark_debug = "true"*)
 		input wire  m_axi_rvalid,
+		(*mark_debug = "true"*)
 		output wire  m_axi_rready,
 
 		input wire [C_M_AXI_ID_WIDTH-1 : 0] s_axi_arid,

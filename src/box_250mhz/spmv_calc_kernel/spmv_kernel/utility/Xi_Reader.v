@@ -215,7 +215,8 @@ axi_master_r_single #(
             end
 
             if(read_status ==4)begin
-                if( Xi_Cnt < Xi_Cnt_Max & Xi_ready)begin
+                // if( Xi_Cnt < Xi_Cnt_Max & Xi_ready)begin
+                if(Xi_ready & m_axi_Xi_arready)begin
                     colIndex_read_addr <= colIndex_read_addr + 4;
                     read_status<=1;
                     Read_Xi_Begin <=1;
@@ -234,7 +235,8 @@ axi_master_r_single #(
             if(read_status==1)begin
                 
                 // if(m_axi_Xi_rvalid)begin
-                if(Xi_Cnt < Xi_Cnt_Max)begin
+                // if(Xi_Cnt < Xi_Cnt_Max)begin
+                if(Xi_ready & m_axi_Xi_arready)begin
 
                     Read_Xi_Begin<=0;
                     Xi_rstn<=0;

@@ -24,11 +24,11 @@ module Issue_Uint #(
     (*mark_debug = "true"*)    
     reg [1:0] AR_CNT;
 
-    // assign Issue_IDLE = AR_CNT==0 & Issue_cold == 0 & m_axi_arready;
-    assign Issue_IDLE = AR_CNT==0 & Issue_cold == 0 ;
+    assign Issue_IDLE = AR_CNT==0 & Issue_cold == 0 & m_axi_arready;
+    // assign Issue_IDLE = AR_CNT==0 & Issue_cold == 0 ;
 
-    // assign Issue_BUSY = AR_CNT==2 | Issue_cold != 0 | ~m_axi_arready;
-    assign Issue_BUSY = AR_CNT==2 | Issue_cold != 0 ;
+    assign Issue_BUSY = AR_CNT==2 | Issue_cold != 0 | ~m_axi_arready;
+    // assign Issue_BUSY = AR_CNT==2 | Issue_cold != 0 ;
 
 
     always @(posedge clk ) begin

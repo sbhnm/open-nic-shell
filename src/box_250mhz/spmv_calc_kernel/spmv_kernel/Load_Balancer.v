@@ -11,6 +11,7 @@ module Load_Balancer #(
 
     input wire [1:0] Config_Port, 
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s00_axi_arid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s00_axi_araddr,
     input wire [7 : 0] s00_axi_arlen,
     input wire [2 : 0] s00_axi_arsize,
@@ -19,16 +20,22 @@ module Load_Balancer #(
     input wire [3 : 0] s00_axi_arcache,
     input wire [2 : 0] s00_axi_arprot,
     input wire [3 : 0] s00_axi_arqos,
+    (*mark_debug = "true"*)
     input wire  s00_axi_arvalid,
+    (*mark_debug = "true"*)
     output wire  s00_axi_arready,
     output wire [C_M_AXI_ID_WIDTH-1 : 0] s00_axi_rid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_DATA_WIDTH-1 : 0] s00_axi_rdata,
     output wire [1 : 0] s00_axi_rresp,
     output wire  s00_axi_rlast,
+    (*mark_debug = "true"*)
     output reg  s00_axi_rvalid,
+    (*mark_debug = "true"*)
     input wire  s00_axi_rready,
 
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s01_axi_arid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s01_axi_araddr,
     input wire [7 : 0] s01_axi_arlen,
     input wire [2 : 0] s01_axi_arsize,
@@ -37,13 +44,18 @@ module Load_Balancer #(
     input wire [3 : 0] s01_axi_arcache,
     input wire [2 : 0] s01_axi_arprot,
     input wire [3 : 0] s01_axi_arqos,
+    (*mark_debug = "true"*)
     input wire  s01_axi_arvalid,
+    (*mark_debug = "true"*)
     output wire  s01_axi_arready,
     output wire [C_M_AXI_ID_WIDTH-1 : 0] s01_axi_rid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_DATA_WIDTH-1 : 0] s01_axi_rdata,
     output wire [1 : 0] s01_axi_rresp,
     output wire  s01_axi_rlast,
+    (*mark_debug = "true"*)
     output reg  s01_axi_rvalid,
+    (*mark_debug = "true"*)
     input wire  s01_axi_rready,
     
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s02_axi_arid,
@@ -84,6 +96,7 @@ module Load_Balancer #(
 
 
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m00_axi_arid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m00_axi_araddr,
     output wire [7 : 0] m00_axi_arlen,
     output wire [5 : 0] m00_axi_arsize,
@@ -92,16 +105,22 @@ module Load_Balancer #(
     output wire [3 : 0] m00_axi_arcache,
     output wire [2 : 0] m00_axi_arprot,
     output wire [3 : 0] m00_axi_arqos,
+    (*mark_debug = "true"*)
     output wire  m00_axi_arvalid,
+    (*mark_debug = "true"*)
     input wire  m00_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m00_axi_rid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m00_axi_rdata,
     input wire [1 : 0] m00_axi_rresp,
     input wire  m00_axi_rlast,
+    (*mark_debug = "true"*)
     input wire  m00_axi_rvalid,
+    (*mark_debug = "true"*)
     output wire  m00_axi_rready,
 
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m01_axi_arid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m01_axi_araddr,
     output wire [7 : 0] m01_axi_arlen,
     output wire [5 : 0] m01_axi_arsize,
@@ -110,16 +129,22 @@ module Load_Balancer #(
     output wire [3 : 0] m01_axi_arcache,
     output wire [2 : 0] m01_axi_arprot,
     output wire [3 : 0] m01_axi_arqos,
+    (*mark_debug = "true"*)
     output wire  m01_axi_arvalid,
+    (*mark_debug = "true"*)
     input wire  m01_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m01_axi_rid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m01_axi_rdata,
     input wire [1 : 0] m01_axi_rresp,
     input wire  m01_axi_rlast,
+    (*mark_debug = "true"*)
     input wire  m01_axi_rvalid,
+    (*mark_debug = "true"*)
     output wire  m01_axi_rready,
     
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m02_axi_arid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m02_axi_araddr,
     output wire [7 : 0] m02_axi_arlen,
     output wire [5 : 0] m02_axi_arsize,
@@ -128,16 +153,22 @@ module Load_Balancer #(
     output wire [3 : 0] m02_axi_arcache,
     output wire [2 : 0] m02_axi_arprot,
     output wire [3 : 0] m02_axi_arqos,
+    (*mark_debug = "true"*)
     output wire  m02_axi_arvalid,
+    (*mark_debug = "true"*)
     input wire  m02_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m02_axi_rid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m02_axi_rdata,
     input wire [1 : 0] m02_axi_rresp,
     input wire  m02_axi_rlast,
+    (*mark_debug = "true"*)
     input wire  m02_axi_rvalid,
+    (*mark_debug = "true"*)
     output wire  m02_axi_rready,
     
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m03_axi_arid,
+    (*mark_debug = "true"*)
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m03_axi_araddr,
     output wire [7 : 0] m03_axi_arlen,
     output wire [5 : 0] m03_axi_arsize,
@@ -146,13 +177,18 @@ module Load_Balancer #(
     output wire [3 : 0] m03_axi_arcache,
     output wire [2 : 0] m03_axi_arprot,
     output wire [3 : 0] m03_axi_arqos,
+    (*mark_debug = "true"*)
     output wire  m03_axi_arvalid,
+    (*mark_debug = "true"*)
     input wire  m03_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m03_axi_rid,
+    (*mark_debug = "true"*)
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m03_axi_rdata,
     input wire [1 : 0] m03_axi_rresp,
     input wire  m03_axi_rlast,
+    (*mark_debug = "true"*)
     input wire  m03_axi_rvalid,
+    (*mark_debug = "true"*)
     output wire  m03_axi_rready,
 
 

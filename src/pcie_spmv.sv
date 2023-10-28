@@ -674,11 +674,20 @@ module pcie_spmv #(
       assign axi_hbm_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
       assign axi_hbm_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
       assign axi_hbm_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
-      assign axi_hbm_aclk[`getvec(1,i)] = axis_aclk;
+
+      assign axi_hbm_arid[`getvec(6,i)] = 0;
+      assign axi_hbm_awid[`getvec(6,i)] = 0;
+      assign axi_hbm_wdata_parity[`getvec(32,i)] = 0;
+
     end
 
   endgenerate
 
+  generate for (genvar j = 0; j < 32; j++) begin
+        assign axi_hbm_areset_n[`getvec(1,j)] = box_250mhz_rstn;
+        assign axi_hbm_aclk[`getvec(1,j)] = axis_aclk;
+    end
+  endgenerate
   hbm_ctrl hbm_ctrl(
     
     .AXI_ACLK(axi_hbm_aclk),

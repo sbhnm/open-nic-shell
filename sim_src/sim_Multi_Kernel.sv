@@ -83,10 +83,10 @@ module sim_Multi_Kernel #(
         s_axil_bready<=1;
         s_axil_wvalid<=0;
         s_axil_awvalid <= 0;
-
         #20
         rstn <=1;
         #1000
+        
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 0;
         #2
@@ -96,6 +96,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_wvalid<=0;
         #20
+        
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 4;
         #2
@@ -105,6 +106,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_wvalid<=0;
         #20
+        
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 8;
         #2
@@ -114,11 +116,51 @@ module sim_Multi_Kernel #(
         #2
         s_axil_wvalid<=0;
         #20
+        
+        #4000
+
         s_axil_awvalid <= 1;
-        s_axil_awaddr <= 12;
+        s_axil_awaddr <= 0;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'b10101010; //reset
         #2
         s_axil_wvalid<=0;
+        #20
 
+        #200
+        
+        s_axil_awvalid <= 1;
+        s_axil_awaddr <= 0;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'b00101011;
+        #2
+        s_axil_wvalid<=0;
+        #20
+
+        s_axil_awvalid <= 1;
+        s_axil_awaddr <= 4;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'h0010;
+        #2
+        s_axil_wvalid<=0;
+        #20
+        
+        s_axil_awvalid <= 1;
+        s_axil_awaddr <= 8;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'ha000;
+        #2
+        s_axil_wvalid<=0;
+        // #20
+        
     end
 
     generate
@@ -162,7 +204,8 @@ module sim_Multi_Kernel #(
         .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )
         spmv_calc_top(
-        .clk(clk),
+        .axil_clk(clk),
+        .axis_clk(clk),
         .rstn(rstn),
 
         .s_axil_awvalid (s_axil_awvalid),

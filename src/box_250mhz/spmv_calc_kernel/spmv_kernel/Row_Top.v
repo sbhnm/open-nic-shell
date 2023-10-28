@@ -110,6 +110,7 @@ module Row_Top#(
 
    //colIndex Buffer
     output wire [1-1 : 0]   Kernel2_m_axi_colIndex_arid,
+    (*mark_debug = "true"*)
     output wire [48-1 : 0]  Kernel2_m_axi_colIndex_araddr,
     output wire [7 : 0]     Kernel2_m_axi_colIndex_arlen,
     output wire [2 : 0]     Kernel2_m_axi_colIndex_arsize,
@@ -118,17 +119,24 @@ module Row_Top#(
     output wire [3 : 0]     Kernel2_m_axi_colIndex_arcache,
     output wire [2 : 0]     Kernel2_m_axi_colIndex_arprot,
     output wire [3 : 0]     Kernel2_m_axi_colIndex_arqos,
+    (*mark_debug = "true"*)
     output wire             Kernel2_m_axi_colIndex_arvalid,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_colIndex_arready,
     input wire [1-1 : 0]    Kernel2_m_axi_colIndex_rid,
+    (*mark_debug = "true"*)
     input wire [32-1 : 0]   Kernel2_m_axi_colIndex_rdata,
     input wire [1 : 0]      Kernel2_m_axi_colIndex_rresp,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_colIndex_rlast,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_colIndex_rvalid,
+    (*mark_debug = "true"*)
     output wire             Kernel2_m_axi_colIndex_rready,
 
 //Xi Buffer
     output wire [1-1 : 0]   Kernel2_m_axi_Xi_arid,
+    (*mark_debug = "true"*)
     output wire [48-1 : 0]  Kernel2_m_axi_Xi_araddr,
     output wire [7 : 0]     Kernel2_m_axi_Xi_arlen,
     output wire [2 : 0]     Kernel2_m_axi_Xi_arsize,
@@ -137,13 +145,19 @@ module Row_Top#(
     output wire [3 : 0]     Kernel2_m_axi_Xi_arcache,
     output wire [2 : 0]     Kernel2_m_axi_Xi_arprot,
     output wire [3 : 0]     Kernel2_m_axi_Xi_arqos,
+    (*mark_debug = "true"*)
     output wire             Kernel2_m_axi_Xi_arvalid,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_Xi_arready,
     input wire [1-1 : 0]    Kernel2_m_axi_Xi_rid,
+    (*mark_debug = "true"*)
     input  wire [64-1 : 0]  Kernel2_m_axi_Xi_rdata,
     input wire [1 : 0]      Kernel2_m_axi_Xi_rresp,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_Xi_rlast,
+    (*mark_debug = "true"*)
     input wire              Kernel2_m_axi_Xi_rvalid,
+    (*mark_debug = "true"*)
     output wire             Kernel2_m_axi_Xi_rready,
 
    //colIndex Buffer
@@ -224,6 +238,7 @@ module Row_Top#(
 
 
     output wire [3-1 : 0] m_axi_Val_arid,
+    (*mark_debug = "true"*)
     output wire [48-1 : 0] m_axi_Val_araddr,
     output wire [7 : 0] m_axi_Val_arlen,
     output wire [2 : 0] m_axi_Val_arsize,
@@ -232,14 +247,19 @@ module Row_Top#(
     output wire [3 : 0] m_axi_Val_arcache,
     output wire [2 : 0] m_axi_Val_arprot,
     output wire [3 : 0] m_axi_Val_arqos,
+    (*mark_debug = "true"*)
     output wire  m_axi_Val_arvalid,
+    (*mark_debug = "true"*)
     input wire  m_axi_Val_arready,
     input wire [3-1 : 0] m_axi_Val_rid,
     input wire [64-1 : 0] m_axi_Val_rdata,
     input wire [1 : 0] m_axi_Val_rresp,
+    (*mark_debug = "true"*)
     input wire  m_axi_Val_rlast,
+    (*mark_debug = "true"*)
     input wire  m_axi_Val_rvalid,
     //HXZ
+    (*mark_debug = "true"*)
     output wire  m_axi_Val_rready,
     
     output wire [3-1 : 0] m_axi_Yi_awid,
@@ -290,6 +310,7 @@ module Row_Top#(
     reg Kernel_Begin_4=0;
 
     reg [3:0] Ctrl_State=0;
+    (*mark_debug = "true"*)
     reg [3:0] Read_NNZ_State=0;
     (*mark_debug = "true"*)
     reg [31:0] Wb_ROW_Num;
@@ -747,34 +768,35 @@ module Row_Top#(
         if(~rstn)begin
             Ctrl_State<=0;
         end
-        if(Ctrl_State ==0)begin //等待开始计算的信号开始
-            if(Calc_Begin)begin
-                Ctrl_State <=1;
+        else begin
+            if(Ctrl_State ==0)begin //等待开始计算的信号开始
+                if(Calc_Begin)begin
+                    Ctrl_State <=1;
+                end
+                else begin
+                    Ctrl_State <=0;
+                end
             end
-            else begin
-                Ctrl_State <=0;
-            end
-        end
-        if(Ctrl_State == 1)begin//计算开始，首先填满Fifo
-            if(NNZ_Fifo_Ready==0)begin
-                Ctrl_State <=2;
+            if(Ctrl_State == 1)begin//计算开始，首先填满Fifo
+                if(NNZ_Fifo_Ready==0)begin
+                    Ctrl_State <=2;
 
 
 
+                end
+                else begin
+                    Ctrl_State<=1;
+                end
             end
-            else begin
-                Ctrl_State<=1;
+            if(Ctrl_State == 2)begin //正在计算1000
+                if(Wb_ROW_Num >= Wb_ROW_Num_total)begin
+                    Ctrl_State <=3;
+                end
+            end
+            if(Ctrl_State ==3)begin
+                Ctrl_State<=3;
             end
         end
-        if(Ctrl_State == 2)begin //正在计算1000
-            if(Wb_ROW_Num >= Wb_ROW_Num_total)begin
-                Ctrl_State <=3;
-            end
-        end
-        if(Ctrl_State ==3)begin
-            Ctrl_State<=3;
-        end
-
     end
 
     reg [31:0] NNZ_ADDR_DEMUX [3:0];
@@ -808,7 +830,7 @@ module Row_Top#(
 
             if(Read_NNZ_State==1)begin
                 NNZ_Read_Begin <=0;
-                if(m_axi_NNZ_rvalid)begin
+                if(m_axi_NNZ_rvalid & m_axi_NNZ_rready)begin
                     Read_NNZ_State<=0;
                 end
             end
