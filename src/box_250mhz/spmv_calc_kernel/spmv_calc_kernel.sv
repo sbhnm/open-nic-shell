@@ -5,6 +5,7 @@
 // NNZ Val Yi 共用端口 
 // 端口名 MatWB
 // 这个模块用于描述单个计算核心的硬件结构。
+// no bram
 `include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module spmv_calc_kernel #(
