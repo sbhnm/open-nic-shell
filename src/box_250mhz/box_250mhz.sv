@@ -41,6 +41,31 @@ module box_250mhz #(
   output                   [1:0] s_axil_rresp,
   input                          s_axil_rready,
 
+  input [1*48-1 : 0] s_axi_Xi_araddr,
+  input [1*2-1 : 0] s_axi_Xi_arburst,
+  input [1*8-1 : 0] s_axi_Xi_arlen,
+  input [1*3-1 : 0] s_axi_Xi_arsize,
+  input [1*1-1 : 0]s_axi_Xi_arvalid,
+  input [1*48-1 : 0] s_axi_Xi_awaddr,
+  input [1*2-1 : 0] s_axi_Xi_awburst,
+  input [1*8-1 : 0] s_axi_Xi_awlen,
+  input [1*3-1 : 0] s_axi_Xi_awsize,
+  input [1*1-1 : 0] s_axi_Xi_awvalid,
+  input [1*1-1 : 0] s_axi_Xi_rready,
+  input [1*1-1 : 0] s_axi_Xi_bready,
+  input [1*64-1 : 0] s_axi_Xi_wdata,
+  input [1*1-1 : 0] s_axi_Xi_wlast,
+  input [1*8-1 : 0] s_axi_Xi_wstrb,
+  input [1*1-1 : 0] s_axi_Xi_wvalid,
+  output [1*1-1 : 0] s_axi_Xi_arready,
+  output [1*1-1 : 0] s_axi_Xi_awready,
+  output [1*64-1 : 0] s_axi_Xi_rdata,
+  output [1*1-1 : 0] s_axi_Xi_rlast,
+  output [1*2-1 : 0] s_axi_Xi_rresp,
+  output [1*1-1 : 0] s_axi_Xi_rvalid,
+  output [1*1-1 : 0] s_axi_Xi_wready,
+  output [1*2-1 : 0] s_axi_Xi_bresp,
+  output [1*1-1 : 0] s_axi_Xi_bvalid,
 
   output [(CONF_NUM_KERNEL*4+1)*48-1 : 0] m_axi_ker_araddr,
   output [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_arburst,
@@ -153,58 +178,83 @@ module box_250mhz #(
         .s_axil_rresp   (s_axil_rresp),
         .s_axil_rready  (s_axil_rready),
 
-        .m_axi_ColXi_araddr(m_axi_ker_araddr[4*CONF_NUM_KERNEL*48-1:0]),
-        .m_axi_ColXi_arburst(m_axi_ker_arburst[4*CONF_NUM_KERNEL*2-1:0]),
-        .m_axi_ColXi_arlen(m_axi_ker_arlen[4*CONF_NUM_KERNEL*8-1:0]),
-        .m_axi_ColXi_arsize(m_axi_ker_arsize[4*CONF_NUM_KERNEL*3-1:0]),
-        .m_axi_ColXi_arvalid(m_axi_ker_arvalid[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_awaddr(m_axi_ker_awaddr[4*CONF_NUM_KERNEL*48-1:0]),
-        .m_axi_ColXi_awburst(m_axi_ker_awburst[4*CONF_NUM_KERNEL*2-1:0]),
-        .m_axi_ColXi_awlen(m_axi_ker_awlen[4*CONF_NUM_KERNEL*8-1:0]),
-        .m_axi_ColXi_awsize(m_axi_ker_awsize[4*CONF_NUM_KERNEL*3-1:0]),
-        .m_axi_ColXi_awvalid(m_axi_ker_awvalid[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_rready(m_axi_ker_rready[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_bready(m_axi_ker_bready[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_wdata(m_axi_ker_wdata[4*CONF_NUM_KERNEL*256-1:0]),
-        .m_axi_ColXi_wlast(m_axi_ker_wlast[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_wstrb(m_axi_ker_wstrb[4*CONF_NUM_KERNEL*32-1:0]),
-        .m_axi_ColXi_wvalid(m_axi_ker_wvalid[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_arready(m_axi_ker_arready[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_awready(m_axi_ker_awready[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_rdata(m_axi_ker_rdata[4*CONF_NUM_KERNEL*256-1:0]),
-        .m_axi_ColXi_rlast(m_axi_ker_rlast[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_rresp(m_axi_ker_rresp[4*CONF_NUM_KERNEL*2-1:0]),
-        .m_axi_ColXi_rvalid(m_axi_ker_rvalid[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_wready(m_axi_ker_wready[4*CONF_NUM_KERNEL*1-1:0]),
-        .m_axi_ColXi_bresp(m_axi_ker_bresp[4*CONF_NUM_KERNEL*2-1:0]),
-        .m_axi_ColXi_bvalid(m_axi_ker_bvalid[4*CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_araddr(m_axi_ker_araddr[CONF_NUM_KERNEL*48-1:0]),
+        .m_axi_Col_arburst(m_axi_ker_arburst[CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_Col_arlen(m_axi_ker_arlen[CONF_NUM_KERNEL*8-1:0]),
+        .m_axi_Col_arsize(m_axi_ker_arsize[CONF_NUM_KERNEL*3-1:0]),
+        .m_axi_Col_arvalid(m_axi_ker_arvalid[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_awaddr(m_axi_ker_awaddr[CONF_NUM_KERNEL*48-1:0]),
+        .m_axi_Col_awburst(m_axi_ker_awburst[CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_Col_awlen(m_axi_ker_awlen[CONF_NUM_KERNEL*8-1:0]),
+        .m_axi_Col_awsize(m_axi_ker_awsize[CONF_NUM_KERNEL*3-1:0]),
+        .m_axi_Col_awvalid(m_axi_ker_awvalid[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_rready(m_axi_ker_rready[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_bready(m_axi_ker_bready[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_wdata(m_axi_ker_wdata[CONF_NUM_KERNEL*256-1:0]),
+        .m_axi_Col_wlast(m_axi_ker_wlast[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_wstrb(m_axi_ker_wstrb[CONF_NUM_KERNEL*32-1:0]),
+        .m_axi_Col_wvalid(m_axi_ker_wvalid[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_arready(m_axi_ker_arready[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_awready(m_axi_ker_awready[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_rdata(m_axi_ker_rdata[CONF_NUM_KERNEL*256-1:0]),
+        .m_axi_Col_rlast(m_axi_ker_rlast[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_rresp(m_axi_ker_rresp[CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_Col_rvalid(m_axi_ker_rvalid[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_wready(m_axi_ker_wready[CONF_NUM_KERNEL*1-1:0]),
+        .m_axi_Col_bresp(m_axi_ker_bresp[CONF_NUM_KERNEL*2-1:0]),
+        .m_axi_Col_bvalid(m_axi_ker_bvalid[CONF_NUM_KERNEL*1-1:0]),
 
-        .m_axi_hbm_Val_araddr(m_axi_ker_araddr[(4*CONF_NUM_KERNEL)*48 +: 48]),
-        .m_axi_hbm_Val_arburst(m_axi_ker_arburst[(4*CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_arlen(m_axi_ker_arlen[(4*CONF_NUM_KERNEL)*8 +: 8]),
-        .m_axi_hbm_Val_arsize(m_axi_ker_arsize[(4*CONF_NUM_KERNEL)*3 +: 3]),
-        .m_axi_hbm_Val_arvalid(m_axi_ker_arvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_awaddr(m_axi_ker_awaddr[(4*CONF_NUM_KERNEL)*48 +: 48]),
-        .m_axi_hbm_Val_awburst(m_axi_ker_awburst[(4*CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_awlen(m_axi_ker_awlen[(4*CONF_NUM_KERNEL)*8 +: 8]),
-        .m_axi_hbm_Val_awsize(m_axi_ker_awsize[(4*CONF_NUM_KERNEL)*3 +: 3]),
-        .m_axi_hbm_Val_awvalid(m_axi_ker_awvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_rready(m_axi_ker_rready[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_bready(m_axi_ker_bready[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_wdata(m_axi_ker_wdata[(4*CONF_NUM_KERNEL)*256 +: 256]),
-        .m_axi_hbm_Val_wlast(m_axi_ker_wlast[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_wstrb(m_axi_ker_wstrb[(4*CONF_NUM_KERNEL)*32 +: 32]),
-        .m_axi_hbm_Val_wvalid(m_axi_ker_wvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_arready(m_axi_ker_arready[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_awready(m_axi_ker_awready[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_rdata(m_axi_ker_rdata[(4*CONF_NUM_KERNEL)*256 +: 256]),
-        .m_axi_hbm_Val_rlast(m_axi_ker_rlast[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_rresp(m_axi_ker_rresp[(4*CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_rvalid(m_axi_ker_rvalid[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_wready(m_axi_ker_wready[(4*CONF_NUM_KERNEL)*1 +: 1]),
-        .m_axi_hbm_Val_bresp(m_axi_ker_bresp[(4*CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(4*CONF_NUM_KERNEL)*1 +: 1])
+        .m_axi_hbm_Val_araddr(m_axi_ker_araddr[(CONF_NUM_KERNEL)*48 +: 48]),
+        .m_axi_hbm_Val_arburst(m_axi_ker_arburst[(CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_arlen(m_axi_ker_arlen[(CONF_NUM_KERNEL)*8 +: 8]),
+        .m_axi_hbm_Val_arsize(m_axi_ker_arsize[(CONF_NUM_KERNEL)*3 +: 3]),
+        .m_axi_hbm_Val_arvalid(m_axi_ker_arvalid[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_awaddr(m_axi_ker_awaddr[(CONF_NUM_KERNEL)*48 +: 48]),
+        .m_axi_hbm_Val_awburst(m_axi_ker_awburst[(CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_awlen(m_axi_ker_awlen[(CONF_NUM_KERNEL)*8 +: 8]),
+        .m_axi_hbm_Val_awsize(m_axi_ker_awsize[(CONF_NUM_KERNEL)*3 +: 3]),
+        .m_axi_hbm_Val_awvalid(m_axi_ker_awvalid[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rready(m_axi_ker_rready[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_bready(m_axi_ker_bready[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wdata(m_axi_ker_wdata[(CONF_NUM_KERNEL)*256 +: 256]),
+        .m_axi_hbm_Val_wlast(m_axi_ker_wlast[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wstrb(m_axi_ker_wstrb[(CONF_NUM_KERNEL)*32 +: 32]),
+        .m_axi_hbm_Val_wvalid(m_axi_ker_wvalid[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_arready(m_axi_ker_arready[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_awready(m_axi_ker_awready[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rdata(m_axi_ker_rdata[(CONF_NUM_KERNEL)*256 +: 256]),
+        .m_axi_hbm_Val_rlast(m_axi_ker_rlast[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_rresp(m_axi_ker_rresp[(CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_rvalid(m_axi_ker_rvalid[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_wready(m_axi_ker_wready[(CONF_NUM_KERNEL)*1 +: 1]),
+        .m_axi_hbm_Val_bresp(m_axi_ker_bresp[(CONF_NUM_KERNEL)*2 +: 2]),
+        .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(CONF_NUM_KERNEL)*1 +: 1]),
 
+        .s_axi_Xi_awaddr(s_axi_Xi_awaddr),      // input wire [47 : 0] s_axi_awaddr
+        .s_axi_Xi_awlen(s_axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
+        .s_axi_Xi_awsize(s_axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
+        .s_axi_Xi_awsize(s_axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
+        .s_axi_Xi_awvalid(s_axi_Xi_awvalid),    // input wire [0 : 0] s_axi_awvalid
+        .s_axi_Xi_awready(s_axi_Xi_awready),    // output wire [0 : 0] s_axi_awready
+        .s_axi_Xi_wdata(s_axi_Xi_wdata),        // input wire [63 : 0] s_axi_wdata
+        .s_axi_Xi_wstrb(s_axi_Xi_wstrb),        // input wire [7 : 0] s_axi_wstrb
+        .s_axi_Xi_wlast(s_axi_Xi_wlast),        // input wire [0 : 0] s_axi_wlast
+        .s_axi_Xi_wvalid(s_axi_Xi_wvalid),      // input wire [0 : 0] s_axi_wvalid
+        .s_axi_Xi_wready(s_axi_Xi_wready),      // output wire [0 : 0] s_axi_wready
+        .s_axi_Xi_bresp(s_axi_Xi_bresp),        // output wire [1 : 0] s_axi_bresp
+        .s_axi_Xi_bvalid(s_axi_Xi_bvalid),      // output wire [0 : 0] s_axi_bvalid
+        .s_axi_Xi_bready(s_axi_Xi_bready),      // input wire [0 : 0] s_axi_bready
+        .s_axi_Xi_araddr(s_axi_Xi_araddr),      // input wire [47 : 0] s_axi_araddr
+        .s_axi_Xi_arlen(s_axi_Xi_arlen),        // input wire [7 : 0] s_axi_arlen
+        .s_axi_Xi_arsize(s_axi_Xi_arsize),      // input wire [2 : 0] s_axi_arsize
+        .s_axi_Xi_arburst(s_axi_Xi_arburst),    // input wire [1 : 0] s_axi_arburst
+        .s_axi_Xi_arvalid(s_axi_Xi_arvalid),    // input wire [0 : 0] s_axi_arvalid
+        .s_axi_Xi_arready(s_axi_Xi_arready),    // output wire [0 : 0] s_axi_arready
+        .s_axi_Xi_rdata(s_axi_Xi_rdata),        // output wire [63 : 0] s_axi_rdata
+        .s_axi_Xi_rresp(s_axi_Xi_rresp),        // output wire [1 : 0] s_axi_rresp
+        .s_axi_Xi_rlast(s_axi_Xi_rlast),        // output wire [0 : 0] s_axi_rlast
+        .s_axi_Xi_rvalid(s_axi_Xi_rvalid),      // output wire [0 : 0] s_axi_rvalid
+        .s_axi_Xi_rready(s_axi_Xi_rready)      // input wire [0 : 0] s_axi_rready
 
     );
     
