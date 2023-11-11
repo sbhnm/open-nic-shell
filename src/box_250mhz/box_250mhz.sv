@@ -233,7 +233,7 @@ module box_250mhz #(
         .s_axi_Xi_awaddr(s_axi_Xi_awaddr),      // input wire [47 : 0] s_axi_awaddr
         .s_axi_Xi_awlen(s_axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
         .s_axi_Xi_awsize(s_axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
-        .s_axi_Xi_awsize(s_axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
+        .s_axi_Xi_awburst(s_axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
         .s_axi_Xi_awvalid(s_axi_Xi_awvalid),    // input wire [0 : 0] s_axi_awvalid
         .s_axi_Xi_awready(s_axi_Xi_awready),    // output wire [0 : 0] s_axi_awready
         .s_axi_Xi_wdata(s_axi_Xi_wdata),        // input wire [63 : 0] s_axi_wdata
