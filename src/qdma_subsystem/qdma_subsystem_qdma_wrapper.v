@@ -531,33 +531,33 @@ module qdma_subsystem_qdma_wrapper (
     .s_axis_c2h_cmpt_tready               (s_axis_cpl_tready),
 
 
-    .h2c_byp_in_mm_radr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_radr
-    .h2c_byp_in_mm_wadr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_wadr
-    .h2c_byp_in_mm_len(0),                                        // input wire [15 : 0] h2c_byp_in_mm_len
-    .h2c_byp_in_mm_mrkr_req(0),                              // input wire h2c_byp_in_mm_mrkr_req
-    .h2c_byp_in_mm_port_id(0),                                // input wire [2 : 0] h2c_byp_in_mm_port_id
-    .h2c_byp_in_mm_sdi(0),                                        // input wire h2c_byp_in_mm_sdi
-    .h2c_byp_in_mm_qid(0),                                        // input wire [10 : 0] h2c_byp_in_mm_qid
-    .h2c_byp_in_mm_error(0),                                    // input wire h2c_byp_in_mm_error
-    .h2c_byp_in_mm_func(0),                                      // input wire [7 : 0] h2c_byp_in_mm_func
-    .h2c_byp_in_mm_cidx(0),                                      // input wire [15 : 0] h2c_byp_in_mm_cidx
-    .h2c_byp_in_mm_no_dma(0),                                  // input wire h2c_byp_in_mm_no_dma
-    .h2c_byp_in_mm_vld(0),                                        // input wire h2c_byp_in_mm_vld
-    .h2c_byp_in_mm_rdy(),                                        // output wire h2c_byp_in_mm_rdy
+    // .h2c_byp_in_mm_radr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_radr
+    // .h2c_byp_in_mm_wadr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_wadr
+    // .h2c_byp_in_mm_len(0),                                        // input wire [15 : 0] h2c_byp_in_mm_len
+    // .h2c_byp_in_mm_mrkr_req(0),                              // input wire h2c_byp_in_mm_mrkr_req
+    // .h2c_byp_in_mm_port_id(0),                                // input wire [2 : 0] h2c_byp_in_mm_port_id
+    // .h2c_byp_in_mm_sdi(0),                                        // input wire h2c_byp_in_mm_sdi
+    // .h2c_byp_in_mm_qid(0),                                        // input wire [10 : 0] h2c_byp_in_mm_qid
+    // .h2c_byp_in_mm_error(0),                                    // input wire h2c_byp_in_mm_error
+    // .h2c_byp_in_mm_func(0),                                      // input wire [7 : 0] h2c_byp_in_mm_func
+    // .h2c_byp_in_mm_cidx(0),                                      // input wire [15 : 0] h2c_byp_in_mm_cidx
+    // .h2c_byp_in_mm_no_dma(0),                                  // input wire h2c_byp_in_mm_no_dma
+    // .h2c_byp_in_mm_vld(0),                                        // input wire h2c_byp_in_mm_vld
+    // .h2c_byp_in_mm_rdy(),                                        // output wire h2c_byp_in_mm_rdy
 
-    .c2h_byp_in_mm_radr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_radr
-    .c2h_byp_in_mm_wadr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_wadr
-    .c2h_byp_in_mm_len(0),                                        // input wire [15 : 0] c2h_byp_in_mm_len
-    .c2h_byp_in_mm_mrkr_req(0),                              // input wire c2h_byp_in_mm_mrkr_req
-    .c2h_byp_in_mm_port_id(0),                                // input wire [2 : 0] c2h_byp_in_mm_port_id
-    .c2h_byp_in_mm_sdi(0),                                        // input wire c2h_byp_in_mm_sdi
-    .c2h_byp_in_mm_qid(0),                                        // input wire [10 : 0] c2h_byp_in_mm_qid
-    .c2h_byp_in_mm_error(0),                                    // input wire c2h_byp_in_mm_error
-    .c2h_byp_in_mm_func(0),                                      // input wire [7 : 0] c2h_byp_in_mm_func
-    .c2h_byp_in_mm_cidx(0),                                      // input wire [15 : 0] c2h_byp_in_mm_cidx
-    .c2h_byp_in_mm_vld(0),                                        // input wire c2h_byp_in_mm_vld
-    .c2h_byp_in_mm_no_dma(0),                                  // input wire c2h_byp_in_mm_no_dma
-    .c2h_byp_in_mm_rdy(),                                        // output wire c2h_byp_in_mm_rdy
+    // .c2h_byp_in_mm_radr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_radr
+    // .c2h_byp_in_mm_wadr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_wadr
+    // .c2h_byp_in_mm_len(0),                                        // input wire [15 : 0] c2h_byp_in_mm_len
+    // .c2h_byp_in_mm_mrkr_req(0),                              // input wire c2h_byp_in_mm_mrkr_req
+    // .c2h_byp_in_mm_port_id(0),                                // input wire [2 : 0] c2h_byp_in_mm_port_id
+    // .c2h_byp_in_mm_sdi(0),                                        // input wire c2h_byp_in_mm_sdi
+    // .c2h_byp_in_mm_qid(0),                                        // input wire [10 : 0] c2h_byp_in_mm_qid
+    // .c2h_byp_in_mm_error(0),                                    // input wire c2h_byp_in_mm_error
+    // .c2h_byp_in_mm_func(0),                                      // input wire [7 : 0] c2h_byp_in_mm_func
+    // .c2h_byp_in_mm_cidx(0),                                      // input wire [15 : 0] c2h_byp_in_mm_cidx
+    // .c2h_byp_in_mm_vld(0),                                        // input wire c2h_byp_in_mm_vld
+    // .c2h_byp_in_mm_no_dma(0),                                  // input wire c2h_byp_in_mm_no_dma
+    // .c2h_byp_in_mm_rdy(),                                        // output wire c2h_byp_in_mm_rdy
  
 
 
