@@ -21,7 +21,7 @@
 
 
 module sim_Multi_Kernel #(
-    parameter int CONF_NUM_KERNEL = 32'h4
+    parameter int CONF_NUM_KERNEL = 32'h1
 )(
     
     );
@@ -52,31 +52,31 @@ module sim_Multi_Kernel #(
     reg                          s_axil_rready;
 
 
-  wire [(CONF_NUM_KERNEL*4+1)*48-1 : 0] axi_hbm_araddr;
-  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_hbm_arburst;
-  wire [(CONF_NUM_KERNEL*4+1)*8-1 : 0] axi_hbm_arlen;
-  wire [(CONF_NUM_KERNEL*4+1)*3-1 : 0] axi_hbm_arsize;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0]axi_hbm_arvalid;
-  wire [(CONF_NUM_KERNEL*4+1)*48-1 : 0] axi_hbm_awaddr;
-  wire [(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_hbm_awburst;
-  wire [(CONF_NUM_KERNEL*4+1)*8-1 : 0] axi_hbm_awlen;
-  wire [(CONF_NUM_KERNEL*4+1)*3-1 : 0] axi_hbm_awsize;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_awvalid;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_rready;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_bready;
-  wire [(CONF_NUM_KERNEL*4+1)*256-1 : 0] axi_hbm_wdata;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_wlast;
-  wire [(CONF_NUM_KERNEL*4+1)*32-1 : 0] axi_hbm_wstrb;
-  wire [(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_wvalid;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_arready;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_awready;
-  wire[(CONF_NUM_KERNEL*4+1)*256-1 : 0] axi_hbm_rdata;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_rlast;
-  wire[(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_hbm_rresp;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_rvalid;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_wready;
-  wire[(CONF_NUM_KERNEL*4+1)*2-1 : 0] axi_hbm_bresp;
-  wire[(CONF_NUM_KERNEL*4+1)*1-1 : 0] axi_hbm_bvalid;
+  wire [(CONF_NUM_KERNEL+1)*48-1 : 0] axi_hbm_araddr;
+  wire [(CONF_NUM_KERNEL+1)*2-1 : 0] axi_hbm_arburst;
+  wire [(CONF_NUM_KERNEL+1)*8-1 : 0] axi_hbm_arlen;
+  wire [(CONF_NUM_KERNEL+1)*3-1 : 0] axi_hbm_arsize;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0]axi_hbm_arvalid;
+  wire [(CONF_NUM_KERNEL+1)*48-1 : 0] axi_hbm_awaddr;
+  wire [(CONF_NUM_KERNEL+1)*2-1 : 0] axi_hbm_awburst;
+  wire [(CONF_NUM_KERNEL+1)*8-1 : 0] axi_hbm_awlen;
+  wire [(CONF_NUM_KERNEL+1)*3-1 : 0] axi_hbm_awsize;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_awvalid;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_rready;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_bready;
+  wire [(CONF_NUM_KERNEL+1)*256-1 : 0] axi_hbm_wdata;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_wlast;
+  wire [(CONF_NUM_KERNEL+1)*32-1 : 0] axi_hbm_wstrb;
+  wire [(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_wvalid;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_arready;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_awready;
+  wire[(CONF_NUM_KERNEL+1)*256-1 : 0] axi_hbm_rdata;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_rlast;
+  wire[(CONF_NUM_KERNEL+1)*2-1 : 0] axi_hbm_rresp;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_rvalid;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_wready;
+  wire[(CONF_NUM_KERNEL+1)*2-1 : 0] axi_hbm_bresp;
+  wire[(CONF_NUM_KERNEL+1)*1-1 : 0] axi_hbm_bvalid;
 
     initial begin
         rstn <=0;
@@ -86,16 +86,6 @@ module sim_Multi_Kernel #(
         #20
         rstn <=1;
         #1000
-        
-        s_axil_awvalid <= 1;
-        s_axil_awaddr <= 0;
-        #2
-        s_axil_awvalid<=0;
-        s_axil_wvalid<=1;
-        s_axil_wdata<=32'b0101011;
-        #2
-        s_axil_wvalid<=0;
-        #20
         
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 4;
@@ -112,11 +102,19 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'ha000;
+        s_axil_wdata<=32'h200;
         #2
         s_axil_wvalid<=0;
         #20
-        
+        s_axil_awvalid <= 1;
+        s_axil_awaddr <= 0;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'b100101011;
+        #2
+        s_axil_wvalid<=0;
+        #20
         #4000
 
         s_axil_awvalid <= 1;
@@ -124,7 +122,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'b10101010; //reset
+        s_axil_wdata<=32'b110101010; //reset
         #2
         s_axil_wvalid<=0;
         #20
@@ -136,7 +134,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'b00101011;
+        s_axil_wdata<=32'b100101011;
         #2
         s_axil_wvalid<=0;
         #20
@@ -164,7 +162,7 @@ module sim_Multi_Kernel #(
     end
 
     generate
-        for(genvar i = 0;i<CONF_NUM_KERNEL*4+1 ;i = i+1)begin
+        for(genvar i = 0;i<CONF_NUM_KERNEL +1 ;i = i+1)begin
             sim_blk_ram sim_blk_ram (
             .s_aclk(clk),                // input wire s_aclk
             .s_aresetn(rstn),          // input wire s_aresetn

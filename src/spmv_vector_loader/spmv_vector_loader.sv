@@ -27,12 +27,16 @@ module spmv_vector_loader #(
     input [511 : 0] s_axi_pcie_wdata,
     input [63 : 0] s_axi_pcie_wuser,
     input [63 : 0] s_axi_pcie_wstrb,
+    input s_axi_pcie_awregion,
+    input s_axi_pcie_awqos,
     input s_axi_pcie_wlast,
     input s_axi_pcie_wvalid,
     input s_axi_pcie_bready,
     input [3 : 0] s_axi_pcie_arid,
     input [63 : 0] s_axi_pcie_araddr,
     input [31 : 0] s_axi_pcie_aruser,
+    input s_axi_pcie_arregion,
+    input s_axi_pcie_arqos,
     input [7 : 0] s_axi_pcie_arlen,
     input [2 : 0] s_axi_pcie_arsize,
     input [1 : 0] s_axi_pcie_arburst,
@@ -41,6 +45,8 @@ module spmv_vector_loader #(
     input s_axi_pcie_arlock,
     input [3 : 0] s_axi_pcie_arcache,
     input s_axi_pcie_rready,
+
+
 
     output [47 : 0] m_axi_hbm_araddr,
     output [1 : 0] m_axi_hbm_arburst,
@@ -58,6 +64,7 @@ module spmv_vector_loader #(
     output m_axi_hbm_wlast,
     output [31 : 0] m_axi_hbm_wstrb,
     output m_axi_hbm_wvalid,
+    
     input m_axi_hbm_arready,
     input m_axi_hbm_awready,
     input [255 : 0] m_axi_hbm_rdata,
@@ -172,45 +179,39 @@ module spmv_vector_loader #(
     wire [0 : 0] axi_w256_rvalid;
     wire [0 : 0] axi_w256_rready;
     
-
-    assign axi_crossbar_awaddr[`getvec(48,0)] = m_axi_hbm_awaddr;      
-    assign axi_crossbar_awlen[`getvec(8,0)] = m_axi_hbm_awlen;        
-    assign axi_crossbar_awsize[`getvec(3,0)] = m_axi_hbm_awsize;      
-    assign axi_crossbar_awburst[`getvec(2,0)] = m_axi_hbm_awburst;    
-//    assign axi_crossbar_awlock[`getvec(1,0)] = m_axi_hbm_awlock;      
-//    assign axi_crossbar_awcache[`getvec(4,0)] = m_axi_hbm_awcache;    
-//    assign axi_crossbar_awprot[`getvec(3,0)] = m_axi_hbm_awprot;      
-//    assign axi_crossbar_awregion[`getvec(4,0)] = m_axi_hbm_awregion;  
-//    assign axi_crossbar_awqos[`getvec(4,0)] = m_axi_hbm_awqos;        
-    assign axi_crossbar_awvalid[`getvec(1,0)] = m_axi_hbm_awvalid;    
-    assign axi_crossbar_awready[`getvec(1,0)] = m_axi_hbm_awready;    
-    assign axi_crossbar_wdata[`getvec(256,0)] = m_axi_hbm_wdata;        
-    assign axi_crossbar_wstrb[`getvec(32,0)] = m_axi_hbm_wstrb;        
-    assign axi_crossbar_wlast[`getvec(1,0)] = m_axi_hbm_wlast;        
-    assign axi_crossbar_wvalid[`getvec(1,0)] = m_axi_hbm_wvalid;      
+    assign m_axi_hbm_araddr =axi_crossbar_araddr[`getvec(48,0)];
+    assign m_axi_hbm_arburst = axi_crossbar_arburst[`getvec(2,0)];
+    assign m_axi_hbm_arlen = axi_crossbar_arlen[`getvec(8,0)];
+    assign m_axi_hbm_arsize = axi_crossbar_arsize[`getvec(3,0)];
+    assign m_axi_hbm_arvalid = axi_crossbar_arvalid[`getvec(1,0)];
+    assign m_axi_hbm_awaddr  = axi_crossbar_awaddr[`getvec(48,0)];
+    assign m_axi_hbm_awburst = axi_crossbar_awburst[`getvec(2,0)];
+    assign m_axi_hbm_awlen = axi_crossbar_awlen[`getvec(8,0)];
+    assign m_axi_hbm_awsize = axi_crossbar_awsize[`getvec(3,0)];
+    assign m_axi_hbm_awvalid = axi_crossbar_awvalid[`getvec(1,0)];
+    assign m_axi_hbm_rready = axi_crossbar_rready[`getvec(1,0)];
+    assign m_axi_hbm_bready = axi_crossbar_bready[`getvec(1,0)];
+    assign m_axi_hbm_wdata = axi_crossbar_wdata[`getvec(256,0)];
+    assign m_axi_hbm_wlast = axi_crossbar_wlast[`getvec(1,0)];
+    assign  m_axi_hbm_wstrb = axi_crossbar_wstrb[`getvec(32,0)];
+    assign m_axi_hbm_wvalid = axi_crossbar_wvalid[`getvec(1,0)];
+    
+  
+    assign axi_crossbar_awready[`getvec(1,0)] = m_axi_hbm_awready;        
     assign axi_crossbar_wready[`getvec(1,0)] = m_axi_hbm_wready;      
     assign axi_crossbar_bresp[`getvec(2,0)] = m_axi_hbm_bresp;        
-    assign axi_crossbar_bvalid[`getvec(1,0)] = m_axi_hbm_bvalid;      
-    assign axi_crossbar_bready[`getvec(1,0)] = m_axi_hbm_bready;      
-    assign axi_crossbar_araddr[`getvec(48,0)] = m_axi_hbm_araddr;      
-    assign axi_crossbar_arlen[`getvec(8,0)] = m_axi_hbm_arlen;        
-    assign axi_crossbar_arsize[`getvec(3,0)] = m_axi_hbm_arsize;      
-    assign axi_crossbar_arburst[`getvec(2,0)] = m_axi_hbm_arburst;    
-//    assign axi_crossbar_arlock[`getvec(1,0)] = m_axi_hbm_arlock;      
-//    assign axi_crossbar_arcache[`getvec(4,0)] = m_axi_hbm_arcache;    
-//    assign axi_crossbar_arprot[`getvec(3,0)] = m_axi_hbm_arprot;      
-//    assign axi_crossbar_arregion[`getvec(4,0)] = m_axi_hbm_arregion;  
-//    assign axi_crossbar_arqos[`getvec(4,0)] = m_axi_hbm_arqos;        
-    assign axi_crossbar_arvalid[`getvec(1,0)] = m_axi_hbm_arvalid;    
+    assign axi_crossbar_bvalid[`getvec(1,0)] = m_axi_hbm_bvalid;         
     assign axi_crossbar_arready[`getvec(1,0)] = m_axi_hbm_arready;    
     assign axi_crossbar_rdata[`getvec(256,0)] = m_axi_hbm_rdata;        
     assign axi_crossbar_rresp[`getvec(2,0)] = m_axi_hbm_rresp;        
     assign axi_crossbar_rlast[`getvec(1,0)] = m_axi_hbm_rlast;        
     assign axi_crossbar_rvalid[`getvec(1,0)] = m_axi_hbm_rvalid;      
-    assign axi_crossbar_rready[`getvec(1,0)] = m_axi_hbm_rready;
+
+
     axi_Xi_Width_Converter axi_Xi_Width_Converter (
     .s_axi_aclk(pcie_aclk),          // input wire s_axi_aclk
     .s_axi_aresetn(pcie_aresetn),    // input wire s_axi_aresetn
+
     .s_axi_awaddr(axi_crossbar_awaddr[`getvec(48,1)]),      // output wire [95 : 0] s_axi_awaddr
     .s_axi_awlen(axi_crossbar_awlen[`getvec(8,1)]),        // output wire [15 : 0] s_axi_awlen
     .s_axi_awsize(axi_crossbar_awsize[`getvec(3,1)]),      // output wire [5 : 0] s_axi_awsize

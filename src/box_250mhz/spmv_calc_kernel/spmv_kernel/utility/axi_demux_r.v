@@ -50,13 +50,13 @@ module axi_demux_r #(
 		output wire [C_S_AXI_DATA_WIDTH-1 : 0] s_axi_rdata,
 		output wire [1 : 0] s_axi_rresp,
 		output wire  s_axi_rlast,
-		output reg  s_axi_rvalid,
+		output wire  s_axi_rvalid,
 		input wire  s_axi_rready
         
 );
 	integer i;
 	wire addr_hit;
-	assign addr_hit = (s_axi_araddr >= m_axi_read_addr & s_axi_araddr < m_axi_araddr + addr_gap);
+	assign addr_hit = (Req_addr >= m_axi_read_addr & Req_addr < m_axi_araddr + addr_gap);
 
 	assign m_axi_arlen = C_M_AXI_BURST_LEN -1;
 	assign m_axi_arid = 0;
@@ -68,7 +68,7 @@ module axi_demux_r #(
 	assign m_axi_arqos	= 4'h0;
 
 
-	assign s_axi_arready = 1;
+	// assign s_axi_arready = addr_hit;
 	assign s_axi_rid = 0;
 	assign s_axi_rresp = 0;
 	assign s_axi_rlast = s_axi_rvalid;
@@ -85,34 +85,37 @@ module axi_demux_r #(
 	//AR请求产生逻辑
 	always @(posedge clk ) begin
 		if(~rstn)begin
-			m_axi_read_addr<=0;
+			m_axi_read_addr<=48'h9877654321;
 			m_axi_arvalid<=0;
+		end
+		else if(m_axi_arready & m_axi_arvalid)begin
+				m_axi_arvalid<=0;	
 		end
 		else begin
 			if(s_axi_arvalid)begin
 				if(addr_hit)begin
 					m_axi_read_addr<= m_axi_read_addr;
-					m_axi_arvalid<=0;
+					// m_axi_arvalid<=0;
 				end
 				else begin
 					m_axi_read_addr<= s_axi_araddr & ~{32'h0, addr_gap-1};
 					m_axi_arvalid<=1;
 				end
 			end
-			else if(m_axi_arready)begin
-				m_axi_arvalid<=0;	
-			end
+			
 			
 		end
 	end
 
+
+	
+
 	reg [16:0] BurstIndex;
 	// reg []
-	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
 	
 	reg [C_S_AXI_DATA_WIDTH-1:0] BurstDataBuffer [(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN) -1 :0];
 
-	reg [C_M_AXI_ADDR_WIDTH-1:0] Req_addr;
+	wire [C_M_AXI_ADDR_WIDTH-1:0] Req_addr;
 
 	// reg Rea_en;
 
@@ -135,39 +138,66 @@ module axi_demux_r #(
 	end
 	//维护Buffer
 	always @(posedge clk ) begin
-		if(s_axi_arvalid)begin
-			if(~addr_hit)begin
-				BufferValidMap<=0;
-			end
-		end
-		if(m_axi_rready & m_axi_rvalid)begin
-			BufferValidMap[BurstIndex]<=1;
-
-			for(i = 0;i< C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH;i=i+1)
-				BurstDataBuffer[(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH) * BurstIndex +  i]<=m_axi_rdata[C_S_AXI_DATA_WIDTH * i +: C_S_AXI_DATA_WIDTH];
-
-		end
-	end
-
-	reg Req_en;
-	always @(posedge clk ) begin
-		if(s_axi_arvalid)begin
-			Req_addr <= s_axi_araddr;
-			Req_en<=1;
-			s_axi_rvalid <= 0;
-		end
-		else if(Req_en)begin
-			if(BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap])begin
-				s_axi_rvalid <= 1;
-				Req_en<=0;
-			end
-			else begin
-				s_axi_rvalid <= 0;
-			end
+		if(~rstn)begin
+			BufferValidMap<=0;
+			// s_axi_arready <=1;
 		end
 		else begin
-			s_axi_rvalid <= 0;
+			if(s_axi_arvalid & s_axi_arready)begin
+				if(~addr_hit)begin
+					BufferValidMap<=0;
+					// s_axi_arready <=0;
+				end
+			end
+			if(m_axi_rready & m_axi_rvalid)begin
+				BufferValidMap[BurstIndex]<=1;
+				// s_axi_arready <=1;
+				for(i = 0;i< C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH;i=i+1)
+					BurstDataBuffer[(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH) * BurstIndex +  i]<=m_axi_rdata[C_S_AXI_DATA_WIDTH * i +: C_S_AXI_DATA_WIDTH];
+			end
 		end
 	end
+
+	// reg Req_en;
+
+
+	Fifo #(
+		.DATA_WIDTH(48)
+	) Fifo_ar
+	(
+		.clk(clk),
+		.rst(~rstn),
+		.data_in(s_axi_araddr),
+		.data_out(Req_addr),
+		.rd_en(s_axi_rvalid & s_axi_rready),
+		.wr_en(s_axi_arvalid & s_axi_arready),
+		.empty(Fifo_ar_empty),
+		.full(Fifo_ar_full)
+	);
+	assign s_axi_arready = ~Fifo_ar_full;
+	assign s_axi_rvalid = ~Fifo_ar_empty & 
+		addr_hit & 
+		BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap] &
+		s_axi_rready;
+	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
+
+
+	// always @(posedge clk ) begin
+	// 	if((Req_addr >= m_axi_read_addr & Req_addr < m_axi_araddr + addr_gap))begin
+	// 		if(BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap])begin
+	// 			if(s_axi_rready)begin
+	// 				s_axi_rvalid <= 1;
+	// 				// Req_en<=0;
+	// 				s_axi_rdata <= 
+	// 			end
+	// 		end
+	// 		else begin
+	// 			s_axi_rvalid <= 0;
+	// 		end
+	// 	end
+	// 	else begin
+	// 		s_axi_rvalid <= 0;
+	// 	end
+	// end
 
 endmodule

@@ -620,8 +620,11 @@ module pcie_spmv #(
     .s_axi_pcie_arlock(axi_pcie_hbm_arlock),                                                  // output wire s_axi_pcie_arlock
     .s_axi_pcie_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] s_axi_pcie_arcache
     .s_axi_pcie_rready(axi_pcie_hbm_rready),                                                  // output wire s_axi_pcie_rready
-
-
+    .s_axi_pcie_awregion(0),
+    .s_axi_pcie_arregion(0),
+    .s_axi_pcie_awqos(0),
+    .s_axi_pcie_arqos(0),
+    
     .m_axi_hbm_araddr(axi_hbm_width_araddr),
     .m_axi_hbm_arburst(axi_hbm_width_arburst),
     .m_axi_hbm_arlen(axi_hbm_width_arlen),
@@ -647,6 +650,7 @@ module pcie_spmv #(
     .m_axi_hbm_wready(axi_hbm_width_wready),
     .m_axi_hbm_bvalid(axi_hbm_width_bvalid),
     .m_axi_hbm_bresp(axi_hbm_width_bresp),
+
 
     .m_axi_bram_araddr(axi_Xi_araddr),
     .m_axi_bram_arburst(axi_Xi_arburst),

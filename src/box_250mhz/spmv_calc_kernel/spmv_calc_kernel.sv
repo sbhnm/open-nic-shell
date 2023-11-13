@@ -61,7 +61,16 @@ module spmv_calc_kernel #(
     output [1*1-1 : 0] s_axi_Xi_bram_wready,
     output [1*2-1 : 0] s_axi_Xi_bram_bresp,
     output [1*1-1 : 0] s_axi_Xi_bram_bvalid,
-
+    input [3:0] s_axi_Xi_bram_awcache,
+    input [2:0] s_axi_Xi_bram_awprot,
+    input [3:0] s_axi_Xi_bram_awqos,
+    input [0:0] s_axi_Xi_bram_awlock,
+    input [3:0] s_axi_Xi_bram_arcache,
+    input [2:0] s_axi_Xi_bram_arprot,
+    input [3:0] s_axi_Xi_bram_arqos,
+    input [0:0] s_axi_Xi_bram_arlock,
+    
+    
 
     output [47 : 0] m_axi_Val_araddr,
     output [1 : 0] m_axi_Val_arburst,
@@ -698,13 +707,13 @@ module spmv_calc_kernel #(
         assign axi_Xi_bram_bvalid[`getvec(1,i)]=axi_Switch_bvalid[`getvec(1,2*i)];
 
         axi_switch #(
-            
-        )(
+            .ADDR_WIDTH(48)
+        )axi_switch (
             .s_aclk(clk),
             .s_aresetn(rstn),
             .CS(config_wire[8+:4]),
 
-            .s_axi_awaddr(axi_Switch_awaddr[`getvec(48,i)]),
+            .s_axi_awaddr(axi_Switch_awaddr[`getvec(48*2,i)]),
             .s_axi_awlen(axi_Switch_awlen[`getvec(8*2,i)]),
             .s_axi_awvalid(axi_Switch_awvalid[`getvec(1*2,i)]),
             .s_axi_awready(axi_Switch_awready[`getvec(1*2,i)]),
@@ -713,15 +722,15 @@ module spmv_calc_kernel #(
             .s_axi_wlast(axi_Switch_wlast[`getvec(1*2,i)]),
             .s_axi_wvalid(axi_Switch_wvalid[`getvec(1*2,i)]),
             .s_axi_wready(axi_Switch_wready[`getvec(1*2,i)]),
-            .s_axi_bresp(axi_Switch_bresp[`getvec(1*2,i)]),
+            .s_axi_bresp(axi_Switch_bresp[`getvec(2*2,i)]),
             .s_axi_bvalid(axi_Switch_bvalid[`getvec(1*2,i)]),
             .s_axi_bready(axi_Switch_bready[`getvec(1*2,i)]),
-            .s_axi_araddr(axi_Switch_araddr[`getvec(48,i)]),
+            .s_axi_araddr(axi_Switch_araddr[`getvec(48*2,i)]),
             .s_axi_arlen(axi_Switch_arlen[`getvec(8*2,i)]),
             .s_axi_arvalid(axi_Switch_arvalid[`getvec(1*2,i)]),
             .s_axi_arready(axi_Switch_arready[`getvec(1*2,i)]),
             .s_axi_rdata(axi_Switch_rdata[`getvec(64*2,i)]),
-            .s_axi_rresp(axi_Switch_rresp[`getvec(1*2,i)]),
+            .s_axi_rresp(axi_Switch_rresp[`getvec(2*2,i)]),
             .s_axi_rlast(axi_Switch_rlast[`getvec(1*2,i)]),
             .s_axi_rvalid(axi_Switch_rvalid[`getvec(1*2,i)]),
             .s_axi_rready(axi_Switch_rready[`getvec(1*2,i)]),
@@ -895,9 +904,12 @@ module spmv_calc_kernel #(
     assign m_axi_Val_rid=0;
 
 
+
+
     axi_bram_crossbar axi_bram_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
+        
         .s_axi_awaddr(s_axi_Xi_bram_awaddr),      // input wire [47 : 0] s_axi_awaddr
         .s_axi_awlen(s_axi_Xi_bram_awlen),        // input wire [7 : 0] s_axi_awlen
         .s_axi_awsize(s_axi_Xi_bram_awsize),      // input wire [2 : 0] s_axi_awsize
@@ -923,6 +935,15 @@ module spmv_calc_kernel #(
         .s_axi_rlast(s_axi_Xi_bram_rlast),        // output wire [0 : 0] s_axi_rlast
         .s_axi_rvalid(s_axi_Xi_bram_rvalid),      // output wire [0 : 0] s_axi_rvalid
         .s_axi_rready(s_axi_Xi_bram_rready),      // input wire [0 : 0] s_axi_rready
+        
+        .s_axi_awcache(s_axi_Xi_bram_awcache),
+        .s_axi_awprot(s_axi_Xi_bram_awprot),
+        .s_axi_awqos(s_axi_Xi_bram_awqos),
+        .s_axi_awlock(s_axi_Xi_bram_awlock),
+        .s_axi_arcache(s_axi_Xi_bram_arcache),
+        .s_axi_arprot(s_axi_Xi_bram_arprot),
+        .s_axi_arqos(s_axi_Xi_bram_arqos),
+        .s_axi_arlock(s_axi_Xi_bram_arlock),
 
         .m_axi_awaddr(axi_Xi_bram_awaddr),      // output wire [191 : 0] m_axi_awaddr
         .m_axi_awlen(axi_Xi_bram_awlen),        // output wire [31 : 0] m_axi_awlen

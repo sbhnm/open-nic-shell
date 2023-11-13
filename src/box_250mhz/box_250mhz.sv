@@ -254,7 +254,15 @@ module box_250mhz #(
         .s_axi_Xi_rresp(s_axi_Xi_rresp),        // output wire [1 : 0] s_axi_rresp
         .s_axi_Xi_rlast(s_axi_Xi_rlast),        // output wire [0 : 0] s_axi_rlast
         .s_axi_Xi_rvalid(s_axi_Xi_rvalid),      // output wire [0 : 0] s_axi_rvalid
-        .s_axi_Xi_rready(s_axi_Xi_rready)      // input wire [0 : 0] s_axi_rready
+        .s_axi_Xi_rready(s_axi_Xi_rready),      // input wire [0 : 0] s_axi_rready
+        .s_axi_Xi_awcache(4'b0010),
+        .s_axi_Xi_awprot(0),
+        .s_axi_Xi_awqos(0),
+        .s_axi_Xi_awlock(0),
+        .s_axi_Xi_arcache(4'b0010),
+        .s_axi_Xi_arprot(0),
+        .s_axi_Xi_arqos(0),
+        .s_axi_Xi_arlock(0)
 
     );
     

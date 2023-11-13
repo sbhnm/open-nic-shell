@@ -214,7 +214,7 @@ module Row_Kernel#(
         end
     end
     assign Fifo_Xi_rd_en = Xi_ready & ~Fifo_Xi_empty & Xi_data_Cnt==0;
-    Xi_Reader #(
+    Xi_Reader_s #(
         .COLINDEX_BASE_ADDR(COLINDEX_BASE_ADDR),
         .XVal_BASE_ADDR(XVal_BASE_ADDR)
     )Xi_Reader_inst (
