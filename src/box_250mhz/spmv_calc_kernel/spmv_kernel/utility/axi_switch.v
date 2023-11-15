@@ -62,10 +62,13 @@ module axi_switch #(
 );
 
 integer i;
+wire [3:0] CSD;
+assign CSD = 1;
 generate
 always @* begin
     for (i = 0; i < NUM_SLAVE; i = i + 1) begin
         if (CS == i) begin
+        // if (CSD == i) begin
             m_axi_awaddr= s_axi_awaddr[`getvec(ADDR_WIDTH,i)];
             m_axi_awlen=s_axi_awlen[`getvec(8,i)];
             m_axi_awvalid=s_axi_awvalid[`getvec(1,i)];
@@ -88,6 +91,7 @@ always @* begin
 
     for (i = 0; i < NUM_SLAVE; i = i + 1) begin
         if (CS == i) begin
+        // if (CSD == i) begin
             s_axi_awready[`getvec(1,i)]=m_axi_awready;
             s_axi_wready[`getvec(1,i)]=m_axi_wready;
             s_axi_bresp[`getvec(2,i)]=m_axi_bresp;

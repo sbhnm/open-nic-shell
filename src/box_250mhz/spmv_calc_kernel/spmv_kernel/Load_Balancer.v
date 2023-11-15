@@ -679,10 +679,10 @@ module Load_Balancer #(
 
 
 
-    assign Issue_Uint_1_Fifo_Post_Read = Post_Fifo_ServeNum == 1;
-    assign Issue_Uint_2_Fifo_Post_Read = Post_Fifo_ServeNum == 2;
-    assign Issue_Uint_3_Fifo_Post_Read = Post_Fifo_ServeNum == 3;
-    assign Issue_Uint_4_Fifo_Post_Read = Post_Fifo_ServeNum == 4;
+    assign Issue_Uint_1_Fifo_Post_Read = Post_Fifo_ServeNum == 1 ;
+    assign Issue_Uint_2_Fifo_Post_Read = Post_Fifo_ServeNum == 2 ;
+    assign Issue_Uint_3_Fifo_Post_Read = Post_Fifo_ServeNum == 3 ;
+    assign Issue_Uint_4_Fifo_Post_Read = Post_Fifo_ServeNum == 4 ;
 
     assign Fifo_Data =  Post_Fifo_ServeNum == 1? Issue_Uint_1_Fifo_Post_Read_data:0|
                         Post_Fifo_ServeNum == 2? Issue_Uint_2_Fifo_Post_Read_data:0|
@@ -717,59 +717,68 @@ module Load_Balancer #(
     (*mark_debug = "true"*)   
     reg [7:0]    rData_4ValidMap;
 
+    wire [2:0] Wb_Cold_1;
+    wire [2:0] Wb_Cold_2;
+    wire [2:0] Wb_Cold_3;
+    wire [2:0] Wb_Cold_4;
 
-    reg [2:0] Wb_Cold_1;
-    reg [2:0] Wb_Cold_2;
-    reg [2:0] Wb_Cold_3;
-    reg [2:0] Wb_Cold_4;
+    assign Wb_Cold_1 = 0;
+    assign Wb_Cold_2 = 0;
+    assign Wb_Cold_3 = 0;
+    assign Wb_Cold_4 = 0;
+    
+    // reg [2:0] Wb_Cold_1;
+    // reg [2:0] Wb_Cold_2;
+    // reg [2:0] Wb_Cold_3;
+    // reg [2:0] Wb_Cold_4;
 
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            Wb_Cold_1<=3;
-        end
-        else if(s00_axi_rvalid & s00_axi_rready)begin
-            Wb_Cold_1<=3;
-        end
-        else begin
-            Wb_Cold_1 <= Wb_Cold_1==0 ? 0:Wb_Cold_1 - 1;
-        end
-    end
+    // always @(posedge clk ) begin
+    //     if(~rstn)begin
+    //         Wb_Cold_1<=3;
+    //     end
+    //     else if(s00_axi_rvalid & s00_axi_rready)begin
+    //         Wb_Cold_1<=3;
+    //     end
+    //     else begin
+    //         Wb_Cold_1 <= Wb_Cold_1==0 ? 0:Wb_Cold_1 - 1;
+    //     end
+    // end
 
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            Wb_Cold_2<=3;
-        end
-        else if(s01_axi_rvalid & s01_axi_rready)begin
-            Wb_Cold_2<=3;
-        end
-        else begin
-            Wb_Cold_2 <= Wb_Cold_2==0 ? 0:Wb_Cold_2 - 1;
-        end
-    end
+    // always @(posedge clk ) begin
+    //     if(~rstn)begin
+    //         Wb_Cold_2<=3;
+    //     end
+    //     else if(s01_axi_rvalid & s01_axi_rready)begin
+    //         Wb_Cold_2<=3;
+    //     end
+    //     else begin
+    //         Wb_Cold_2 <= Wb_Cold_2==0 ? 0:Wb_Cold_2 - 1;
+    //     end
+    // end
 
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            Wb_Cold_3<=3;
-        end
-        else if(s02_axi_rvalid & s02_axi_rready)begin
-            Wb_Cold_3<=3;
-        end
-        else begin
-            Wb_Cold_3 <= Wb_Cold_3==0 ? 0:Wb_Cold_3 - 1;
-        end
-    end
+    // always @(posedge clk ) begin
+    //     if(~rstn)begin
+    //         Wb_Cold_3<=3;
+    //     end
+    //     else if(s02_axi_rvalid & s02_axi_rready)begin
+    //         Wb_Cold_3<=3;
+    //     end
+    //     else begin
+    //         Wb_Cold_3 <= Wb_Cold_3==0 ? 0:Wb_Cold_3 - 1;
+    //     end
+    // end
 
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            Wb_Cold_4<=3;
-        end
-        else if(s03_axi_rvalid & s03_axi_rready)begin
-            Wb_Cold_4<=3;
-        end
-        else begin
-            Wb_Cold_4 <= Wb_Cold_4==0 ? 0:Wb_Cold_4 - 1;
-        end
-    end
+    // always @(posedge clk ) begin
+    //     if(~rstn)begin
+    //         Wb_Cold_4<=3;
+    //     end
+    //     else if(s03_axi_rvalid & s03_axi_rready)begin
+    //         Wb_Cold_4<=3;
+    //     end
+    //     else begin
+    //         Wb_Cold_4 <= Wb_Cold_4==0 ? 0:Wb_Cold_4 - 1;
+    //     end
+    // end
 
     always @(posedge clk ) begin
         if(Post_Fifo_ServeNum!=0)begin

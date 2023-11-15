@@ -626,12 +626,12 @@ module spmv_calc_kernel #(
 
     generate for (genvar i = 0; i < 4; i++) begin
         axi_demux_r #(    
-            .C_M_AXI_BURST_LEN(2),
+            .C_M_AXI_BURST_LEN(8),
             .C_M_AXI_ID_WIDTH(1),
             .C_M_AXI_ADDR_WIDTH(48),
             .C_S_AXI_DATA_WIDTH(32),
             .C_M_AXI_DATA_WIDTH(256)
-    )axi_demux_r(
+        )axi_demux_r_inst(
         .clk(clk),
         .rstn(rstn),
 
@@ -881,7 +881,11 @@ module spmv_calc_kernel #(
                 assign axi_Yi_wvalid[`getvec(1,i)] = 0;
                 assign axi_Yi_bready[`getvec(1,i)] = 0;
             end
-            else begin
+        end
+    endgenerate
+    generate
+        for(genvar i = 0;i<3;i++)begin
+            if(i>=2) begin
                 assign axi_NNZWB_arid[`getvec(2,i)]=0;          // input wire [5 : 0] s_axi_arid
                 assign axi_NNZWB_araddr[`getvec(48,i)]=0;      // input wire [98 : 0] s_axi_araddr
                 assign axi_NNZWB_arlen[`getvec(8,i)]=0;        // input wire [23 : 0] s_axi_arlen
@@ -898,6 +902,7 @@ module spmv_calc_kernel #(
 
         end
     endgenerate
+
     wire [1:0]  m_axi_Val_bid;
     wire [1:0]  m_axi_Val_rid;
     assign m_axi_Val_bid=0;

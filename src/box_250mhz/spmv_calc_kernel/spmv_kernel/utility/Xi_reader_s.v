@@ -65,6 +65,7 @@ module Xi_Reader_s#(
 
 
     output wire [1-1 : 0] m_axi_colIndex_arid;
+    (*mark_debug = "true"*)
     output reg [48-1 : 0] m_axi_colIndex_araddr;
     output wire [7 : 0] m_axi_colIndex_arlen;
     output wire [2 : 0] m_axi_colIndex_arsize;
@@ -73,13 +74,17 @@ module Xi_Reader_s#(
     output wire [3 : 0] m_axi_colIndex_arcache;
     output wire [2 : 0] m_axi_colIndex_arprot;
     output wire [3 : 0] m_axi_colIndex_arqos;
+    (*mark_debug = "true"*)
     output wire  m_axi_colIndex_arvalid;
+    (*mark_debug = "true"*)
     input wire  m_axi_colIndex_arready;
     input wire [1-1 : 0] m_axi_colIndex_rid;
     input wire [32-1 : 0] m_axi_colIndex_rdata;
     input wire [1 : 0] m_axi_colIndex_rresp;
     input wire  m_axi_colIndex_rlast;
+    (*mark_debug = "true"*)
     input wire  m_axi_colIndex_rvalid;
+    (*mark_debug = "true"*)
     output wire  m_axi_colIndex_rready;
     wire  colIndex_rready;
 
@@ -103,22 +108,27 @@ module Xi_Reader_s#(
     output wire  m_axi_Xi_rready;
 
     wire [31:0] col_idx_fifo_o;
+
+    wire [1:0] Xi_Cast;
+    
+
+
     assign m_axi_Xi_araddr =   XVal_BASE_ADDR +  ((Ctrl_sig_Xi ==2 ? ({(col_idx_fifo_o <<3)&32'b1111_1111_1111_1111_1111_1111_1111_1000}):0)|
                                 (Ctrl_sig_Xi ==1 ? ({(col_idx_fifo_o <<2)&32'b1111_1111_1111_1111_1111_1111_1111_1000}):0)|
                                 (Ctrl_sig_Xi ==0 ? ({(col_idx_fifo_o <<1)&32'b1111_1111_1111_1111_1111_1111_1111_1000}):0));
     wire [3:0] Fifo_Col_ctrl;
     wire [3:0] Fifo_Xi_ctrl;
     assign m_axi_colIndex_rready = ~Fifo_Col_ctrl[3];
-    assign m_axi_colIndex_arvalid = ~Fifo_Col_ctrl[3] & m_axi_colIndex_arready & work;
-
+    assign m_axi_colIndex_arvalid = ~Fifo_Col_ctrl[3] & m_axi_colIndex_arready & work ; 
+    // assign m_axi_colIndex_arvalid = ~Fifo_Col_ctrl[3]& work;
+//    assign m_axi_colIndex_arvalid =work;
+    // assign m_axi_colIndex_arvalid =1;
     assign Fifo_Col_ctrl[1] = m_axi_colIndex_rvalid & m_axi_colIndex_rready; 
     assign Fifo_Col_ctrl[0] = m_axi_Xi_arvalid & m_axi_Xi_arready;
 
-
-
     always @(posedge clk ) begin
         if(~rstn)begin
-            m_axi_colIndex_araddr <=0;
+            m_axi_colIndex_araddr <=COLINDEX_BASE_ADDR;
         end
         else begin
             if(m_axi_colIndex_arvalid & m_axi_colIndex_arready)begin
@@ -166,25 +176,50 @@ module Xi_Reader_s#(
         .full(Fifo_Col_ctrl[3])
 
     );
-    assign m_axi_Xi_arvalid = ~Fifo_Xi_ctrl[3] & ~Fifo_Col_ctrl[2] & m_axi_Xi_arready;
+
+    Fifo #(
+        .DATA_WIDTH(2),
+        .DEPTH(8)
+    ) Fifo_Cast(
+        .clk(clk),
+        .rst(~rstn),
+        .data_in(col_idx_fifo_o[1:0]),
+        .data_out(Xi_Cast),
+        .wr_en(Fifo_Col_ctrl[0]),
+        .rd_en(Fifo_Xi_ctrl[1])
+    );
+
+    assign m_axi_Xi_arvalid = Xi_ready & ~Fifo_Col_ctrl[2] & m_axi_Xi_arready; //后端需要数据才读，
+    //不能设为存储队列不满就读。 会导致已经发送的数据顶满滑动窗口
     assign m_axi_Xi_rready = ~Fifo_Xi_ctrl[3];
 
     assign Fifo_Xi_ctrl[1] = m_axi_Xi_rready & m_axi_Xi_rvalid;
     assign Fifo_Xi_ctrl[0] = Xi_ready & ~Fifo_Xi_ctrl[2];
+    assign Xi_valid = Fifo_Xi_ctrl[0];
 
-
+    wire [63:0] Fifo_Xi_Data_in;
+    assign Fifo_Xi_Data_in =(Ctrl_sig_Xi ==2 ? m_axi_Xi_rdata:0)|
+                    (Ctrl_sig_Xi ==1 ? (Xi_Cast[0] ==0? m_axi_Xi_rdata[31:0] : m_axi_Xi_rdata[63:32]):0)|
+                    (Ctrl_sig_Xi ==0 ? (   
+                                    Xi_Cast[1:0] ==0 ? m_axi_Xi_rdata[15:0]:0|
+                                    Xi_Cast[1:0] ==1 ? m_axi_Xi_rdata[31:16]:0|
+                                    Xi_Cast[1:0] ==2 ? m_axi_Xi_rdata[47:32]:0|
+                                    Xi_Cast[1:0] ==3 ? m_axi_Xi_rdata[63:48]:0
+                                     ):0);
+    // wire [4:0] Xi_Depth;
     Fifo #(
         .DATA_WIDTH(64),
-        .DEPTH(4)
+        .DEPTH(16)
     )Fifo_Xi(
         .clk(clk),
         .rst(~rstn),
-        .data_in(m_axi_Xi_rdata),
+        .data_in(Fifo_Xi_Data_in),
         .data_out(Xi_data),
         .rd_en(Fifo_Xi_ctrl[0]),
         .wr_en(Fifo_Xi_ctrl[1]),
         .empty(Fifo_Xi_ctrl[2]),
         .full(Fifo_Xi_ctrl[3])
+        // .fill_level(Xi_Depth)
     );
 
 endmodule

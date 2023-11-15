@@ -1,15 +1,15 @@
 module Row_Top#(
-    parameter  COLINDEX_BASE_ADDR_1	= 48'h800000000,
-    parameter  XVal_BASE_ADDR_1	= 48'h810000000,
+    parameter  COLINDEX_BASE_ADDR_1	= 48'h10000000,
+    parameter  XVal_BASE_ADDR_1	= 0,
 
-    parameter  COLINDEX_BASE_ADDR_2	= 48'h820000000,
-    parameter  XVal_BASE_ADDR_2	= 48'h830000000,
+    parameter  COLINDEX_BASE_ADDR_2	= 48'h20000000,
+    parameter  XVal_BASE_ADDR_2	= 0,
 
-    parameter  COLINDEX_BASE_ADDR_3	= 48'h840000000,
-    parameter  XVal_BASE_ADDR_3	= 48'h850000000,
+    parameter  COLINDEX_BASE_ADDR_3	= 48'h30000000,
+    parameter  XVal_BASE_ADDR_3	= 0,
 
-    parameter  COLINDEX_BASE_ADDR_4	= 48'h860000000,
-    parameter  XVal_BASE_ADDR_4	= 48'h870000000,
+    parameter  COLINDEX_BASE_ADDR_4	= 48'h40000000,
+    parameter  XVal_BASE_ADDR_4	= 0,
 
     parameter  Val_BASE_ADDR	= 48'h70000000,
 
@@ -47,7 +47,7 @@ module Row_Top#(
     input wire  m_axi_NNZ_arready,
     input wire [3-1 : 0] m_axi_NNZ_rid,
     (*mark_debug = "true"*)
-    input wire [32-1 : 0] m_axi_NNZ_rdata,
+    input wire [256-1 : 0] m_axi_NNZ_rdata,
     input wire [1 : 0] m_axi_NNZ_rresp,
     (*mark_debug = "true"*)
     input wire  m_axi_NNZ_rlast,
@@ -252,7 +252,7 @@ module Row_Top#(
     (*mark_debug = "true"*)
     input wire  m_axi_Val_arready,
     input wire [3-1 : 0] m_axi_Val_rid,
-    input wire [64-1 : 0] m_axi_Val_rdata,
+    input wire [256-1 : 0] m_axi_Val_rdata,
     input wire [1 : 0] m_axi_Val_rresp,
     (*mark_debug = "true"*)
     input wire  m_axi_Val_rlast,
@@ -596,7 +596,7 @@ module Row_Top#(
     );
     reg [31:0] Read_NNZ_ADDR = 0;
     axi_master_r_single #(
-        .C_M_AXI_DATA_WIDTH(32),
+        .C_M_AXI_DATA_WIDTH(256),
         .C_M_AXI_TARGET_SLAVE_BASE_ADDR(0)
     ) axi_master_r_single_Row_NNZ(
         .m_axi_init_axi_read(NNZ_Read_Begin),
@@ -627,7 +627,13 @@ module Row_Top#(
     );
     reg [3:0] Fifo_wait_for_data=0;
     
-    Fifo NNZ_fifo_1(
+    Fifo_DeMux  #(
+        .DATA_IN_WIDTH(256),
+        .DATA_OUT_WIDTH(32),
+        .DEPTH(8),
+        .MIN_THER(4),
+        .MAX_THER(16)
+    ) NNZ_fifo_1(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==1 & m_axi_NNZ_rvalid),        
@@ -636,13 +642,19 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in(15),
+        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
         `endif 
         .data_out(Row_Kernel_1_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_1_empty),   
         .full(NNZ_fifo_1_full)     
     );
-    Fifo NNZ_fifo_2(
+    Fifo_DeMux  #(
+        .DATA_IN_WIDTH(256),
+        .DATA_OUT_WIDTH(32),
+        .DEPTH(8),
+        .MIN_THER(4),
+        .MAX_THER(16)
+    ) NNZ_fifo_2(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==2 & m_axi_NNZ_rvalid),        
@@ -651,13 +663,19 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in(15),
+        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
         `endif   
         .data_out(Row_Kernel_2_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_2_empty),   
         .full(NNZ_fifo_2_full)     
     );
-    Fifo NNZ_fifo_3(
+    Fifo_DeMux  #(
+        .DATA_IN_WIDTH(256),
+        .DATA_OUT_WIDTH(32),
+        .DEPTH(8),
+        .MIN_THER(4),
+        .MAX_THER(16)
+    ) NNZ_fifo_3(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==3 & m_axi_NNZ_rvalid),        
@@ -666,13 +684,19 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in(15),
+        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
         `endif   
         .data_out(Row_Kernel_3_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_3_empty),   
         .full(NNZ_fifo_3_full)     
     );
-    Fifo NNZ_fifo_4(
+    Fifo_DeMux  #(
+        .DATA_IN_WIDTH(256),
+        .DATA_OUT_WIDTH(32),
+        .DEPTH(8),
+        .MIN_THER(4),
+        .MAX_THER(16)
+    ) NNZ_fifo_4(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==4 & m_axi_NNZ_rvalid),        
@@ -681,7 +705,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in(15),
+        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
         `endif 
         .data_out(Row_Kernel_4_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_4_empty),   
@@ -820,7 +844,7 @@ module Row_Top#(
                     Fifo_wait_for_data<=NNZ_Fifo_Ready;
                     Read_NNZ_ADDR <= 48'h1000000 * (NNZ_Fifo_Ready -1)+ NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] + Read_NNZ_ADDR_BASE;
 
-                    NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] <= NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] +4;
+                    NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] <= NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] +32;
                     
                     NNZ_Read_Begin <=1;
 
@@ -846,8 +870,8 @@ module Row_Top#(
     reg Fifo_Val_wr_en_ctrl;
     wire m_axi_Val_arvalid_self;
 
-            axi_master_r #(
-        .C_M_AXI_DATA_WIDTH(64),
+    axi_master_r #(
+        .C_M_AXI_DATA_WIDTH(256),
         .C_M_AXI_TARGET_SLAVE_BASE_ADDR(Val_BASE_ADDR),
         .C_M_AXI_BURST_LEN(16)
     ) axi_master_r_Val(
@@ -884,8 +908,9 @@ module Row_Top#(
     //     Val_Valid_Pre <= m_axi_Val_rvalid;
     // end
     wire [63:0] Fifo_Val_data_out;
-    Fifo #(
-        .DATA_WIDTH(64),
+    Fifo_DeMux #(
+        .DATA_IN_WIDTH(256),
+        .DATA_OUT_WIDTH(64),
         .DEPTH(32),
         .MIN_THER(4),
         .MAX_THER(16)

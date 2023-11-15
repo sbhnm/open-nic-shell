@@ -16,8 +16,11 @@ module Row_Kernel#(
     input wire [31:0] Read_Length,
 
 //Row NNZ
+(*mark_debug = "true"*)
     input wire [32-1:0] S_AXIS_TIMES_tdata,
+(*mark_debug = "true"*)
     output wire S_AXIS_TIMES_tready,
+(*mark_debug = "true"*)
     input wire S_AXIS_TIMES_tvalid,
 
 //ValueBus
@@ -184,7 +187,9 @@ module Row_Kernel#(
 
 
     wire Fifo_Xi_empty;
-    reg [2:0] Xi_data_Cnt;
+    // reg [2:0] Xi_data_Cnt;
+    wire [2:0] Xi_data_Cnt;
+    assign Xi_data_Cnt = 0;
 
     Fifo#(
         .DATA_WIDTH(64)
@@ -199,25 +204,25 @@ module Row_Kernel#(
         .full(Fifo_Xi_full)
     );
 
-    always @(posedge clk ) begin
-        if(~rstn)begin
-            Xi_data_Cnt <=2;
-        end
-        if(Fifo_Xi_rd_en)begin
-            Xi_data_Cnt <=2;
-        end
-        else if(Xi_data_Cnt >0)begin
-            Xi_data_Cnt<=Xi_data_Cnt-1;
-        end
-        else if(Xi_data_Cnt ==0)begin
-            Xi_data_Cnt<=Xi_data_Cnt;
-        end
-    end
+    // always @(posedge clk ) begin
+    //     if(~rstn)begin
+    //         Xi_data_Cnt <=2;
+    //     end
+    //     if(Fifo_Xi_rd_en)begin
+    //         Xi_data_Cnt <=2;
+    //     end
+    //     else if(Xi_data_Cnt >0)begin
+    //         Xi_data_Cnt<=Xi_data_Cnt-1;
+    //     end
+    //     else if(Xi_data_Cnt ==0)begin
+    //         Xi_data_Cnt<=Xi_data_Cnt;
+    //     end
+    // end
     assign Fifo_Xi_rd_en = Xi_ready & ~Fifo_Xi_empty & Xi_data_Cnt==0;
     Xi_Reader_s #(
         .COLINDEX_BASE_ADDR(COLINDEX_BASE_ADDR),
         .XVal_BASE_ADDR(XVal_BASE_ADDR)
-    )Xi_Reader_inst (
+    )Xi_Reader_s_inst (
         .Xi_ready(~Fifo_Xi_full),
         //HXZ
         // .Xi_ready(1),

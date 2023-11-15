@@ -36,6 +36,7 @@ module axi_demux_r #(
 		output wire  m_axi_rready,
 
 		input wire [C_M_AXI_ID_WIDTH-1 : 0] s_axi_arid,
+		(*mark_debug = "true"*)
 		input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s_axi_araddr,
 		input wire [7 : 0] s_axi_arlen,
 		input wire [2 : 0] s_axi_arsize,
@@ -44,13 +45,18 @@ module axi_demux_r #(
 		input wire [3 : 0] s_axi_arcache,
 		input wire [2 : 0] s_axi_arprot,
 		input wire [3 : 0] s_axi_arqos,
+		(*mark_debug = "true"*)
 		input wire  s_axi_arvalid,
+		(*mark_debug = "true"*)
 		output wire  s_axi_arready,
 		output wire [C_M_AXI_ID_WIDTH-1 : 0] s_axi_rid,
+		(*mark_debug = "true"*)
 		output wire [C_S_AXI_DATA_WIDTH-1 : 0] s_axi_rdata,
 		output wire [1 : 0] s_axi_rresp,
 		output wire  s_axi_rlast,
+		(*mark_debug = "true"*)
 		output wire  s_axi_rvalid,
+		(*mark_debug = "true"*)
 		input wire  s_axi_rready
         
 );
@@ -159,8 +165,10 @@ module axi_demux_r #(
 	end
 
 	// reg Req_en;
-
-
+	(*mark_debug = "true"*)
+	wire Fifo_ar_full;
+	(*mark_debug = "true"*)
+	wire Fifo_ar_empty;
 	Fifo #(
 		.DATA_WIDTH(48)
 	) Fifo_ar
@@ -175,6 +183,7 @@ module axi_demux_r #(
 		.full(Fifo_ar_full)
 	);
 	assign s_axi_arready = ~Fifo_ar_full;
+	// assign s_axi_arready = 1;
 	assign s_axi_rvalid = ~Fifo_ar_empty & 
 		addr_hit & 
 		BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap] &

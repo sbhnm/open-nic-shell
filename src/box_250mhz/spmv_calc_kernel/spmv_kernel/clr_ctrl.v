@@ -45,18 +45,18 @@ module clr_ctrl(
     output wire disable_all;
     
 
-    assign disable_all = nowtime[31] == 1;
+    assign disable_all = nowtime[32] == 1;
     (*mark_debug = "true"*)
-    reg [31:0] nowtime = 0;
-    assign     times_ready = nowtime==0 | nowtime[31] == 1;
+    reg [32:0] nowtime = 0;
+    assign     times_ready = nowtime==0 | nowtime[32] == 1;
     assign     clr = (nowtime ==0  &rstn);
     always @(posedge clk) begin
         if(~rstn) begin
-            nowtime<=32'hffffffff;
+            nowtime<=33'h1ffffffff;
         end
         else begin
             if(times_valid&vaild_sig)begin
-                nowtime<=times_data-1;
+                nowtime<={1'b0,times_data}-1;
             end
             else if(vaild_sig)begin
                 nowtime <= nowtime-1;

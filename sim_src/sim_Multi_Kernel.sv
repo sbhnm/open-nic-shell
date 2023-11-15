@@ -86,7 +86,16 @@ module sim_Multi_Kernel #(
         #20
         rstn <=1;
         #1000
-        
+        #20
+        s_axil_awvalid <= 1;
+        s_axil_awaddr <= 0;
+        #2
+        s_axil_awvalid<=0;
+        s_axil_wvalid<=1;
+        s_axil_wdata<=32'h100;
+        #2
+        s_axil_wvalid<=0;
+
         s_axil_awvalid <= 1;
         s_axil_awaddr <= 4;
         #2
@@ -102,7 +111,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'h200;
+        s_axil_wdata<=32'ha00;
         #2
         s_axil_wvalid<=0;
         #20
@@ -111,7 +120,7 @@ module sim_Multi_Kernel #(
         #2
         s_axil_awvalid<=0;
         s_axil_wvalid<=1;
-        s_axil_wdata<=32'b100101011;
+        s_axil_wdata<=32'h12b;
         #2
         s_axil_wvalid<=0;
         #20
