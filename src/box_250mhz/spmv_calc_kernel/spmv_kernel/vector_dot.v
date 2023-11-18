@@ -60,7 +60,6 @@ module vector_dot #(
         .times_data(S_AXIS_TIMES_tdata),
         .times_ready(S_AXIS_TIMES_tready),
         .vaild_sig(axis_conv_fix_tvalid & axis_conv_fix_tready),
-        .disable_all(),
         .clr(clr),
         .clk(clk),
         .rstn(rstn)
@@ -75,7 +74,12 @@ module vector_dot #(
     .SCLR(clr),  // input wire SCLR
     .Q(axis_acc_tdata)        // output wire [255 : 0] Q
     );
-    assign axis_acc_tvalid = clr;
+
+    reg clr_ff;
+    always @(posedge clk ) begin
+        clr_ff<=clr;
+    end
+    assign axis_acc_tvalid = clr & ~clr_ff;
     // assign axis_acc_tdata
     fix_data_fifo fix_data_fifo (
     .s_axis_aresetn(rstn),  // input wire s_axis_aresetn

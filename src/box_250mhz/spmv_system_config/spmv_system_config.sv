@@ -6,8 +6,9 @@ module spmv_system_config #(
     parameter int CTRL_OFFSET = 32'h00,
     parameter int ROW_OFFSET = 32'h04,
     parameter int NNZ_OFFSET = 32'h08,
-
-    parameter int PER_ADDR_SPACE = 32'd12
+    parameter int CNT_LSB_OFFSET = 32'h0c,
+    parameter int CNT_MSB_OFFSET = 32'h10,
+    parameter int PER_ADDR_SPACE = 32'd24
 
 ) (
     input                          s_axil_awvalid,
@@ -27,7 +28,9 @@ module spmv_system_config #(
     output                   [1:0] s_axil_rresp,
     input                          s_axil_rready,
 
-    output [32*3*CONF_NUM_KERNEL-1:0] config_wire,
+    output  [32*3*CONF_NUM_KERNEL-1:0] config_wire,
+    input   [32*3*CONF_NUM_KERNEL-1:0] status_wire,
+
 
     input aclk,
     input aresetn
@@ -78,13 +81,15 @@ module spmv_system_config #(
     reg [32*CONF_NUM_KERNEL-1:0] row_num;
     reg [32*CONF_NUM_KERNEL-1:0] nnz_num;
 
-
+    wire [64*CONF_NUM_KERNEL-1:0] cnt_data;
 
   generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
     
     assign config_wire[`getvec(32,3*i)] = ctrl_reg[`getvec(32,i)];
     assign config_wire[`getvec(32,3*i+1)] = row_num[`getvec(32,i)];
     assign config_wire[`getvec(32,3*i+2)] = nnz_num[`getvec(32,i)];
+    assign cnt_data[`getvec(32,2*i)] = status_wire[`getvec(32,3*i)];
+    assign cnt_data[`getvec(32,2*i+1)] = status_wire[`getvec(32,3*i + 1)];
 
   end
   endgenerate
@@ -98,7 +103,7 @@ module spmv_system_config #(
                 if(reg_addr>= 0 *PER_ADDR_SPACE && reg_addr < CONF_NUM_KERNEL *PER_ADDR_SPACE)begin
                     for (int i = 0; i < CONF_NUM_KERNEL; i++) begin
                         if(reg_addr>= i *PER_ADDR_SPACE && reg_addr < i *PER_ADDR_SPACE +PER_ADDR_SPACE)begin //在地址范围内
-                            case (reg_addr - i *12)
+                            case (reg_addr - i *PER_ADDR_SPACE)
                                 CTRL_OFFSET: begin
                                     reg_dout<= ctrl_reg[`getvec(32,i)];
                                 end
@@ -108,6 +113,14 @@ module spmv_system_config #(
                                 NNZ_OFFSET:begin
                                     reg_dout<= nnz_num[`getvec(32,i)];
                                 end
+                                CNT_LSB_OFFSET:begin
+                                    reg_dout<=cnt_data[`getvec(32,i)];
+                                end
+                                CNT_MSB_OFFSET:begin
+                                    reg_dout<=cnt_data[`getvec(32,i+1)];
+                                end
+                                
+
                                 default:begin
                                     reg_dout<= 32'hdeadbeef;
                                 end 
@@ -132,7 +145,7 @@ module spmv_system_config #(
             if(reg_addr>= 0 *PER_ADDR_SPACE && reg_addr < CONF_NUM_KERNEL *PER_ADDR_SPACE)begin
                     for (int i = 0; i < CONF_NUM_KERNEL; i++) begin
                         if(reg_addr>= i *PER_ADDR_SPACE && reg_addr < i *PER_ADDR_SPACE +PER_ADDR_SPACE)begin //在地址范围内
-                            case (reg_addr - i *12)
+                            case (reg_addr - i *PER_ADDR_SPACE)
                                 CTRL_OFFSET: begin
                                     ctrl_reg[`getvec(32,i)]<= reg_din;
                                 end

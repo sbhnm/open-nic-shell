@@ -62,8 +62,11 @@ module axi_demux_r #(
 );
 	integer i;
 	wire addr_hit;
-	assign addr_hit = (Req_addr >= m_axi_read_addr & Req_addr < m_axi_araddr + addr_gap);
-
+	assign addr_hit = (Req_addr >= m_axi_read_addr & Req_addr < m_axi_read_addr + addr_gap);
+	
+	reg [C_S_AXI_DATA_WIDTH-1:0] BurstBuffer_Bak [(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN) -1 :0];
+	reg  BufferValidMap_Bak;
+	
 	assign m_axi_arlen = C_M_AXI_BURST_LEN -1;
 	assign m_axi_arid = 0;
 	assign m_axi_arsize	= clogb2((C_M_AXI_DATA_WIDTH/8)-1);
@@ -79,7 +82,7 @@ module axi_demux_r #(
 	assign s_axi_rresp = 0;
 	assign s_axi_rlast = s_axi_rvalid;
     reg [C_M_AXI_ADDR_WIDTH-1:0] m_axi_read_addr;
-	assign m_axi_araddr = m_axi_read_addr;
+	assign m_axi_araddr = Bak_Buffer_Addr;
 	function integer clogb2 (input integer bit_depth);              
   	begin                                                           
     for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
@@ -87,33 +90,49 @@ module axi_demux_r #(
     end                                                           
   	endfunction   
 	integer addr_gap = C_M_AXI_BURST_LEN*C_M_AXI_DATA_WIDTH/8;
-
+	
 	//AR请求产生逻辑
+	reg [C_M_AXI_ADDR_WIDTH-1:0] Bak_Buffer_Addr;
 	always @(posedge clk ) begin
 		if(~rstn)begin
-			m_axi_read_addr<=48'h9877654321;
+			Bak_Buffer_Addr<=48'h9877654321;
 			m_axi_arvalid<=0;
 		end
 		else if(m_axi_arready & m_axi_arvalid)begin
 				m_axi_arvalid<=0;	
 		end
-		else begin
-			if(s_axi_arvalid)begin
-				if(addr_hit)begin
-					m_axi_read_addr<= m_axi_read_addr;
-					// m_axi_arvalid<=0;
-				end
-				else begin
-					m_axi_read_addr<= s_axi_araddr & ~{32'h0, addr_gap-1};
-					m_axi_arvalid<=1;
-				end
+		else if(s_axi_arvalid & s_axi_arready)begin
+			if(~BufferValidMap_Bak & ~addr_hit & ~m_axi_arvalid & read_state == 0)begin
+				Bak_Buffer_Addr<= s_axi_araddr & ~{32'h0, addr_gap-1};
+				m_axi_arvalid<=1;
 			end
 			
-			
+			else if(~BufferValidMap_Bak & ~m_axi_arvalid & read_state == 0)begin
+				Bak_Buffer_Addr<= Bak_Buffer_Addr + addr_gap;
+				m_axi_arvalid<=1;
+			end
 		end
 	end
 
-
+	reg[1:0] read_state;
+	always @(posedge clk ) begin
+		if(~rstn)begin
+			read_state<=0;
+		end
+		else begin
+			if(read_state == 0)begin
+				if(m_axi_arvalid & m_axi_arready)begin
+					read_state <=1;
+				end
+			end
+			if(read_state == 1)begin
+				if(m_axi_rvalid & m_axi_rready & m_axi_rlast)begin
+					read_state <=0;
+				end
+			end
+			
+		end
+	end
 	
 
 	reg [16:0] BurstIndex;
@@ -143,23 +162,43 @@ module axi_demux_r #(
 		end
 	end
 	//维护Buffer
+
+	always @(posedge clk ) begin
+		if(~rstn)begin
+			BufferValidMap_Bak<=0;
+			// s_axi_arready <=1;
+		end
+		else begin
+			if(m_axi_rready & m_axi_rvalid & m_axi_rlast & ~BufferValidMap_Bak)begin
+				BufferValidMap_Bak<=1;
+			end
+			else if(BufferValidMap_Bak & ~addr_hit) begin
+				BufferValidMap_Bak<=0;
+			end
+			if(m_axi_rready & m_axi_rvalid)begin
+				for(i = 0;i< C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH;i=i+1)
+					BurstBuffer_Bak[(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH) * BurstIndex +  i]<=m_axi_rdata[C_S_AXI_DATA_WIDTH * i +: C_S_AXI_DATA_WIDTH];
+			end
+		end
+	end
+
 	always @(posedge clk ) begin
 		if(~rstn)begin
 			BufferValidMap<=0;
-			// s_axi_arready <=1;
+			m_axi_read_addr<=48'h9877654321;
 		end
 		else begin
 			if(s_axi_arvalid & s_axi_arready)begin
 				if(~addr_hit)begin
 					BufferValidMap<=0;
-					// s_axi_arready <=0;
 				end
 			end
-			if(m_axi_rready & m_axi_rvalid)begin
-				BufferValidMap[BurstIndex]<=1;
-				// s_axi_arready <=1;
-				for(i = 0;i< C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH;i=i+1)
-					BurstDataBuffer[(C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH) * BurstIndex +  i]<=m_axi_rdata[C_S_AXI_DATA_WIDTH * i +: C_S_AXI_DATA_WIDTH];
+			if(BufferValidMap_Bak & ~addr_hit)begin
+				m_axi_read_addr <= Bak_Buffer_Addr;
+				for(i = 0;i< C_M_AXI_BURST_LEN;i=i+1)
+					BufferValidMap[i]<=1;
+				for(i = 0;i< (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN);i=i+1)
+					BurstDataBuffer[i]<=BurstBuffer_Bak[i];
 			end
 		end
 	end
@@ -191,22 +230,5 @@ module axi_demux_r #(
 	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
 
 
-	// always @(posedge clk ) begin
-	// 	if((Req_addr >= m_axi_read_addr & Req_addr < m_axi_araddr + addr_gap))begin
-	// 		if(BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap])begin
-	// 			if(s_axi_rready)begin
-	// 				s_axi_rvalid <= 1;
-	// 				// Req_en<=0;
-	// 				s_axi_rdata <= 
-	// 			end
-	// 		end
-	// 		else begin
-	// 			s_axi_rvalid <= 0;
-	// 		end
-	// 	end
-	// 	else begin
-	// 		s_axi_rvalid <= 0;
-	// 	end
-	// end
 
 endmodule

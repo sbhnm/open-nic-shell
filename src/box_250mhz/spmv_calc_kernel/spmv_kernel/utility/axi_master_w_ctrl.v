@@ -138,7 +138,6 @@
 	//AXI4 internal temp signals
 	reg [C_M_AXI_ADDR_WIDTH-1 : 0] 	axi_awaddr;
 	reg  	axi_awvalid;
-	reg [C_M_AXI_DATA_WIDTH-1 : 0] 	axi_wdata;
 	reg  	axi_wlast;
 	reg  	axi_wvalid;
 	reg  	axi_bready;
@@ -192,7 +191,7 @@
 	assign M_AXI_AWQOS	= 4'h0;
 	assign M_AXI_AWVALID	= axi_awvalid;
 	//Write Data(W)
-	assign M_AXI_WDATA	= axi_wdata;
+	// assign M_AXI_WDATA	= axi_wdata;
 	//All bursts are complete and aligned in this example
 	assign M_AXI_WSTRB	= {(C_M_AXI_DATA_WIDTH/8){1'b1}};
 	assign M_AXI_WLAST	= axi_wlast;
@@ -372,19 +371,7 @@
 	                                                                                    
 	/* Write Data Generator                                                             
 	 Data pattern is only a simple incrementing count from 0 for each burst  */         
-	  always @(posedge M_AXI_ACLK)                                                      
-	  begin                                                                             
-	    if (M_AXI_ARESETN == 0 || init_w_pulse == 1'b1)                                                         
-	      axi_wdata <= 'b1;                                                             
-	    //else if (wnext && axi_wlast)                                                  
-	    //  axi_wdata <= 'b0;                                                           
-	    else if (wnext)                                                                 
-	      axi_wdata <= axi_wdata + 1;                                                   
-	    else                                                                            
-	      axi_wdata <= axi_wdata;                                                       
-	    end                                                                             
-
-
+                                                                        
 	//----------------------------
 	//Write Response (B) Channel
 	//----------------------------

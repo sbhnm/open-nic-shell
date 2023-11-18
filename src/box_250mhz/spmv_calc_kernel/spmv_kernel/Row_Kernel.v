@@ -35,7 +35,7 @@ module Row_Kernel#(
     output wire             output_valid,
     (*mark_debug = "true"*)
     input  wire             output_ready,
-    output wire [63:0]      output_data,
+    output wire [256-1:0]      output_data,
 
 //colIndex Buffer
     output wire [1-1 : 0] m_axi_colIndex_arid,
@@ -290,7 +290,9 @@ module Row_Kernel#(
     assign output_single_ready = Data_Mux_input_ready;
     assign output_double_ready = Data_Mux_input_ready;
  
-
+    wire Data_Mux_inst_output_ready;
+    wire Data_Mux_inst_output_valid;
+    wire [64-1:0] Data_Mux_inst_output_data;
     Data_Mux Data_Mux_inst(
         .clk(clk),
         .rstn(rstn),
@@ -298,10 +300,32 @@ module Row_Kernel#(
         .input_valid(Data_Mux_input_valid),
         .input_data(Data_Mux_input_data),
         .input_ready(Data_Mux_input_ready),
-        .output_valid(output_valid),
-        .output_data(output_data),
-        .output_ready(output_ready)
-    
+        .output_valid(Data_Mux_inst_output_valid),
+        .output_data(Data_Mux_inst_output_data),
+        .output_ready(Data_Mux_inst_output_ready)
     );
+
+    reg [256-1:0] Mux_Data_Buffer;
+    reg [4:0] Data_Index;
+    assign Data_Mux_inst_output_ready = Data_Index != 256 /64;
+    assign output_valid =output_ready &(Data_Index == 256 /64 );
+    assign output_data = Mux_Data_Buffer;
+    always @(posedge clk ) begin
+        if(~rstn)begin
+            Data_Index<=0;
+            Mux_Data_Buffer<=0;
+        end
+        else begin
+            if(Data_Mux_inst_output_ready & Data_Mux_inst_output_valid) begin
+                Mux_Data_Buffer[64 * Data_Index+: 64] <= Data_Mux_inst_output_data;
+                Data_Index<=Data_Index+1;
+            end
+            else if (output_ready & output_valid)begin
+                Mux_Data_Buffer <= 0;
+                Data_Index<=0;
+            end
+        end
+    end
+
     
 endmodule

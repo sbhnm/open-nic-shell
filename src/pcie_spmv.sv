@@ -16,6 +16,10 @@
 //
 // *************************************************************************
 
+
+// axi_demux_r 乒乓化 √
+// 挂载定时器到总线上 √
+// axi yi buffer 
 `include "pcie_spmv_macros.vh"
 `timescale 1ns/1ps
 module pcie_spmv #(

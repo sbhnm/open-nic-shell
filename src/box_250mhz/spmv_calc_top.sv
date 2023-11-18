@@ -128,6 +128,7 @@ module spmv_calc_top #(
     input rstn
 );
     wire [32*3*CONF_NUM_KERNEL-1:0] config_wire;
+    wire [32*3*CONF_NUM_KERNEL-1:0] status_wire;
     
     wire [CONF_NUM_KERNEL*48-1 : 0] axi_Val_araddr;
     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Val_arburst;
@@ -386,6 +387,7 @@ endgenerate
         .s_axil_rready  (s_axil_rready),
 
         .config_wire(config_wire),
+        .status_wire(status_wire),
 
         .aclk(axil_clk),
         .aresetn(rstn)
@@ -397,7 +399,7 @@ endgenerate
             .clk(axis_clk),
             .rstn(rstn && ~(config_wire[32*3 *i + 7]) ),
             .config_wire(config_wire[`getvec(32*3,i)]),
-
+            .status_wire(status_wire[`getvec(32*3,i)]),
             .m_axi_Col_araddr(m_axi_Col_araddr[`getvec(48,i)]),
             .m_axi_Col_arburst(m_axi_Col_arburst[`getvec(2,i)]),
             .m_axi_Col_arlen(m_axi_Col_arlen[`getvec(8,i)]),

@@ -239,7 +239,7 @@ module Row_Top#(
 
     output wire [3-1 : 0] m_axi_Val_arid,
     (*mark_debug = "true"*)
-    output wire [48-1 : 0] m_axi_Val_araddr,
+    output reg [48-1 : 0] m_axi_Val_araddr,
     output wire [7 : 0] m_axi_Val_arlen,
     output wire [2 : 0] m_axi_Val_arsize,
     output wire [1 : 0] m_axi_Val_arburst,
@@ -248,7 +248,7 @@ module Row_Top#(
     output wire [2 : 0] m_axi_Val_arprot,
     output wire [3 : 0] m_axi_Val_arqos,
     (*mark_debug = "true"*)
-    output wire  m_axi_Val_arvalid,
+    output reg  m_axi_Val_arvalid,
     (*mark_debug = "true"*)
     input wire  m_axi_Val_arready,
     input wire [3-1 : 0] m_axi_Val_rid,
@@ -260,7 +260,7 @@ module Row_Top#(
     input wire  m_axi_Val_rvalid,
     //HXZ
     (*mark_debug = "true"*)
-    output wire  m_axi_Val_rready,
+    output reg  m_axi_Val_rready,
     
     output wire [3-1 : 0] m_axi_Yi_awid,
     output wire [48-1 : 0] m_axi_Yi_awaddr,
@@ -275,8 +275,8 @@ module Row_Top#(
     output wire  m_axi_Yi_awvalid,
     (*mark_debug = "true"*)
     input wire  m_axi_Yi_awready,
-    output wire [64-1 : 0] m_axi_Yi_wdata,
-    output wire [64/8-1 : 0] m_axi_Yi_wstrb,
+    output wire [256-1 : 0] m_axi_Yi_wdata,
+    output wire [256/8-1 : 0] m_axi_Yi_wstrb,
     output wire  m_axi_Yi_wlast,
     (*mark_debug = "true"*)
     output wire  m_axi_Yi_wvalid,
@@ -288,10 +288,10 @@ module Row_Top#(
     input wire  m_axi_Yi_bvalid,
     output wire  m_axi_Yi_bready
 );
-    wire [63:0] Row_Kernel_1_output_data;
-    wire [63:0] Row_Kernel_2_output_data;
-    wire [63:0] Row_Kernel_3_output_data;
-    wire [63:0] Row_Kernel_4_output_data;
+    wire [255:0] Row_Kernel_1_output_data;
+    wire [255:0] Row_Kernel_2_output_data;
+    wire [255:0] Row_Kernel_3_output_data;
+    wire [255:0] Row_Kernel_4_output_data;
     
     wire [31:0] Row_Kernel_1_S_AXIS_TIMES_tdata;
     wire [31:0] Row_Kernel_2_S_AXIS_TIMES_tdata;
@@ -637,7 +637,7 @@ module Row_Top#(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==1 & m_axi_NNZ_rvalid),        
-        .rd_en(Row_Kernel_1_S_AXIS_TIMES_tready & Ctrl_State ==2),        
+        .rd_en(Row_Kernel_1_S_AXIS_TIMES_tvalid & Ctrl_State ==2),        
         //HXZ
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
@@ -658,7 +658,7 @@ module Row_Top#(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==2 & m_axi_NNZ_rvalid),        
-        .rd_en(Row_Kernel_2_S_AXIS_TIMES_tready & Ctrl_State ==2),        
+        .rd_en(Row_Kernel_2_S_AXIS_TIMES_tvalid & Ctrl_State ==2),        
         //HXZ
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
@@ -679,7 +679,7 @@ module Row_Top#(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==3 & m_axi_NNZ_rvalid),        
-        .rd_en(Row_Kernel_3_S_AXIS_TIMES_tready & Ctrl_State ==2),        
+        .rd_en( Row_Kernel_3_S_AXIS_TIMES_tvalid  & Ctrl_State ==2 ),        
         //HXZ
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
@@ -700,7 +700,7 @@ module Row_Top#(
         .clk(clk),          
         .rst(~rstn),          
         .wr_en(Fifo_wait_for_data ==4 & m_axi_NNZ_rvalid),        
-        .rd_en(Row_Kernel_4_S_AXIS_TIMES_tready & Ctrl_State ==2),        
+        .rd_en(Row_Kernel_4_S_AXIS_TIMES_tvalid & Ctrl_State ==2),        
         //HXZ
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
@@ -712,6 +712,15 @@ module Row_Top#(
         .full(NNZ_fifo_4_full)     
     );
     wire [3:0] NNZ_Fifo_Ready;
+    (*mark_debug = "true"*)
+    wire NNZ_fifo_1_empty;
+    (*mark_debug = "true"*)
+    wire NNZ_fifo_2_empty;
+    (*mark_debug = "true"*)
+    wire NNZ_fifo_3_empty;
+    (*mark_debug = "true"*)
+    wire NNZ_fifo_4_empty;
+    
     assign NNZ_Fifo_Ready = ((Ctrl_sig_Val ==0)?
                         (
                         NNZ_fifo_1_empty?1:
@@ -776,12 +785,17 @@ module Row_Top#(
     end
     wire [31:0] Wb_ROW_Num_total;
     assign Wb_ROW_Num_total =   Row_Num;
+    wire [16:0] Trans_PerPacket;
+    assign Trans_PerPacket =    Ctrl_sig_Yi == 0? 256/16 :0 |
+                                Ctrl_sig_Yi == 1? 256/32 :0 |
+                                Ctrl_sig_Yi == 2? 256/64 :0 ;
+
     always @(posedge clk ) begin
         if(~rstn)begin
             Wb_ROW_Num<=0;
         end
-        if(m_axi_Yi_awvalid & m_axi_Yi_awready )begin
-             Wb_ROW_Num<=Wb_ROW_Num +1;
+        if(m_axi_Yi_wvalid & m_axi_Yi_wready )begin
+             Wb_ROW_Num<=Wb_ROW_Num + Trans_PerPacket;
         end 
         else if(Ctrl_State == 0 & Calc_Begin) begin
             Wb_ROW_Num <=0;
@@ -804,9 +818,6 @@ module Row_Top#(
             if(Ctrl_State == 1)begin//计算开始，首先填满Fifo
                 if(NNZ_Fifo_Ready==0)begin
                     Ctrl_State <=2;
-
-
-
                 end
                 else begin
                     Ctrl_State<=1;
@@ -861,46 +872,32 @@ module Row_Top#(
         end
 
     end
-    assign Row_Kernel_1_S_AXIS_TIMES_tvalid = Row_Kernel_1_S_AXIS_TIMES_tready;
-    assign Row_Kernel_2_S_AXIS_TIMES_tvalid = Row_Kernel_2_S_AXIS_TIMES_tready;
-    assign Row_Kernel_3_S_AXIS_TIMES_tvalid = Row_Kernel_3_S_AXIS_TIMES_tready;
-    assign Row_Kernel_4_S_AXIS_TIMES_tvalid = Row_Kernel_4_S_AXIS_TIMES_tready;
+    assign Row_Kernel_1_S_AXIS_TIMES_tvalid = Row_Kernel_1_S_AXIS_TIMES_tready & ~NNZ_fifo_1_empty;
+    assign Row_Kernel_2_S_AXIS_TIMES_tvalid = Row_Kernel_2_S_AXIS_TIMES_tready & ~NNZ_fifo_2_empty;
+    assign Row_Kernel_3_S_AXIS_TIMES_tvalid = Row_Kernel_3_S_AXIS_TIMES_tready & ~NNZ_fifo_3_empty;
+    assign Row_Kernel_4_S_AXIS_TIMES_tvalid = Row_Kernel_4_S_AXIS_TIMES_tready & ~NNZ_fifo_4_empty;
     
     // wire m_axi_Val_rready_self;
-    reg Fifo_Val_wr_en_ctrl;
-    wire m_axi_Val_arvalid_self;
 
-    axi_master_r #(
-        .C_M_AXI_DATA_WIDTH(256),
-        .C_M_AXI_TARGET_SLAVE_BASE_ADDR(Val_BASE_ADDR),
-        .C_M_AXI_BURST_LEN(16)
-    ) axi_master_r_Val(
-    .m_axi_init_axi_read(Val_Read_Begin),
-    .m_axi_r_done(),
-    .m_axi_aclk(clk),
-    .m_axi_aresetn(rstn),
-    .m_axi_arid(m_axi_Val_arid),
-    .m_axi_araddr(m_axi_Val_araddr),
-    .m_axi_arlen(m_axi_Val_arlen),
-    .m_axi_arsize(m_axi_Val_arsize),
-    .m_axi_arburst(m_axi_Val_arburst),
-    .m_axi_arlock(m_axi_Val_arlock),
-    .m_axi_arcache(m_axi_Val_arcache),
-    .m_axi_arprot(m_axi_Val_arprot),
-    .m_axi_arqos(m_axi_Val_arqos),
-    .m_axi_arvalid(m_axi_Val_arvalid),
-    .m_axi_arready(m_axi_Val_arready),
-    .m_axi_rid(m_axi_Val_rid),
-    .m_axi_rdata(m_axi_Val_rdata),
-    .m_axi_rresp(m_axi_Val_rresp),
-    .m_axi_rlast(m_axi_Val_rlast),
-    .m_axi_rvalid(m_axi_Val_rvalid),
-    .m_axi_rready(m_axi_Val_rready_self),
+    function integer clogb2 (input integer bit_depth);              
+  	begin                                                           
+    for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
+      bit_depth = bit_depth >> 1;                                 
+    end                                                           
+  	endfunction
 
-    .read_length(NNZ_Num / 16),
-    .read_ctrl(Fifo_Val_wr_en_ctrl),
-    .read_base_addr(0)
-    );
+    assign m_axi_Val_arlen = 16 -1;
+	assign m_axi_Val_arid = 0;
+	assign m_axi_Val_arsize	= clogb2((256/8)-1);
+	assign m_axi_Val_arburst	= 2'b01;
+	assign m_axi_Val_arlock = 1'b0;
+	assign m_axi_Val_arcache	= 4'b0010;
+	assign m_axi_Val_arprot	= 3'h0;
+	assign m_axi_Val_arqos	= 4'h0;
+
+
+
+
     // reg Val_Valid_Pre;
     wire Fifo_Val_needdata;
     wire Fifo_Val_noneeddata;
@@ -912,7 +909,7 @@ module Row_Top#(
         .DATA_IN_WIDTH(256),
         .DATA_OUT_WIDTH(64),
         .DEPTH(32),
-        .MIN_THER(4),
+        .MIN_THER(14),
         .MAX_THER(16)
     ) Fifo_Val(
         .clk(clk),          
@@ -927,42 +924,38 @@ module Row_Top#(
         .noneeddata(Fifo_Val_noneeddata)
     );
 
-    assign m_axi_Val_rready = m_axi_Val_rready_self & ~Fifo_Val_full;
-    // assign m_axi_Val_rready = m_axi_Val_rready_self & (
-    //     (Ctrl_sig_Val ==2) ?Row_Kernel_1_Radix_Converter_Val_input_ready :0 |
-    //     (Ctrl_sig_Val ==1) ?(Row_Kernel_1_Radix_Converter_Val_input_ready & 
-    //                         Row_Kernel_2_Radix_Converter_Val_input_ready):0 |
-    //     (Ctrl_sig_Val ==0) ?(Row_Kernel_1_Radix_Converter_Val_input_ready 
-    //                         & Row_Kernel_2_Radix_Converter_Val_input_ready 
-    //                         & Row_Kernel_3_Radix_Converter_Val_input_ready 
-    //                         & Row_Kernel_4_Radix_Converter_Val_input_ready):0
-    // );
+    // assign m_axi_Val_rready = m_axi_Val_rready_self & ~Fifo_Val_full;
+
     reg [2:0] Val_read_Status = 0;
 
-
-    // assign m_axi_Val_arvalid = m_axi_Val_arvalid_self & Fifo_Val_wr_en_ctrl;
     always @(posedge clk ) begin
         if(~rstn)begin
-            Val_read_Status <=0;
-            Fifo_Val_wr_en_ctrl<=1;
+            m_axi_Val_arvalid<=0;
+            Val_read_Status<=0;
+            m_axi_Val_araddr <= Val_BASE_ADDR;
         end
         else begin
-            if(Val_read_Status==0)begin
-                if(Fifo_Val_noneeddata)begin
-                    Fifo_Val_wr_en_ctrl<=0;
-                    Val_read_Status<= 1;
+            if(Val_read_Status ==0)begin
+                if(~m_axi_Val_arvalid & Fifo_Val_needdata)begin
+                    m_axi_Val_arvalid <=1;
+                    Val_read_Status<=1;
                 end
-
-            end
-            if(Val_read_Status==1)begin
-                if(Fifo_Val_needdata)begin
-                    Fifo_Val_wr_en_ctrl<=1;
-                    Val_read_Status<= 0;
+            end 
+            if(Val_read_Status ==1)begin
+                if(m_axi_Val_arvalid & m_axi_Val_arready)begin
+                    m_axi_Val_arvalid<=0;
+                    m_axi_Val_rready<=1;
+                end
+                if(m_axi_Val_rvalid & m_axi_Val_rready & m_axi_Val_rlast)begin
+                    m_axi_Val_rready<=0;
+                    Val_read_Status<=0;
+                    m_axi_Val_araddr <= m_axi_Val_araddr + 256*16/8;
                 end
             end
         end
-        
     end
+
+
     wire Fifo_Val_rd_ready;
     assign Fifo_Val_rd_ready = (Ctrl_sig_Val ==2) ? Row_Kernel_1_Radix_Converter_Val_input_ready: 0 |
                             (Ctrl_sig_Val ==1) ?    Row_Kernel_1_Radix_Converter_Val_input_ready & 
@@ -1012,13 +1005,15 @@ module Row_Top#(
     
 
     // TODO 针对Yi的输出配置，将所有的Yi输出数据对齐到64bit后再写入fifo，保证写回的利用率。  
-    wire [63:0] Yi_fifo_1_data_out;
-    wire [63:0] Yi_fifo_2_data_out;
-    wire [63:0] Yi_fifo_3_data_out;
-    wire [63:0] Yi_fifo_4_data_out;
+    wire [255:0] Yi_fifo_1_data_out;
+    wire [255:0] Yi_fifo_2_data_out;
+    wire [255:0] Yi_fifo_3_data_out;
+    wire [255:0] Yi_fifo_4_data_out;
 
     Fifo #(
-        .DATA_WIDTH(64)
+        .DATA_WIDTH(256),
+        .DEPTH(16),
+        .MIN_THER(8)
     ) Yi_fifo_1(
         .clk(clk),          
         .rst(~rstn),          
@@ -1026,13 +1021,16 @@ module Row_Top#(
         .rd_en(Yi_fifo_1_rd_en),        
         .data_in(Row_Kernel_1_output_data),   
         .data_out(Yi_fifo_1_data_out),  
-        .empty(Yi_fifo_1_empty),   
-        .full(Yi_fifo_1_full)     
+        .empty(),   
+        .full(Yi_fifo_1_full),
+        .needdata(Yi_fifo_1_empty)   
     );
 
 
     Fifo #(
-        .DATA_WIDTH(64)
+        .DATA_WIDTH(256),
+        .DEPTH(16),
+        .MIN_THER(8)
     ) Yi_fifo_2(
         .clk(clk),          
         .rst(~rstn),          
@@ -1040,13 +1038,16 @@ module Row_Top#(
         .rd_en(Yi_fifo_2_rd_en),        
         .data_in(Row_Kernel_2_output_data),   
         .data_out(Yi_fifo_2_data_out),  
-        .empty(Yi_fifo_2_empty),   
-        .full(Yi_fifo_2_full)     
+        .empty(),   
+        .full(Yi_fifo_2_full),
+        .needdata(Yi_fifo_2_empty)     
     );
 
 
     Fifo #(
-        .DATA_WIDTH(64)
+        .DATA_WIDTH(256),
+        .DEPTH(16),
+        .MIN_THER(8)
     ) Yi_fifo_3(
         .clk(clk),          
         .rst(~rstn),          
@@ -1054,13 +1055,16 @@ module Row_Top#(
         .rd_en(Yi_fifo_3_rd_en),        
         .data_in(Row_Kernel_3_output_data),   
         .data_out(Yi_fifo_3_data_out),  
-        .empty(Yi_fifo_3_empty),   
-        .full(Yi_fifo_3_full)     
+        .empty(),   
+        .full(Yi_fifo_3_full),
+        .needdata(Yi_fifo_3_empty)
     );
 
 
     Fifo #(
-        .DATA_WIDTH(64)
+        .DATA_WIDTH(256),
+        .DEPTH(16),
+        .MAX_THER(8)
     ) Yi_fifo_4(
         .clk(clk),          
         .rst(~rstn),          
@@ -1068,21 +1072,22 @@ module Row_Top#(
         .rd_en(Yi_fifo_4_rd_en),        
         .data_in(Row_Kernel_4_output_data),   
         .data_out(Yi_fifo_4_data_out),  
-        .empty(Yi_fifo_4_empty),   
-        .full(Yi_fifo_4_full)     
+        .empty(),   
+        .full(Yi_fifo_4_full),
+        .needdata(Yi_fifo_4_empty)     
     );
 
 
-    wire [63:0] Yi_Data;
-    reg  [63:0] Yi_Data_Tx;
+    wire [255:0] Yi_Data;
+    reg  [255:0] Yi_Data_Tx;
     reg [47:0] write_addr = 48'hffffffffffff;
-    axi_master_w_single #(
+    axi_master_w #(
         .C_M_AXI_TARGET_SLAVE_BASE_ADDR(Yi_Base_ADDR),
-        .C_M_AXI_DATA_WIDTH(64)
+        .C_M_AXI_DATA_WIDTH(256),
+        .C_M_AXI_BURST_LEN(8)
     )
-    axi_master_w_single_Yi(
+    axi_master_w_Yi(
         .m_axi_init_axi_write(axi_master_w_single_Yi_m_axi_init_axi_write),
-        .write_data(Yi_Data_Tx),
         .m_axi_w_done(m_axi_w_done),
         .m_axi_aclk(clk),
         .m_axi_aresetn(rstn),
@@ -1098,7 +1103,7 @@ module Row_Top#(
         .m_axi_awqos(m_axi_Yi_awqos),
         .m_axi_awvalid(m_axi_Yi_awvalid),
         .m_axi_awready(m_axi_Yi_awready),
-        .m_axi_wdata(m_axi_Yi_wdata),
+        // .m_axi_wdata(m_axi_Yi_wdata),
         .m_axi_wstrb(m_axi_Yi_wstrb),
         .m_axi_wlast(m_axi_Yi_wlast),
         .m_axi_wvalid(m_axi_Yi_wvalid),
@@ -1108,7 +1113,7 @@ module Row_Top#(
         .m_axi_bvalid(m_axi_Yi_bvalid),
         .m_axi_bready(m_axi_Yi_bready),
 
-        // .write_length(1),
+        .write_length(1),
 
         .write_base_addr(write_addr)
     );
@@ -1125,7 +1130,6 @@ module Row_Top#(
     
     (*mark_debug = "true"*)
     wire [2:0] Yi_Fifo_ready;
-
     assign Yi_Fifo_ready = 
                             Yi_fifo_1_full?1:
                             Yi_fifo_2_full?2:
@@ -1137,13 +1141,14 @@ module Row_Top#(
                             ~Yi_fifo_3_empty?3:
                             ~Yi_fifo_4_empty?4:
                             0;
-
-    assign Yi_Data =    
-                        (Yi_Fifo_ready == 1) ? Yi_fifo_1_data_out : 64'h0|
-                        (Yi_Fifo_ready == 2) ? Yi_fifo_2_data_out : 64'h0|
-                        (Yi_Fifo_ready == 3) ? Yi_fifo_3_data_out : 64'h0|
-                        (Yi_Fifo_ready == 4) ? Yi_fifo_4_data_out : 64'h0;
     reg [2:0] Yi_Fifo_Wb;
+    assign m_axi_Yi_wdata = Yi_Data;
+    assign Yi_Data =    
+                        (Yi_Fifo_Wb == 1) ? Yi_fifo_1_data_out : 64'h0|
+                        (Yi_Fifo_Wb == 2) ? Yi_fifo_2_data_out : 64'h0|
+                        (Yi_Fifo_Wb == 3) ? Yi_fifo_3_data_out : 64'h0|
+                        (Yi_Fifo_Wb == 4) ? Yi_fifo_4_data_out : 64'h0;
+    
     assign Yi_fifo_1_rd_en = Yi_Fifo_Wb == 1 & m_axi_Yi_wvalid & m_axi_Yi_wready;
     assign Yi_fifo_2_rd_en = Yi_Fifo_Wb == 2 & m_axi_Yi_wvalid & m_axi_Yi_wready;
     assign Yi_fifo_3_rd_en = Yi_Fifo_Wb == 3 & m_axi_Yi_wvalid & m_axi_Yi_wready;
@@ -1186,7 +1191,7 @@ module Row_Top#(
                 if(Yi_Fifo_ready!=0)begin
                     write_state<=1;
                     write_addr <= write_addr_demux[Yi_Fifo_ready -1];
-                    write_addr_demux[Yi_Fifo_ready -1]<=write_addr_demux[Yi_Fifo_ready -1]+8;
+                    write_addr_demux[Yi_Fifo_ready -1]<=write_addr_demux[Yi_Fifo_ready -1]+256/8 * 8;
                     Yi_Data_Tx<=Yi_Data;
                     Yi_Fifo_Wb <= Yi_Fifo_ready;
                 end

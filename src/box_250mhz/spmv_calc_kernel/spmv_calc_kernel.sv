@@ -99,6 +99,8 @@ module spmv_calc_kernel #(
     input m_axi_Val_bvalid,
 
     input [32*3-1:0] config_wire,
+    output [32*3-1:0] status_wire,
+
 
     input clk,
     input rstn
@@ -273,6 +275,14 @@ module spmv_calc_kernel #(
     wire [3*1-1 : 0] axi_Yi_bready;
 
     assign axi_Xi_Width_arregion = 4'b1111;
+    wire Calc_End;
+    Timer Timer(
+        .clk(clk),
+        .rstn(rstn),
+        .Time_Use(status_wire[63:0]),
+        .begin_sig(config_wire[0]),
+        .end_sig(Calc_End)
+    );
     Row_Top #()Row_Top
     (
         .clk(clk),
@@ -285,7 +295,7 @@ module spmv_calc_kernel #(
         .NNZ_Num(config_wire[`getvec(32,2)]),
 
         .Calc_Begin(config_wire[0]),
-        .Calc_End(),
+        .Calc_End(Calc_End),
 
 
         .m_axi_NNZ_arid(axi_NNZWB_arid[`getvec(2,0)]),
