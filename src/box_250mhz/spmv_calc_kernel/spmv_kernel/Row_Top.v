@@ -275,6 +275,7 @@ module Row_Top#(
     output wire  m_axi_Yi_awvalid,
     (*mark_debug = "true"*)
     input wire  m_axi_Yi_awready,
+    (*mark_debug = "true"*)
     output wire [256-1 : 0] m_axi_Yi_wdata,
     output wire [256/8-1 : 0] m_axi_Yi_wstrb,
     output wire  m_axi_Yi_wlast,
@@ -286,8 +287,10 @@ module Row_Top#(
     input wire [1 : 0] m_axi_Yi_bresp,
     (*mark_debug = "true"*)
     input wire  m_axi_Yi_bvalid,
+    (*mark_debug = "true"*)
     output wire  m_axi_Yi_bready
 );
+
     wire [255:0] Row_Kernel_1_output_data;
     wire [255:0] Row_Kernel_2_output_data;
     wire [255:0] Row_Kernel_3_output_data;
@@ -1064,7 +1067,7 @@ module Row_Top#(
     Fifo #(
         .DATA_WIDTH(256),
         .DEPTH(16),
-        .MAX_THER(8)
+        .MIN_THER(8)
     ) Yi_fifo_4(
         .clk(clk),          
         .rst(~rstn),          

@@ -93,16 +93,23 @@ module axi_demux_r #(
 	
 	//AR请求产生逻辑
 	reg [C_M_AXI_ADDR_WIDTH-1:0] Bak_Buffer_Addr;
+	reg init;
 	always @(posedge clk ) begin
 		if(~rstn)begin
 			Bak_Buffer_Addr<=48'h9877654321;
 			m_axi_arvalid<=0;
+			init<=1;
 		end
 		else if(m_axi_arready & m_axi_arvalid)begin
 				m_axi_arvalid<=0;	
 		end
 		else if(s_axi_arvalid & s_axi_arready)begin
-			if(~BufferValidMap_Bak & ~addr_hit & ~m_axi_arvalid & read_state == 0)begin
+			if(~BufferValidMap_Bak & ~m_axi_arvalid & read_state == 0 & init)begin
+				init<=0;
+				Bak_Buffer_Addr<= s_axi_araddr & ~{32'h0, addr_gap-1};
+				m_axi_arvalid<=1;
+			end
+			else if(~BufferValidMap_Bak & ~addr_hit & ~m_axi_arvalid & read_state == 0)begin
 				Bak_Buffer_Addr<= s_axi_araddr & ~{32'h0, addr_gap-1};
 				m_axi_arvalid<=1;
 			end
