@@ -42,7 +42,7 @@ module clr_ctrl(
     input wire rstn;
     
 
-    (*mark_debug = "true"*)
+    
     reg [32:0] nowtime;
     assign     times_ready = nowtime==0 | nowtime == 33'h1ffffffff;
     assign     clr = (nowtime ==0  &rstn);

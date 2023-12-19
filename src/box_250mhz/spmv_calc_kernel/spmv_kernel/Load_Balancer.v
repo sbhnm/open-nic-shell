@@ -11,7 +11,7 @@ module Load_Balancer #(
 
     input wire [1:0] Config_Port, 
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s00_axi_arid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s00_axi_araddr,
     input wire [7 : 0] s00_axi_arlen,
     input wire [2 : 0] s00_axi_arsize,
@@ -20,22 +20,22 @@ module Load_Balancer #(
     input wire [3 : 0] s00_axi_arcache,
     input wire [2 : 0] s00_axi_arprot,
     input wire [3 : 0] s00_axi_arqos,
-    (*mark_debug = "true"*)
+    
     input wire  s00_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     output wire  s00_axi_arready,
     output wire [C_M_AXI_ID_WIDTH-1 : 0] s00_axi_rid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_DATA_WIDTH-1 : 0] s00_axi_rdata,
     output wire [1 : 0] s00_axi_rresp,
     output wire  s00_axi_rlast,
-    (*mark_debug = "true"*)
+    
     output reg  s00_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     input wire  s00_axi_rready,
 
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s01_axi_arid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_ADDR_WIDTH-1 : 0] s01_axi_araddr,
     input wire [7 : 0] s01_axi_arlen,
     input wire [2 : 0] s01_axi_arsize,
@@ -44,18 +44,18 @@ module Load_Balancer #(
     input wire [3 : 0] s01_axi_arcache,
     input wire [2 : 0] s01_axi_arprot,
     input wire [3 : 0] s01_axi_arqos,
-    (*mark_debug = "true"*)
+    
     input wire  s01_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     output wire  s01_axi_arready,
     output wire [C_M_AXI_ID_WIDTH-1 : 0] s01_axi_rid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_DATA_WIDTH-1 : 0] s01_axi_rdata,
     output wire [1 : 0] s01_axi_rresp,
     output wire  s01_axi_rlast,
-    (*mark_debug = "true"*)
+    
     output reg  s01_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     input wire  s01_axi_rready,
     
     input wire [C_M_AXI_ID_WIDTH-1 : 0] s02_axi_arid,
@@ -96,7 +96,7 @@ module Load_Balancer #(
 
 
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m00_axi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m00_axi_araddr,
     output wire [7 : 0] m00_axi_arlen,
     output wire [5 : 0] m00_axi_arsize,
@@ -105,22 +105,22 @@ module Load_Balancer #(
     output wire [3 : 0] m00_axi_arcache,
     output wire [2 : 0] m00_axi_arprot,
     output wire [3 : 0] m00_axi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire  m00_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m00_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m00_axi_rid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m00_axi_rdata,
     input wire [1 : 0] m00_axi_rresp,
     input wire  m00_axi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m00_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m00_axi_rready,
 
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m01_axi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m01_axi_araddr,
     output wire [7 : 0] m01_axi_arlen,
     output wire [5 : 0] m01_axi_arsize,
@@ -129,22 +129,22 @@ module Load_Balancer #(
     output wire [3 : 0] m01_axi_arcache,
     output wire [2 : 0] m01_axi_arprot,
     output wire [3 : 0] m01_axi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire  m01_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m01_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m01_axi_rid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m01_axi_rdata,
     input wire [1 : 0] m01_axi_rresp,
     input wire  m01_axi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m01_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m01_axi_rready,
     
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m02_axi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m02_axi_araddr,
     output wire [7 : 0] m02_axi_arlen,
     output wire [5 : 0] m02_axi_arsize,
@@ -153,22 +153,22 @@ module Load_Balancer #(
     output wire [3 : 0] m02_axi_arcache,
     output wire [2 : 0] m02_axi_arprot,
     output wire [3 : 0] m02_axi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire  m02_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m02_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m02_axi_rid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m02_axi_rdata,
     input wire [1 : 0] m02_axi_rresp,
     input wire  m02_axi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m02_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m02_axi_rready,
     
     output wire [C_M_AXI_ID_WIDTH-1 : 0] m03_axi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [C_M_AXI_ADDR_WIDTH-1 : 0] m03_axi_araddr,
     output wire [7 : 0] m03_axi_arlen,
     output wire [5 : 0] m03_axi_arsize,
@@ -177,18 +177,18 @@ module Load_Balancer #(
     output wire [3 : 0] m03_axi_arcache,
     output wire [2 : 0] m03_axi_arprot,
     output wire [3 : 0] m03_axi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire  m03_axi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m03_axi_arready,
     input wire [C_M_AXI_ID_WIDTH-1 : 0] m03_axi_rid,
-    (*mark_debug = "true"*)
+    
     input wire [C_M_AXI_DATA_WIDTH-1 : 0] m03_axi_rdata,
     input wire [1 : 0] m03_axi_rresp,
     input wire  m03_axi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m03_axi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m03_axi_rready,
 
 
@@ -296,13 +296,13 @@ module Load_Balancer #(
     wire [3+3+C_M_AXI_DATA_WIDTH-1:0] Issue_Uint_3_Fifo_Post_Read_data;
     wire [3+3+C_M_AXI_DATA_WIDTH-1:0] Issue_Uint_4_Fifo_Post_Read_data;
     
-    (*mark_debug = "true"*) 
+     
     reg [2:0] Req_Seq_1;
-    (*mark_debug = "true"*) 
+     
     reg [2:0] Req_Seq_2;
-    (*mark_debug = "true"*) 
+     
     reg [2:0] Req_Seq_3;
-    (*mark_debug = "true"*) 
+     
     reg [2:0] Req_Seq_4;
 
     wire [C_M_AXI_ADDR_WIDTH + 3-1:0] Fifo_AXI_Req_1_data_out;
@@ -408,23 +408,23 @@ module Load_Balancer #(
 
 
 
-    (*mark_debug = "true"*)
+    
     wire [2:0] Req_Fifo_ServeNum;
 
     //Load_Balance
-    (*mark_debug = "true"*)
+    
     reg [31:0] Serve_Req_1_Num;
-    (*mark_debug = "true"*)
+    
     reg [31:0] Serve_Req_2_Num;
-    (*mark_debug = "true"*)
+    
     reg [31:0] Serve_Req_3_Num;
-    (*mark_debug = "true"*)
+    
     reg [31:0] Serve_Req_4_Num;
     
     wire [31:0] min_Req_Seq_Num;
     wire [31:0] min_Req_Seq_Num_1;
     wire [31:0] min_Req_Seq_Num_2;
-    (*mark_debug = "true"*)
+    
     wire [2:0] min_Req_Seq;
     // assign min_Req_Seq_Num_1 = (Serve_Req_1_Num < Serve_Req_2_Num)?(Serve_Req_1_Num):(Serve_Req_2_Num);
     // assign min_Req_Seq_Num_2 = (Serve_Req_3_Num < Serve_Req_4_Num)?(Serve_Req_3_Num):(Serve_Req_4_Num);
@@ -435,16 +435,16 @@ module Load_Balancer #(
     //                             (Config_Port == 1) ? (min_Req_Seq_Num_1) : 0|
     //                             (Config_Port == 0) ? (min_Req_Seq_Num_3) : 0;
 
-    (*mark_debug = "true"*)   
+       
     reg [2:0] Wb_Seq_1;
-    (*mark_debug = "true"*)  
+      
     reg [2:0] Wb_Seq_2;
-    (*mark_debug = "true"*)  
+      
     reg [2:0] Wb_Seq_3;
-    (*mark_debug = "true"*)  
+      
     reg [2:0] Wb_Seq_4;
 
-    (*mark_debug = "true"*)
+    
     wire [2:0] Issue_Available;
     
     assign Issue_Available = 
@@ -459,7 +459,7 @@ module Load_Balancer #(
                             ~Issue_4_BUSY ? 4:
                             0;
     
-    (*mark_debug = "true"*)
+    
     wire Tx_En;
     
     assign Tx_En = Req_Fifo_ServeNum!=0 & Issue_Available!=0;                          
@@ -542,9 +542,9 @@ module Load_Balancer #(
                             );
                             
 
-    (*mark_debug = "true"*)
+    
     wire [C_M_AXI_ADDR_WIDTH-1:0] Tx_ADDR;
-    (*mark_debug = "true"*)
+    
     wire [2:0] Tx_Seq;
     assign Tx_Seq =     Req_Fifo_ServeNum == 1 ? Fifo_AXI_Req_1_data_out[2:0] : 0|
                         Req_Fifo_ServeNum == 2 ? Fifo_AXI_Req_2_data_out[2:0] : 0|
@@ -702,19 +702,19 @@ module Load_Balancer #(
 
     //请求端口的在途序列分配。每发射一个请求后，序列指+1 0->7->0....
     reg [64-1:0] rData_1 [7:0]; 
-    (*mark_debug = "true"*)   
+       
     reg [7:0]    rData_1ValidMap;
 
     reg [64-1:0] rData_2 [7:0];
-    (*mark_debug = "true"*)   
+       
     reg [7:0]    rData_2ValidMap;
     
     reg [64-1:0] rData_3 [7:0];
-    (*mark_debug = "true"*)
+    
     reg [7:0]    rData_3ValidMap;
     
     reg [64-1:0] rData_4 [7:0];
-    (*mark_debug = "true"*)   
+       
     reg [7:0]    rData_4ValidMap;
 
     wire [2:0] Wb_Cold_1;

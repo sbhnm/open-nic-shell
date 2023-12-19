@@ -94,7 +94,8 @@ module Radix_Converter(
 
 
     half2single half2single (
-    .aclk(clk),                                  // input wire aclk
+    .aclk(clk),
+    .aresetn(rstn),                                  // input wire aclk
     .s_axis_a_tvalid(half2single_in_valid),            // input wire s_axis_a_tvalid
     .s_axis_a_tready(half2single_in_ready),            // output wire s_axis_a_tready
     .s_axis_a_tdata(input_data[15:0]),              // input wire [15 : 0] s_axis_a_tdata
@@ -104,7 +105,8 @@ module Radix_Converter(
     );
 
     single2double single2double (
-    .aclk(clk),                                  // input wire aclk
+    .aclk(clk),                                  // input wire aclk\
+    .aresetn(rstn),
     .s_axis_a_tvalid(single2double_in_valid),            // input wire s_axis_a_tvalid
     .s_axis_a_tready(single2double_in_ready),            // output wire s_axis_a_tready
     .s_axis_a_tdata(single2double_in_data),              // input wire [31 : 0] s_axis_a_tdata

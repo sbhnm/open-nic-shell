@@ -200,21 +200,21 @@ module pcie_spmv #(
   wire axi_pcie_hbm_rready;
 
   // QDMA subsystem interfaces to the box running at 250MHz
-  // (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tvalid;
-  // (* MARK_DEBUG="true" *)
+  
   wire [512*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tdata;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [64*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tkeep;
-  (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tlast;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_size;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_src;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_dst;
-  // (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tready;
 
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_c2h_tvalid;
@@ -584,6 +584,32 @@ module pcie_spmv #(
     .axis_aclk                            (axis_aclk)
   );
 
+  wire [1*48-1 : 0] axi_Xi_araddr;
+  wire [1*2-1 : 0] axi_Xi_arburst;
+  wire [1*8-1 : 0] axi_Xi_arlen;
+  wire [1*3-1 : 0] axi_Xi_arsize;
+  wire [1*1-1 : 0]axi_Xi_arvalid;
+  wire [1*48-1 : 0] axi_Xi_awaddr;
+  wire [1*2-1 : 0] axi_Xi_awburst;
+  wire [1*8-1 : 0] axi_Xi_awlen;
+  wire [1*3-1 : 0] axi_Xi_awsize;
+  wire [1*1-1 : 0] axi_Xi_awvalid;
+  wire [1*1-1 : 0] axi_Xi_rready;
+  wire [1*1-1 : 0] axi_Xi_bready;
+  wire [1*64-1 : 0] axi_Xi_wdata;
+  wire [1*1-1 : 0] axi_Xi_wlast;
+  wire [1*8-1 : 0] axi_Xi_wstrb;
+  wire [1*1-1 : 0] axi_Xi_wvalid;
+  wire [1*1-1 : 0] axi_Xi_arready;
+  wire [1*1-1 : 0] axi_Xi_awready;
+  wire [1*64-1 : 0] axi_Xi_rdata;
+  wire [1*1-1 : 0] axi_Xi_rlast;
+  wire [1*2-1 : 0] axi_Xi_rresp;
+  wire [1*1-1 : 0] axi_Xi_rvalid;
+  wire [1*1-1 : 0] axi_Xi_wready;
+  wire [1*2-1 : 0] axi_Xi_bresp;
+  wire [1*1-1 : 0] axi_Xi_bvalid;
+
   spmv_vector_loader spmv_vector_loader(
     
     .s_axi_pcie_awready(axi_pcie_hbm_awready),
@@ -921,7 +947,7 @@ module pcie_spmv #(
     .m_axi_ker_bresp(axi_box_bresp),
     .m_axi_ker_bvalid(axi_box_bvalid),
 
-    .s_axi_Xi_awaddr(axi_Xi_awaddr),      // input wire [47 : 0] s_axi_awaddr
+    .s_axi_Xi_awaddr(axi_Xi_awaddr& 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_awaddr
     .s_axi_Xi_awlen(axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
     .s_axi_Xi_awsize(axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
     .s_axi_Xi_awburst(axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
@@ -935,7 +961,7 @@ module pcie_spmv #(
     .s_axi_Xi_bresp(axi_Xi_bresp),        // output wire [1 : 0] s_axi_bresp
     .s_axi_Xi_bvalid(axi_Xi_bvalid),      // output wire [0 : 0] s_axi_bvalid
     .s_axi_Xi_bready(axi_Xi_bready),      // input wire [0 : 0] s_axi_bready
-    .s_axi_Xi_araddr(axi_Xi_araddr),      // input wire [47 : 0] s_axi_araddr
+    .s_axi_Xi_araddr(axi_Xi_araddr & 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_araddr
     .s_axi_Xi_arlen(axi_Xi_arlen),        // input wire [7 : 0] s_axi_arlen
     .s_axi_Xi_arsize(axi_Xi_arsize),      // input wire [2 : 0] s_axi_arsize
     .s_axi_Xi_arburst(axi_Xi_arburst),    // input wire [1 : 0] s_axi_arburst

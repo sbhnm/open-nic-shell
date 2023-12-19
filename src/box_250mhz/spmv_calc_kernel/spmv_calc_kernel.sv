@@ -6,6 +6,7 @@
 // 端口名 MatWB
 // 这个模块用于描述单个计算核心的硬件结构。
 `include "pcie_spmv_macros.vh"
+`include "system_ifc.vh"
 `timescale 1ns/1ps
 module spmv_calc_kernel #(
 
@@ -144,31 +145,31 @@ module spmv_calc_kernel #(
     wire [4*1-1:0]          axi_demux_Col_rvalid;
     wire [4*1-1:0]          axi_demux_Col_rready;
 
-    wire [4*48-1 : 0] axi_Xi_bram_araddr;
-    wire [4*2-1 : 0] axi_Xi_bram_arburst;
-    wire [4*8-1 : 0] axi_Xi_bram_arlen;
-    wire [4*3-1 : 0] axi_Xi_bram_arsize;
-    wire [4*1-1 : 0]axi_Xi_bram_arvalid;
-    wire [4*48-1 : 0] axi_Xi_bram_awaddr;
-    wire [4*2-1 : 0] axi_Xi_bram_awburst;
-    wire [4*8-1 : 0] axi_Xi_bram_awlen;
-    wire [4*3-1 : 0] axi_Xi_bram_awsize;
-    wire [4*1-1 : 0] axi_Xi_bram_awvalid;
-    wire [4*1-1 : 0] axi_Xi_bram_rready;
-    wire [4*1-1 : 0] axi_Xi_bram_bready;
-    wire [4*64-1 : 0] axi_Xi_bram_wdata;
-    wire [4*1-1 : 0] axi_Xi_bram_wlast;
-    wire [4*8-1 : 0] axi_Xi_bram_wstrb;
-    wire [4*1-1 : 0] axi_Xi_bram_wvalid;
-    wire  [4*1-1 : 0] axi_Xi_bram_arready;
-    wire  [4*1-1 : 0] axi_Xi_bram_awready;
-    wire  [4*64-1 : 0] axi_Xi_bram_rdata;
-    wire  [4*1-1 : 0] axi_Xi_bram_rlast;
-    wire  [4*2-1 : 0] axi_Xi_bram_rresp;
-    wire  [4*1-1 : 0] axi_Xi_bram_rvalid;
-    wire  [4*1-1 : 0] axi_Xi_bram_wready;
-    wire  [4*2-1 : 0] axi_Xi_bram_bresp;
-    wire  [4*1-1 : 0] axi_Xi_bram_bvalid;
+     wire[4*48-1 : 0] axi_Xi_bram_araddr;
+     wire[4*2-1 : 0] axi_Xi_bram_arburst;
+     wire[4*8-1 : 0] axi_Xi_bram_arlen;
+     wire[4*3-1 : 0] axi_Xi_bram_arsize;
+     wire[4*1-1 : 0]axi_Xi_bram_arvalid;
+     wire[4*48-1 : 0] axi_Xi_bram_awaddr;
+     wire[4*2-1 : 0] axi_Xi_bram_awburst;
+     wire[4*8-1 : 0] axi_Xi_bram_awlen;
+     wire[4*3-1 : 0] axi_Xi_bram_awsize;
+     wire[4*1-1 : 0] axi_Xi_bram_awvalid;
+     wire[4*1-1 : 0] axi_Xi_bram_rready;
+     wire[4*1-1 : 0] axi_Xi_bram_bready;
+     wire[4*64-1 : 0] axi_Xi_bram_wdata;
+     wire[4*1-1 : 0] axi_Xi_bram_wlast;
+     wire[4*8-1 : 0] axi_Xi_bram_wstrb;
+     wire[4*1-1 : 0] axi_Xi_bram_wvalid;
+     wire [4*1-1 : 0] axi_Xi_bram_arready;
+     wire [4*1-1 : 0] axi_Xi_bram_awready;
+     wire [4*64-1 : 0] axi_Xi_bram_rdata;
+     wire [4*1-1 : 0] axi_Xi_bram_rlast;
+     wire [4*2-1 : 0] axi_Xi_bram_rresp;
+     wire [4*1-1 : 0] axi_Xi_bram_rvalid;
+     wire [4*1-1 : 0] axi_Xi_bram_wready;
+     wire [4*2-1 : 0] axi_Xi_bram_bresp;
+     wire [4*1-1 : 0] axi_Xi_bram_bvalid;
 
 
     wire [4*1-1 : 0]        axi_bl_ker_arid;
@@ -229,29 +230,29 @@ module spmv_calc_kernel #(
     wire [8*1-1:0] axi_Switch_rlast;
     wire [8*1-1:0] axi_Switch_rvalid;
     wire [8*1-1:0] axi_Switch_rready;
+    
+    `DEBUG wire[4*48-1:0] axi_Xi_awaddr;
+    `DEBUG wire[4*8-1:0] axi_Xi_awlen;
+    `DEBUG wire[4*1-1:0] axi_Xi_awvalid;
+    `DEBUG wire[4*1-1:0] axi_Xi_awready;
+    `DEBUG wire[4*64-1:0] axi_Xi_wdata;
+    `DEBUG wire[4*8-1:0] axi_Xi_wstrb;
+    `DEBUG wire[4*1-1:0] axi_Xi_wlast;
+    `DEBUG wire[4*1-1:0] axi_Xi_wvalid;
+    `DEBUG wire[4*1-1:0] axi_Xi_wready;
+    `DEBUG wire[4*2-1:0] axi_Xi_bresp;
+    `DEBUG wire[4*1-1:0] axi_Xi_bvalid;
+    `DEBUG wire[4*1-1:0] axi_Xi_bready;
 
-    wire [8*48-1:0] axi_Xi_awaddr;
-    wire [8*8-1:0] axi_Xi_awlen;
-    wire [8*1-1:0] axi_Xi_awvalid;
-    wire [8*1-1:0] axi_Xi_awready;
-    wire [8*64-1:0] axi_Xi_wdata;
-    wire [8*8-1:0] axi_Xi_wstrb;
-    wire [8*1-1:0] axi_Xi_wlast;
-    wire [8*1-1:0] axi_Xi_wvalid;
-    wire [8*1-1:0] axi_Xi_wready;
-    wire [8*1-1:0] axi_Xi_bresp;
-    wire [8*1-1:0] axi_Xi_bvalid;
-    wire [8*1-1:0] axi_Xi_bready;
-
-    wire [8*48-1:0] axi_Xi_araddr;
-    wire [8*8-1:0] axi_Xi_arlen;
-    wire [8*1-1:0] axi_Xi_arvalid;
-    wire [8*1-1:0] axi_Xi_arready;
-    wire [8*64-1:0] axi_Xi_rdata;
-    wire [8*1-1:0] axi_Xi_rresp;
-    wire [8*1-1:0] axi_Xi_rlast;
-    wire [8*1-1:0] axi_Xi_rvalid;
-    wire [8*1-1:0] axi_Xi_rready;
+    `DEBUG wire[4*48-1:0] axi_Xi_araddr;
+    `DEBUG wire[4*8-1:0] axi_Xi_arlen;
+    `DEBUG wire[4*1-1:0] axi_Xi_arvalid;
+    `DEBUG wire[4*1-1:0] axi_Xi_arready;
+    `DEBUG wire[4*64-1:0] axi_Xi_rdata;
+    `DEBUG wire[4*2-1:0] axi_Xi_rresp;
+    `DEBUG wire[4*1-1:0] axi_Xi_rlast;
+    `DEBUG wire[4*1-1:0] axi_Xi_rvalid;
+    `DEBUG wire[4*1-1:0] axi_Xi_rready;
 
     wire [3*2-1 : 0] axi_Yi_awid;
     wire [3*48-1 : 0] axi_Yi_awaddr;
@@ -283,7 +284,14 @@ module spmv_calc_kernel #(
         .begin_sig(config_wire[0]),
         .end_sig(Calc_End)
     );
-    Row_Top #()Row_Top
+    Row_Top #(
+        `ifndef  __synthesis__
+            .COLINDEX_BASE_ADDR_1(0),
+            .COLINDEX_BASE_ADDR_2(0),
+            .COLINDEX_BASE_ADDR_3(0),
+            .COLINDEX_BASE_ADDR_4(0)
+        `endif
+    )Row_Top
     (
         .clk(clk),
         .rstn( rstn),
@@ -580,15 +588,15 @@ module spmv_calc_kernel #(
 
     //改成 写Xi
 
-        assign axi_Switch_araddr[`getvec(48,2*i)] = axi_Xi_bram_araddr[`getvec(48,i)];
-//        assign axi_Switch_arburst[`getvec(2,2*i)] = axi_Xi_bram_arburst[`getvec(2,i)];
+        assign axi_Switch_araddr[`getvec(48,2*i)] = axi_Xi_bram_araddr[`getvec(48,i)]& 48'h0FFF_FFFF;
+    //    assign axi_Switch_arburst[`getvec(2,2*i)] = axi_Xi_bram_arburst[`getvec(2,i)];
         assign axi_Switch_arlen[`getvec(8,2*i)] = axi_Xi_bram_arlen[`getvec(8,i)];
-//        assign axi_Switch_arsize[`getvec(3,2*i)] = axi_Xi_bram_arsize[`getvec(3,i)];
+    //    assign axi_Switch_arsize[`getvec(3,2*i)] = axi_Xi_bram_arsize[`getvec(3,i)];
         assign axi_Switch_arvalid[`getvec(1,2*i)] = axi_Xi_bram_arvalid[`getvec(1,i)];
-        assign axi_Switch_awaddr[`getvec(48,2*i)] = axi_Xi_bram_awaddr[`getvec(48,i)];
-//        assign axi_Switch_awburst[`getvec(2,2*i)] = axi_Xi_bram_awburst[`getvec(2,i)];
+        assign axi_Switch_awaddr[`getvec(48,2*i)] = axi_Xi_bram_awaddr[`getvec(48,i)] & 48'h0FFF_FFFF;
+    //    assign axi_Switch_awburst[`getvec(2,2*i)] = axi_Xi_bram_awburst[`getvec(2,i)];
         assign axi_Switch_awlen[`getvec(8,2*i)] = axi_Xi_bram_awlen[`getvec(8,i)];
-//        assign axi_Switch_awsize[`getvec(3,2*i)] = axi_Xi_bram_awsize[`getvec(3,i)];
+    //    assign axi_Switch_awsize[`getvec(3,2*i)] = axi_Xi_bram_awsize[`getvec(3,i)];
         assign axi_Switch_awvalid[`getvec(1,2*i)] = axi_Xi_bram_awvalid[`getvec(1,i)];
         assign axi_Switch_rready[`getvec(1,2*i)] = axi_Xi_bram_rready[`getvec(1,i)];
         assign axi_Switch_bready[`getvec(1,2*i)] = axi_Xi_bram_bready[`getvec(1,i)];
@@ -817,7 +825,7 @@ module spmv_calc_kernel #(
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
         
-        .s_axi_awaddr(s_axi_Xi_bram_awaddr),      // input wire [47 : 0] s_axi_awaddr
+        .s_axi_awaddr(s_axi_Xi_bram_awaddr & 48'h3FFF_FFFF),      // input wire [47 : 0] s_axi_awaddr
         .s_axi_awlen(s_axi_Xi_bram_awlen),        // input wire [7 : 0] s_axi_awlen
         .s_axi_awsize(s_axi_Xi_bram_awsize),      // input wire [2 : 0] s_axi_awsize
         .s_axi_awburst(s_axi_Xi_bram_awburst),    // input wire [1 : 0] s_axi_awburst
@@ -831,7 +839,7 @@ module spmv_calc_kernel #(
         .s_axi_bresp(s_axi_Xi_bram_bresp),        // output wire [1 : 0] s_axi_bresp
         .s_axi_bvalid(s_axi_Xi_bram_bvalid),      // output wire [0 : 0] s_axi_bvalid
         .s_axi_bready(s_axi_Xi_bram_bready),      // input wire [0 : 0] s_axi_bready
-        .s_axi_araddr(s_axi_Xi_bram_araddr),      // input wire [47 : 0] s_axi_araddr
+        .s_axi_araddr(s_axi_Xi_bram_araddr & 48'h3FFF_FFFF),      // input wire [47 : 0] s_axi_araddr
         .s_axi_arlen(s_axi_Xi_bram_arlen),        // input wire [7 : 0] s_axi_arlen
         .s_axi_arsize(s_axi_Xi_bram_arsize),      // input wire [2 : 0] s_axi_arsize
         .s_axi_arburst(s_axi_Xi_bram_arburst),    // input wire [1 : 0] s_axi_arburst

@@ -65,7 +65,7 @@ module Xi_Reader_s#(
 
 
     output wire [1-1 : 0] m_axi_colIndex_arid;
-    (*mark_debug = "true"*)
+    
     output reg [48-1 : 0] m_axi_colIndex_araddr;
     output wire [7 : 0] m_axi_colIndex_arlen;
     output wire [2 : 0] m_axi_colIndex_arsize;
@@ -74,17 +74,17 @@ module Xi_Reader_s#(
     output wire [3 : 0] m_axi_colIndex_arcache;
     output wire [2 : 0] m_axi_colIndex_arprot;
     output wire [3 : 0] m_axi_colIndex_arqos;
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_colIndex_arvalid;
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_colIndex_arready;
     input wire [1-1 : 0] m_axi_colIndex_rid;
     input wire [32-1 : 0] m_axi_colIndex_rdata;
     input wire [1 : 0] m_axi_colIndex_rresp;
     input wire  m_axi_colIndex_rlast;
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_colIndex_rvalid;
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_colIndex_rready;
     wire  colIndex_rready;
 

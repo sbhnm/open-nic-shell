@@ -32,7 +32,7 @@ module Row_Top#(
 
 
     output wire [3-1 : 0] m_axi_NNZ_arid,
-    (*mark_debug = "true"*)
+    
     output wire [48-1 : 0] m_axi_NNZ_araddr,
     output wire [7 : 0] m_axi_NNZ_arlen,
     output wire [2 : 0] m_axi_NNZ_arsize,
@@ -41,26 +41,26 @@ module Row_Top#(
     output wire [3 : 0] m_axi_NNZ_arcache,
     output wire [2 : 0] m_axi_NNZ_arprot,
     output wire [3 : 0] m_axi_NNZ_arqos,
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_NNZ_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_NNZ_arready,
     input wire [3-1 : 0] m_axi_NNZ_rid,
-    (*mark_debug = "true"*)
+    
     input wire [256-1 : 0] m_axi_NNZ_rdata,
     input wire [1 : 0] m_axi_NNZ_rresp,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_NNZ_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_NNZ_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_NNZ_rready,
 
     
     //colIndex Buffer
     
     output wire [1-1 : 0]   Kernel1_m_axi_colIndex_arid,
-    (*mark_debug = "true"*)
+    
     output wire [48-1 : 0]  Kernel1_m_axi_colIndex_araddr,
     output wire [7 : 0]     Kernel1_m_axi_colIndex_arlen,
     output wire [2 : 0]     Kernel1_m_axi_colIndex_arsize,
@@ -69,23 +69,23 @@ module Row_Top#(
     output wire [3 : 0]     Kernel1_m_axi_colIndex_arcache,
     output wire [2 : 0]     Kernel1_m_axi_colIndex_arprot,
     output wire [3 : 0]     Kernel1_m_axi_colIndex_arqos,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel1_m_axi_colIndex_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_colIndex_arready,
     input wire [1-1 : 0]    Kernel1_m_axi_colIndex_rid,
     input wire [32-1 : 0]   Kernel1_m_axi_colIndex_rdata,
     input wire [1 : 0]      Kernel1_m_axi_colIndex_rresp,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_colIndex_rlast,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_colIndex_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel1_m_axi_colIndex_rready,
 
 //Xi Buffer
     output wire [1-1 : 0]   Kernel1_m_axi_Xi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [48-1 : 0]  Kernel1_m_axi_Xi_araddr,
     output wire [7 : 0]     Kernel1_m_axi_Xi_arlen,
     output wire [2 : 0]     Kernel1_m_axi_Xi_arsize,
@@ -94,23 +94,23 @@ module Row_Top#(
     output wire [3 : 0]     Kernel1_m_axi_Xi_arcache,
     output wire [2 : 0]     Kernel1_m_axi_Xi_arprot,
     output wire [3 : 0]     Kernel1_m_axi_Xi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel1_m_axi_Xi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_Xi_arready,
     input wire [1-1 : 0]    Kernel1_m_axi_Xi_rid,
     input  wire [64-1 : 0]  Kernel1_m_axi_Xi_rdata,
     input wire [1 : 0]      Kernel1_m_axi_Xi_rresp,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_Xi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel1_m_axi_Xi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel1_m_axi_Xi_rready,
 
    //colIndex Buffer
     output wire [1-1 : 0]   Kernel2_m_axi_colIndex_arid,
-    (*mark_debug = "true"*)
+    
     output wire [48-1 : 0]  Kernel2_m_axi_colIndex_araddr,
     output wire [7 : 0]     Kernel2_m_axi_colIndex_arlen,
     output wire [2 : 0]     Kernel2_m_axi_colIndex_arsize,
@@ -119,24 +119,24 @@ module Row_Top#(
     output wire [3 : 0]     Kernel2_m_axi_colIndex_arcache,
     output wire [2 : 0]     Kernel2_m_axi_colIndex_arprot,
     output wire [3 : 0]     Kernel2_m_axi_colIndex_arqos,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel2_m_axi_colIndex_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_colIndex_arready,
     input wire [1-1 : 0]    Kernel2_m_axi_colIndex_rid,
-    (*mark_debug = "true"*)
+    
     input wire [32-1 : 0]   Kernel2_m_axi_colIndex_rdata,
     input wire [1 : 0]      Kernel2_m_axi_colIndex_rresp,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_colIndex_rlast,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_colIndex_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel2_m_axi_colIndex_rready,
 
 //Xi Buffer
     output wire [1-1 : 0]   Kernel2_m_axi_Xi_arid,
-    (*mark_debug = "true"*)
+    
     output wire [48-1 : 0]  Kernel2_m_axi_Xi_araddr,
     output wire [7 : 0]     Kernel2_m_axi_Xi_arlen,
     output wire [2 : 0]     Kernel2_m_axi_Xi_arsize,
@@ -145,19 +145,19 @@ module Row_Top#(
     output wire [3 : 0]     Kernel2_m_axi_Xi_arcache,
     output wire [2 : 0]     Kernel2_m_axi_Xi_arprot,
     output wire [3 : 0]     Kernel2_m_axi_Xi_arqos,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel2_m_axi_Xi_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_Xi_arready,
     input wire [1-1 : 0]    Kernel2_m_axi_Xi_rid,
-    (*mark_debug = "true"*)
+    
     input  wire [64-1 : 0]  Kernel2_m_axi_Xi_rdata,
     input wire [1 : 0]      Kernel2_m_axi_Xi_rresp,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_Xi_rlast,
-    (*mark_debug = "true"*)
+    
     input wire              Kernel2_m_axi_Xi_rvalid,
-    (*mark_debug = "true"*)
+    
     output wire             Kernel2_m_axi_Xi_rready,
 
    //colIndex Buffer
@@ -238,7 +238,7 @@ module Row_Top#(
 
 
     output wire [3-1 : 0] m_axi_Val_arid,
-    (*mark_debug = "true"*)
+    
     output reg [48-1 : 0] m_axi_Val_araddr,
     output wire [7 : 0] m_axi_Val_arlen,
     output wire [2 : 0] m_axi_Val_arsize,
@@ -247,19 +247,19 @@ module Row_Top#(
     output wire [3 : 0] m_axi_Val_arcache,
     output wire [2 : 0] m_axi_Val_arprot,
     output wire [3 : 0] m_axi_Val_arqos,
-    (*mark_debug = "true"*)
+    
     output reg  m_axi_Val_arvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Val_arready,
     input wire [3-1 : 0] m_axi_Val_rid,
     input wire [256-1 : 0] m_axi_Val_rdata,
     input wire [1 : 0] m_axi_Val_rresp,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Val_rlast,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Val_rvalid,
     //HXZ
-    (*mark_debug = "true"*)
+    
     output reg  m_axi_Val_rready,
     
     output wire [3-1 : 0] m_axi_Yi_awid,
@@ -271,23 +271,23 @@ module Row_Top#(
     output wire [3 : 0] m_axi_Yi_awcache,
     output wire [2 : 0] m_axi_Yi_awprot,
     output wire [3 : 0] m_axi_Yi_awqos,
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_Yi_awvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Yi_awready,
-    (*mark_debug = "true"*)
+    
     output wire [256-1 : 0] m_axi_Yi_wdata,
     output wire [256/8-1 : 0] m_axi_Yi_wstrb,
     output wire  m_axi_Yi_wlast,
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_Yi_wvalid,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Yi_wready,
     input wire [3-1 : 0] m_axi_Yi_bid,
     input wire [1 : 0] m_axi_Yi_bresp,
-    (*mark_debug = "true"*)
+    
     input wire  m_axi_Yi_bvalid,
-    (*mark_debug = "true"*)
+    
     output wire  m_axi_Yi_bready
 );
 
@@ -313,9 +313,9 @@ module Row_Top#(
     reg Kernel_Begin_4=0;
 
     reg [3:0] Ctrl_State=0;
-    (*mark_debug = "true"*)
+    
     reg [3:0] Read_NNZ_State=0;
-    (*mark_debug = "true"*)
+    
     reg [31:0] Wb_ROW_Num;
     assign Calc_End = Ctrl_State == 3 & Wb_ROW_Num !=0;
     reg NNZ_Read_Begin =0;
@@ -715,13 +715,13 @@ module Row_Top#(
         .full(NNZ_fifo_4_full)     
     );
     wire [3:0] NNZ_Fifo_Ready;
-    (*mark_debug = "true"*)
+    
     wire NNZ_fifo_1_empty;
-    (*mark_debug = "true"*)
+    
     wire NNZ_fifo_2_empty;
-    (*mark_debug = "true"*)
+    
     wire NNZ_fifo_3_empty;
-    (*mark_debug = "true"*)
+    
     wire NNZ_fifo_4_empty;
     
     assign NNZ_Fifo_Ready = ((Ctrl_sig_Val ==0)?
@@ -1120,7 +1120,7 @@ module Row_Top#(
 
         .write_base_addr(write_addr)
     );
-    (*mark_debug = "true"*)
+    
     reg [47:0] write_addr_demux[3:0];
 
     
@@ -1131,7 +1131,7 @@ module Row_Top#(
     assign axi_master_w_single_Yi_m_axi_init_axi_write = write_begin;
     // assign axi_master_w_single_Yi_write_base_addr = write_addr;
     
-    (*mark_debug = "true"*)
+    
     wire [2:0] Yi_Fifo_ready;
     assign Yi_Fifo_ready = 
                             Yi_fifo_1_full?1:

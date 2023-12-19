@@ -24,37 +24,37 @@ module qdma_subsystem_qdma_wrapper (
   input   [15:0] pcie_rxn,
   output  [15:0] pcie_txp,
   output  [15:0] pcie_txn,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_awvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_awaddr,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_awready,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_wvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_wdata,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_wready,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_bvalid,
-  //(* MARK_DEBUG="true" *)
+  
   input    [1:0] m_axil_bresp,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_bready,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_arvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_araddr,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_arready,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_rvalid,
-  //(* MARK_DEBUG="true" *)
+  
   input   [31:0] m_axil_rdata,
-  //(* MARK_DEBUG="true" *)
+  
   input    [1:0] m_axil_rresp,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_rready,
 
   input m_axi_awready,
@@ -97,27 +97,27 @@ module qdma_subsystem_qdma_wrapper (
   output m_axi_rready,
 
   
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output [511:0] m_axis_h2c_tdata,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axis_h2c_tcrc,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tlast,
-  //(* MARK_DEBUG="true" *)
+  
   output  [10:0] m_axis_h2c_tuser_qid,
-  //(* MARK_DEBUG="true" *)
+  
   output   [2:0] m_axis_h2c_tuser_port_id,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tuser_err,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axis_h2c_tuser_mdata,
-  //(* MARK_DEBUG="true" *)
+  
   output   [5:0] m_axis_h2c_tuser_mty,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tuser_zero_byte,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axis_h2c_tready,
 
   input          s_axis_c2h_tvalid,

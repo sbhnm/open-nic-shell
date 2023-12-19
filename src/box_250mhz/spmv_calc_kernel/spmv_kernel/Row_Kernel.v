@@ -16,24 +16,24 @@ module Row_Kernel#(
     input wire [31:0] Read_Length,
 
 //Row NNZ
-(*mark_debug = "true"*)
+
     input wire [32-1:0] S_AXIS_TIMES_tdata,
-(*mark_debug = "true"*)
+
     output wire S_AXIS_TIMES_tready,
-(*mark_debug = "true"*)
+
     input wire S_AXIS_TIMES_tvalid,
 
 //ValueBus
-    (*mark_debug = "true"*)
+    
     input Radix_Converter_Val_input_valid,
-    (*mark_debug = "true"*)
+    
     output Radix_Converter_Val_input_ready,
-    (*mark_debug = "true"*)
+    
     input [64-1:0] Radix_Converter_Val_input_data,
 
-    (*mark_debug = "true"*)
+    
     output wire             output_valid,
-    (*mark_debug = "true"*)
+    
     input  wire             output_ready,
     output wire [256-1:0]      output_data,
 
@@ -92,23 +92,23 @@ module Row_Kernel#(
     wire             output_half_ready;
     wire [63:0]      output_half_data;
 
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_Xi_output_valid;
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_Xi_output_ready;
-    (*mark_debug = "true"*)
+    
     wire [63:0] Radix_Converter_Xi_output_data;
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_Val_output_valid;
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_Val_output_ready;
-    (*mark_debug = "true"*)
+    
     wire [63:0] Radix_Converter_Val_output_data;
-    (*mark_debug = "true"*)
+    
     wire [63:0] Radix_Converter_INV_Yi_input_data;
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_INV_Yi_input_ready;
-    (*mark_debug = "true"*)
+    
     wire Radix_Converter_INV_Yi_input_valid;
 
     wire [63:0] Fifo_Xi_data_out;
@@ -118,12 +118,18 @@ module Row_Kernel#(
         .M_AXIS_OUT_tdata(Radix_Converter_INV_Yi_input_data),
         .M_AXIS_OUT_tready(Radix_Converter_INV_Yi_input_ready),
         .M_AXIS_OUT_tvalid(Radix_Converter_INV_Yi_input_valid),
-
+        `ifdef __synthesis__
         .S_AXIS_A_tdata(Radix_Converter_Xi_output_data),
+        `else
+        .S_AXIS_A_tdata(0),
+        `endif
         .S_AXIS_A_tready(Radix_Converter_Xi_output_ready),
         .S_AXIS_A_tvalid(Radix_Converter_Xi_output_valid & Radix_Converter_Xi_output_ready),
-
+        `ifdef __synthesis__
         .S_AXIS_B_tdata(Radix_Converter_Val_output_data),
+        `else
+        .S_AXIS_B_tdata(0),
+        `endif
         .S_AXIS_B_tready(Radix_Converter_Val_output_ready),
         .S_AXIS_B_tvalid(Radix_Converter_Val_output_valid & Radix_Converter_Val_output_ready),
 
@@ -140,17 +146,21 @@ module Row_Kernel#(
         .Ctrl_sig(Ctrl_sig_Val),
         .input_valid(Radix_Converter_Val_input_valid),
         .input_ready(Radix_Converter_Val_input_ready),
+        `ifdef __synthesis__
         .input_data(Radix_Converter_Val_input_data),
+        `else
+        .input_data(0),
+        `endif
         .output_valid(Radix_Converter_Val_output_valid),
         .output_ready(Radix_Converter_Val_output_ready),
         // .output_ready(1),
         .output_data(Radix_Converter_Val_output_data)
     );
-    (*mark_debug = "true"*)
+    
     wire Xi_valid;
-    (*mark_debug = "true"*)
+    
     wire Xi_ready;
-    (*mark_debug = "true"*)
+    
     wire [63:0] Xi_data;
     Radix_Converter Radix_Converter_Xi(
         .clk(clk),

@@ -4,17 +4,17 @@
 module spmv_calc_top #(
     parameter int CONF_NUM_KERNEL = 32'h4
 ) (
-    (*mark_debug = "true"*)
+    
     input                          s_axil_awvalid,
-    (*mark_debug = "true"*)
+    
     input                   [31:0] s_axil_awaddr,
-    (*mark_debug = "true"*)
+    
     output                         s_axil_awready,
-    (*mark_debug = "true"*)
+    
     input                          s_axil_wvalid,
-    (*mark_debug = "true"*)
+    
     input                   [31:0] s_axil_wdata,
-    (*mark_debug = "true"*)
+    
     output                         s_axil_wready,
 
     output                         s_axil_bvalid,
@@ -54,69 +54,69 @@ module spmv_calc_top #(
     input [CONF_NUM_KERNEL*2-1 : 0] m_axi_Col_bresp,
     input [CONF_NUM_KERNEL*1-1 : 0] m_axi_Col_bvalid,
 
-    input [1*48-1 : 0] s_axi_Xi_araddr,
-    input [1*2-1 : 0] s_axi_Xi_arburst,
-    input [1*8-1 : 0] s_axi_Xi_arlen,
-    input [1*3-1 : 0] s_axi_Xi_arsize,
-    input [1*1-1 : 0]s_axi_Xi_arvalid,
-    input [1*48-1 : 0] s_axi_Xi_awaddr,
-    input [1*2-1 : 0] s_axi_Xi_awburst,
-    input [1*8-1 : 0] s_axi_Xi_awlen,
-    input [1*3-1 : 0] s_axi_Xi_awsize,
-    input [1*1-1 : 0] s_axi_Xi_awvalid,
-    input [1*1-1 : 0] s_axi_Xi_rready,
-    input [1*1-1 : 0] s_axi_Xi_bready,
-    input [1*64-1 : 0] s_axi_Xi_wdata,
-    input [1*1-1 : 0] s_axi_Xi_wlast,
-    input [1*8-1 : 0] s_axi_Xi_wstrb,
-    input [1*1-1 : 0] s_axi_Xi_wvalid,
-    output [1*1-1 : 0] s_axi_Xi_arready,
-    output [1*1-1 : 0] s_axi_Xi_awready,
-    output [1*64-1 : 0] s_axi_Xi_rdata,
-    output [1*1-1 : 0] s_axi_Xi_rlast,
-    output [1*2-1 : 0] s_axi_Xi_rresp,
-    output [1*1-1 : 0] s_axi_Xi_rvalid,
-    output [1*1-1 : 0] s_axi_Xi_wready,
-    output [1*2-1 : 0] s_axi_Xi_bresp,
-    output [1*1-1 : 0] s_axi_Xi_bvalid,
-    input [3:0] s_axi_Xi_awcache,
-    input [2:0] s_axi_Xi_awprot,
-    input [3:0] s_axi_Xi_awqos,
-    input [0:0] s_axi_Xi_awlock,
+     input [1*48-1 : 0] s_axi_Xi_araddr,
+     input [1*2-1 : 0] s_axi_Xi_arburst,
+     input [1*8-1 : 0] s_axi_Xi_arlen,
+     input [1*3-1 : 0] s_axi_Xi_arsize,
+     input [1*1-1 : 0]s_axi_Xi_arvalid,
+     input [1*48-1 : 0] s_axi_Xi_awaddr,
+     input [1*2-1 : 0] s_axi_Xi_awburst,
+     input [1*8-1 : 0] s_axi_Xi_awlen,
+     input [1*3-1 : 0] s_axi_Xi_awsize,
+     input [1*1-1 : 0] s_axi_Xi_awvalid,
+     input [1*1-1 : 0] s_axi_Xi_rready,
+     input [1*1-1 : 0] s_axi_Xi_bready,
+     input [1*64-1 : 0] s_axi_Xi_wdata,
+     input [1*1-1 : 0] s_axi_Xi_wlast,
+     input [1*8-1 : 0] s_axi_Xi_wstrb,
+     input [1*1-1 : 0] s_axi_Xi_wvalid,
+     output [1*1-1 : 0] s_axi_Xi_arready,
+     output [1*1-1 : 0] s_axi_Xi_awready,
+     output [1*64-1 : 0] s_axi_Xi_rdata,
+     output [1*1-1 : 0] s_axi_Xi_rlast,
+     output [1*2-1 : 0] s_axi_Xi_rresp,
+     output [1*1-1 : 0] s_axi_Xi_rvalid,
+     output [1*1-1 : 0] s_axi_Xi_wready,
+     output [1*2-1 : 0] s_axi_Xi_bresp,
+     output [1*1-1 : 0] s_axi_Xi_bvalid,
+     input [3:0] s_axi_Xi_awcache,
+     input [2:0] s_axi_Xi_awprot,
+     input [3:0] s_axi_Xi_awqos,
+     input [0:0] s_axi_Xi_awlock,
     
-    input [3:0] s_axi_Xi_arcache,
-    input [2:0] s_axi_Xi_arprot,
-    input [3:0] s_axi_Xi_arqos,
-    input [0:0] s_axi_Xi_arlock,
+     input [3:0] s_axi_Xi_arcache,
+     input [2:0] s_axi_Xi_arprot,
+     input [3:0] s_axi_Xi_arqos,
+     input [0:0] s_axi_Xi_arlock,
     
 
 
-    (*mark_debug = "true"*)
+    
     output [47 : 0]                 m_axi_hbm_Val_araddr,
     output [1 : 0]                  m_axi_hbm_Val_arburst,
     output [7 : 0]                  m_axi_hbm_Val_arlen,
     output [2 : 0]                  m_axi_hbm_Val_arsize,
-    (*mark_debug = "true"*)
+    
     output                          m_axi_hbm_Val_arvalid,
     output [47 : 0]                 m_axi_hbm_Val_awaddr,
     output [1 : 0]                  m_axi_hbm_Val_awburst,
     output [7 : 0]                  m_axi_hbm_Val_awlen,
     output [2 : 0]                  m_axi_hbm_Val_awsize,
     output                          m_axi_hbm_Val_awvalid,
-    (*mark_debug = "true"*)
+    
     output                          m_axi_hbm_Val_rready,
     output                          m_axi_hbm_Val_bready,
     output [255 : 0]                m_axi_hbm_Val_wdata,
     output                          m_axi_hbm_Val_wlast,
     output [31 : 0]                 m_axi_hbm_Val_wstrb,
     output                          m_axi_hbm_Val_wvalid,
-    (*mark_debug = "true"*)
+    
     input                           m_axi_hbm_Val_arready,
     input                           m_axi_hbm_Val_awready,
     input [255 : 0]                 m_axi_hbm_Val_rdata,
     input                           m_axi_hbm_Val_rlast,
     input [1 : 0]                   m_axi_hbm_Val_rresp,
-    (*mark_debug = "true"*)
+    
     input                           m_axi_hbm_Val_rvalid,
     input                           m_axi_hbm_Val_wready,
     input [1:0]                     m_axi_hbm_Val_bresp,
@@ -157,32 +157,32 @@ module spmv_calc_top #(
     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Val_bvalid;
     //TODO 实例化cross bar，将所有的Val 连接起来
 
-
-    wire [CONF_NUM_KERNEL*48-1 : 0] axi_Xi_bram_araddr;
-    wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_arburst;
-    wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_arlen;
-    wire [CONF_NUM_KERNEL*3-1 : 0] axi_Xi_bram_arsize;
-    wire [CONF_NUM_KERNEL*1-1 : 0]axi_Xi_bram_arvalid;
-    wire [CONF_NUM_KERNEL*48-1 : 0] axi_Xi_bram_awaddr;
-    wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_awburst;
-    wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_awlen;
-    wire [CONF_NUM_KERNEL*3-1 : 0] axi_Xi_bram_awsize;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_awvalid;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rready;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_bready;
-    wire [CONF_NUM_KERNEL*64-1 : 0] axi_Xi_bram_wdata;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wlast;
-    wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_wstrb;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wvalid;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_arready;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_awready;
-    wire [CONF_NUM_KERNEL*64-1 : 0] axi_Xi_bram_rdata;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rlast;
-    wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_rresp;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rvalid;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wready;
-    wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_bresp;
-    wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_bvalid;
+     wire [CONF_NUM_KERNEL*48-1 : 0] axi_Xi_bram_araddr;
+    
+     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_arburst;
+     wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_arlen;
+     wire [CONF_NUM_KERNEL*3-1 : 0] axi_Xi_bram_arsize;
+     wire [CONF_NUM_KERNEL*1-1 : 0]axi_Xi_bram_arvalid;
+     wire [CONF_NUM_KERNEL*48-1 : 0] axi_Xi_bram_awaddr;
+     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_awburst;
+     wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_awlen;
+     wire [CONF_NUM_KERNEL*3-1 : 0] axi_Xi_bram_awsize;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_awvalid;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rready;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_bready;
+     wire [CONF_NUM_KERNEL*64-1 : 0] axi_Xi_bram_wdata;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wlast;
+     wire [CONF_NUM_KERNEL*8-1 : 0] axi_Xi_bram_wstrb;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wvalid;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_arready;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_awready;
+     wire [CONF_NUM_KERNEL*64-1 : 0] axi_Xi_bram_rdata;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rlast;
+     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_rresp;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_rvalid;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_wready;
+     wire [CONF_NUM_KERNEL*2-1 : 0] axi_Xi_bram_bresp;
+     wire [CONF_NUM_KERNEL*1-1 : 0] axi_Xi_bram_bvalid;
 generate
     
     if (CONF_NUM_KERNEL >1)begin
@@ -454,12 +454,12 @@ endgenerate
             .m_axi_Val_bresp(axi_Val_bresp[`getvec(2,i)]),
             .m_axi_Val_bvalid(axi_Val_bvalid[`getvec(1,i)]),
 
-            .s_axi_Xi_bram_araddr(axi_Xi_bram_araddr[`getvec(48,i)]),
+            .s_axi_Xi_bram_araddr(axi_Xi_bram_araddr[`getvec(48,i)] & 48'h3FFF_FFFF ),
             .s_axi_Xi_bram_arburst(axi_Xi_bram_arburst[`getvec(2,i)]),
             .s_axi_Xi_bram_arlen(axi_Xi_bram_arlen[`getvec(8,i)]),
             .s_axi_Xi_bram_arsize(axi_Xi_bram_arsize[`getvec(3,i)]),
             .s_axi_Xi_bram_arvalid(axi_Xi_bram_arvalid[`getvec(1,i)]),
-            .s_axi_Xi_bram_awaddr(axi_Xi_bram_awaddr[`getvec(48,i)]),
+            .s_axi_Xi_bram_awaddr(axi_Xi_bram_awaddr[`getvec(48,i)] & 48'h3FFF_FFFF),
             .s_axi_Xi_bram_awburst(axi_Xi_bram_awburst[`getvec(2,i)]),
             .s_axi_Xi_bram_awlen(axi_Xi_bram_awlen[`getvec(8,i)]),
             .s_axi_Xi_bram_awsize(axi_Xi_bram_awsize[`getvec(3,i)]),
