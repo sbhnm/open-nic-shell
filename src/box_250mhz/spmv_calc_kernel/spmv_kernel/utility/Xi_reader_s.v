@@ -1,3 +1,4 @@
+`include "system_ifc.vh"
 module Xi_Reader_s#(
     parameter  COLINDEX_BASE_ADDR	= 32'h40000000,
     parameter  XVal_BASE_ADDR	= 32'h40000000

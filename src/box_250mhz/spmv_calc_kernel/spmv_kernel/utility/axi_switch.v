@@ -2,6 +2,7 @@
 //为什么不用 crossbar 可能对随机读写造成延迟
 
 `include "pcie_spmv_macros.vh"
+`include "system_ifc.vh"
 `timescale 1ns/1ps
 module axi_switch #(
     parameter  NUM_SLAVE =2,

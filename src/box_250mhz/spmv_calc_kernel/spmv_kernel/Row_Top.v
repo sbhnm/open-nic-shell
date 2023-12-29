@@ -645,7 +645,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
+        .data_in({32'd1,32'd1,32'd1,32'd1,32'd1,32'd1,32'd1,32'd1}),
         `endif 
         .data_out(Row_Kernel_1_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_1_empty),   

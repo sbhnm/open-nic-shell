@@ -21,6 +21,7 @@
 // 挂载定时器到总线上 √
 // axi yi buffer 
 `include "pcie_spmv_macros.vh"
+`include "system_ifc.vh"
 `timescale 1ns/1ps
 module pcie_spmv #(
   parameter [31:0] BUILD_TIMESTAMP = 32'h01010000,
@@ -160,44 +161,44 @@ module pcie_spmv #(
   wire                         axil_box0_rready;
 
   
-  wire axi_pcie_hbm_awready;
-  wire axi_pcie_hbm_wready;
-  wire [3 : 0] axi_pcie_hbm_bid;
-  wire [1 : 0] axi_pcie_hbm_bresp;
-  wire axi_pcie_hbm_bvalid;
-  wire axi_pcie_hbm_arready;
-  wire [3 : 0] axi_pcie_hbm_rid;
-  wire [511 : 0] axi_pcie_hbm_rdata;
-  wire [1 : 0] axi_pcie_hbm_rresp;
-  wire axi_pcie_hbm_rlast;
-  wire axi_pcie_hbm_rvalid;
-  wire [3 : 0] axi_pcie_hbm_awid;
-  wire [63 : 0] axi_pcie_hbm_awaddr;
-  wire [31 : 0] axi_pcie_hbm_awuser;
-  wire [7 : 0] axi_pcie_hbm_awlen;
-  wire [2 : 0] axi_pcie_hbm_awsize;
-  wire [1 : 0] axi_pcie_hbm_awburst;
-  wire [2 : 0] axi_pcie_hbm_awprot;
-  wire axi_pcie_hbm_awvalid;
-  wire axi_pcie_hbm_awlock;
-  wire [3 : 0] axi_pcie_hbm_awcache;
-  wire [511 : 0] axi_pcie_hbm_wdata;
-  wire [63 : 0] axi_pcie_hbm_wuser;
-  wire [63 : 0] axi_pcie_hbm_wstrb;
-  wire axi_pcie_hbm_wlast;
-  wire axi_pcie_hbm_wvalid;
-  wire axi_pcie_hbm_bready;
-  wire [3 : 0] axi_pcie_hbm_arid;
-  wire [63 : 0] axi_pcie_hbm_araddr;
-  wire [31 : 0] axi_pcie_hbm_aruser;
-  wire [7 : 0] axi_pcie_hbm_arlen;
-  wire [2 : 0] axi_pcie_hbm_arsize;
-  wire [1 : 0] axi_pcie_hbm_arburst;
-  wire [2 : 0] axi_pcie_hbm_arprot;
-  wire axi_pcie_hbm_arvalid;
-  wire axi_pcie_hbm_arlock;
-  wire [3 : 0] axi_pcie_hbm_arcache;
-  wire axi_pcie_hbm_rready;
+   wire axi_pcie_hbm_awready;
+   wire axi_pcie_hbm_wready;
+   wire [3 : 0] axi_pcie_hbm_bid;
+   wire [1 : 0] axi_pcie_hbm_bresp;
+   wire axi_pcie_hbm_bvalid;
+   wire axi_pcie_hbm_arready;
+   wire [3 : 0] axi_pcie_hbm_rid;
+   wire [511 : 0] axi_pcie_hbm_rdata;
+   wire [1 : 0] axi_pcie_hbm_rresp;
+   wire axi_pcie_hbm_rlast;
+   wire axi_pcie_hbm_rvalid;
+   wire [3 : 0] axi_pcie_hbm_awid;
+   wire [63 : 0] axi_pcie_hbm_awaddr;
+   wire [31 : 0] axi_pcie_hbm_awuser;
+   wire [7 : 0] axi_pcie_hbm_awlen;
+   wire [2 : 0] axi_pcie_hbm_awsize;
+   wire [1 : 0] axi_pcie_hbm_awburst;
+   wire [2 : 0] axi_pcie_hbm_awprot;
+   wire axi_pcie_hbm_awvalid;
+   wire axi_pcie_hbm_awlock;
+   wire [3 : 0] axi_pcie_hbm_awcache;
+   wire [511 : 0] axi_pcie_hbm_wdata;
+   wire [63 : 0] axi_pcie_hbm_wuser;
+   wire [63 : 0] axi_pcie_hbm_wstrb;
+   wire axi_pcie_hbm_wlast;
+   wire axi_pcie_hbm_wvalid;
+   wire axi_pcie_hbm_bready;
+   wire [3 : 0] axi_pcie_hbm_arid;
+   wire [63 : 0] axi_pcie_hbm_araddr;
+   wire [31 : 0] axi_pcie_hbm_aruser;
+   wire [7 : 0] axi_pcie_hbm_arlen;
+   wire [2 : 0] axi_pcie_hbm_arsize;
+   wire [1 : 0] axi_pcie_hbm_arburst;
+   wire [2 : 0] axi_pcie_hbm_arprot;
+   wire axi_pcie_hbm_arvalid;
+   wire axi_pcie_hbm_arlock;
+   wire [3 : 0] axi_pcie_hbm_arcache;
+   wire axi_pcie_hbm_rready;
 
   // QDMA subsystem interfaces to the box running at 250MHz
   
