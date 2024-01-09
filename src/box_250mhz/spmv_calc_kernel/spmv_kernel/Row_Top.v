@@ -15,7 +15,11 @@ module Row_Top#(
 
     parameter Read_NNZ_ADDR_BASE = 48'h60000000,
 
-    parameter Yi_Base_ADDR = 48'h50000000
+    parameter Read_NNZ_ADDR_GAP = 48'h1000000,
+
+    parameter Yi_Base_ADDR = 48'h50000000,
+
+    parameter Yi_Base_ADDR_GAP = 48'h1000000 
 )
 (
     input wire clk,
@@ -856,7 +860,7 @@ module Row_Top#(
             if(Read_NNZ_State ==0)begin
                 if(NNZ_Fifo_Ready !=0)begin
                     Fifo_wait_for_data<=NNZ_Fifo_Ready;
-                    Read_NNZ_ADDR <= 48'h1000000 * (NNZ_Fifo_Ready -1)+ NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] + Read_NNZ_ADDR_BASE;
+                    Read_NNZ_ADDR <= Read_NNZ_ADDR_GAP * (NNZ_Fifo_Ready -1)+ NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] + Read_NNZ_ADDR_BASE;
 
                     NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] <= NNZ_ADDR_DEMUX[NNZ_Fifo_Ready -1] +32;
                     
@@ -1183,10 +1187,10 @@ module Row_Top#(
         if(~rstn)begin
             write_state <=0;
             write_addr <= 32'hffffffff;
-            write_addr_demux[0]<=0;
-            write_addr_demux[1]<=47'h1000000;
-            write_addr_demux[2]<=47'h2000000;
-            write_addr_demux[3]<=47'h3000000;
+            write_addr_demux[0]<=0 * Yi_Base_ADDR_GAP;
+            write_addr_demux[1]<=1 * Yi_Base_ADDR_GAP;
+            write_addr_demux[2]<=2 * Yi_Base_ADDR_GAP;
+            write_addr_demux[3]<=3 * Yi_Base_ADDR_GAP;
 
         end
         else begin

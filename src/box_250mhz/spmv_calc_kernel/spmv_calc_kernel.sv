@@ -9,7 +9,23 @@
 `include "system_ifc.vh"
 `timescale 1ns/1ps
 module spmv_calc_kernel #(
+        parameter  COLINDEX_BASE_ADDR_1	= 48'h10000000,
 
+        parameter  COLINDEX_BASE_ADDR_2	= 48'h20000000,
+
+        parameter  COLINDEX_BASE_ADDR_3	= 48'h30000000,
+
+        parameter  COLINDEX_BASE_ADDR_4	= 48'h40000000,
+
+        parameter  Val_BASE_ADDR	= 48'h70000000,
+
+        parameter Read_NNZ_ADDR_BASE = 48'h60000000,
+
+        parameter Read_NNZ_ADDR_GAP = 48'h1000000,
+
+        parameter Yi_Base_ADDR = 48'h50000000,
+
+        parameter Yi_Base_ADDR_GAP = 48'h1000000 
 ) (
     output [1*48-1 : 0] m_axi_Col_araddr,
     output [1*2-1 : 0] m_axi_Col_arburst,
@@ -285,12 +301,16 @@ module spmv_calc_kernel #(
         .end_sig(Calc_End)
     );
     Row_Top #(
-        `ifndef  __synthesis__
-            .COLINDEX_BASE_ADDR_1(0),
-            .COLINDEX_BASE_ADDR_2(0),
-            .COLINDEX_BASE_ADDR_3(0),
-            .COLINDEX_BASE_ADDR_4(0)
-        `endif
+        .COLINDEX_BASE_ADDR_1(COLINDEX_BASE_ADDR_1),
+        .COLINDEX_BASE_ADDR_2(COLINDEX_BASE_ADDR_2),
+        .COLINDEX_BASE_ADDR_3(COLINDEX_BASE_ADDR_3),
+        .COLINDEX_BASE_ADDR_4(COLINDEX_BASE_ADDR_4),
+
+        .Val_BASE_ADDR(Val_BASE_ADDR),
+        .Read_NNZ_ADDR_BASE(Read_NNZ_ADDR_BASE),
+        .Read_NNZ_ADDR_GAP(Read_NNZ_ADDR_GAP),
+        .Yi_Base_ADDR(Yi_Base_ADDR),
+        .Yi_Base_ADDR_GAP(Yi_Base_ADDR_GAP)
     )Row_Top
     (
         .clk(clk),

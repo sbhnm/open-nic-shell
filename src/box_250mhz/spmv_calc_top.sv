@@ -394,7 +394,18 @@ endgenerate
     );
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
         spmv_calc_kernel #(
+            .COLINDEX_BASE_ADDR_1(CONF_NUM_KERNEL * 48'h10000000 + 48'h02000000),
+            .COLINDEX_BASE_ADDR_2(CONF_NUM_KERNEL * 48'h10000000 + 48'h03000000),
+            .COLINDEX_BASE_ADDR_3(CONF_NUM_KERNEL * 48'h10000000 + 48'h04000000),
+            .COLINDEX_BASE_ADDR_4(CONF_NUM_KERNEL * 48'h10000000 + 48'h05000000),
 
+            .Read_NNZ_ADDR_BASE(CONF_NUM_KERNEL * 48'h10000000 + 0),
+            .Read_NNZ_ADDR_GAP(48'h01000000 / 4),
+            .Yi_Base_ADDR(CONF_NUM_KERNEL * 48'h10000000 + 48'h01000000),
+            .Yi_Base_ADDR_GAP(48'h01000000 / 4),
+
+            .Val_BASE_ADDR(CONF_NUM_KERNEL * 48'h10000000 + 48'h06000000)
+            
         )spmv_calc_kernel (
             .clk(axis_clk),
             .rstn(rstn && ~(config_wire[32*3 *i + 7]) ),
