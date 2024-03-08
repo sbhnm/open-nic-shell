@@ -3,9 +3,9 @@ module Issue_Uint #(
 ) (
     input wire  clk,
     input wire  rstn,
-    (*mark_debug = "true"*)   
+       
     input  wire m_axi_arvalid,
-    (*mark_debug = "true"*)   
+       
     input wire m_axi_arready,
     input  wire m_axi_rvalid,
     input wire m_axi_rready,
@@ -21,7 +21,7 @@ module Issue_Uint #(
     input wire [2:0] Req_Seq
 );
     reg [1:0] Issue_cold;
-    (*mark_debug = "true"*)    
+        
     reg [1:0] AR_CNT;
 
     assign Issue_IDLE = AR_CNT==0 & Issue_cold == 0 & m_axi_arready;
@@ -54,7 +54,7 @@ module Issue_Uint #(
             AR_CNT<=AR_CNT +1;
         end
     end
-    (*mark_debug = "true"*) 
+     
     wire [5:0] Fifo_AXI_Issue_data_out;
     Fifo #(
         .DATA_WIDTH(3+3)

@@ -170,7 +170,7 @@ axi_master_r_single #(
     reg Read_Xi_Begin=0;
     reg [31:0] Read_Xi_ADDR=0;
     reg Xi_rstn=1;
-    (*mark_debug = "true"*)    
+        
     reg [31:0] Xi_Cnt;
     assign m_axi_colIndex_rready = colIndex_rready;
 

@@ -16,7 +16,12 @@
 //
 // *************************************************************************
 
+
+// axi_demux_r 乒乓化 √
+// 挂载定时器到总线上 √
+// axi yi buffer 
 `include "pcie_spmv_macros.vh"
+`include "system_ifc.vh"
 `timescale 1ns/1ps
 module pcie_spmv #(
   parameter [31:0] BUILD_TIMESTAMP = 32'h01010000,
@@ -155,62 +160,62 @@ module pcie_spmv #(
   wire                   [1:0] axil_box0_rresp;
   wire                         axil_box0_rready;
 
-
-  wire axi_pcie_hbm_awready;
-  wire axi_pcie_hbm_wready;
-  wire [3 : 0] axi_pcie_hbm_bid;
-  wire [1 : 0] axi_pcie_hbm_bresp;
-  wire axi_pcie_hbm_bvalid;
-  wire axi_pcie_hbm_arready;
-  wire [3 : 0] axi_pcie_hbm_rid;
-  wire [511 : 0] axi_pcie_hbm_rdata;
-  wire [1 : 0] axi_pcie_hbm_rresp;
-  wire axi_pcie_hbm_rlast;
-  wire axi_pcie_hbm_rvalid;
-  wire [3 : 0] axi_pcie_hbm_awid;
-  wire [63 : 0] axi_pcie_hbm_awaddr;
-  wire [31 : 0] axi_pcie_hbm_awuser;
-  wire [7 : 0] axi_pcie_hbm_awlen;
-  wire [2 : 0] axi_pcie_hbm_awsize;
-  wire [1 : 0] axi_pcie_hbm_awburst;
-  wire [2 : 0] axi_pcie_hbm_awprot;
-  wire axi_pcie_hbm_awvalid;
-  wire axi_pcie_hbm_awlock;
-  wire [3 : 0] axi_pcie_hbm_awcache;
-  wire [511 : 0] axi_pcie_hbm_wdata;
-  wire [63 : 0] axi_pcie_hbm_wuser;
-  wire [63 : 0] axi_pcie_hbm_wstrb;
-  wire axi_pcie_hbm_wlast;
-  wire axi_pcie_hbm_wvalid;
-  wire axi_pcie_hbm_bready;
-  wire [3 : 0] axi_pcie_hbm_arid;
-  wire [63 : 0] axi_pcie_hbm_araddr;
-  wire [31 : 0] axi_pcie_hbm_aruser;
-  wire [7 : 0] axi_pcie_hbm_arlen;
-  wire [2 : 0] axi_pcie_hbm_arsize;
-  wire [1 : 0] axi_pcie_hbm_arburst;
-  wire [2 : 0] axi_pcie_hbm_arprot;
-  wire axi_pcie_hbm_arvalid;
-  wire axi_pcie_hbm_arlock;
-  wire [3 : 0] axi_pcie_hbm_arcache;
-  wire axi_pcie_hbm_rready;
+  
+   wire axi_pcie_hbm_awready;
+   wire axi_pcie_hbm_wready;
+   wire [3 : 0] axi_pcie_hbm_bid;
+   wire [1 : 0] axi_pcie_hbm_bresp;
+   wire axi_pcie_hbm_bvalid;
+   wire axi_pcie_hbm_arready;
+   wire [3 : 0] axi_pcie_hbm_rid;
+   wire [511 : 0] axi_pcie_hbm_rdata;
+   wire [1 : 0] axi_pcie_hbm_rresp;
+   wire axi_pcie_hbm_rlast;
+   wire axi_pcie_hbm_rvalid;
+   wire [3 : 0] axi_pcie_hbm_awid;
+   wire [63 : 0] axi_pcie_hbm_awaddr;
+   wire [31 : 0] axi_pcie_hbm_awuser;
+   wire [7 : 0] axi_pcie_hbm_awlen;
+   wire [2 : 0] axi_pcie_hbm_awsize;
+   wire [1 : 0] axi_pcie_hbm_awburst;
+   wire [2 : 0] axi_pcie_hbm_awprot;
+   wire axi_pcie_hbm_awvalid;
+   wire axi_pcie_hbm_awlock;
+   wire [3 : 0] axi_pcie_hbm_awcache;
+   wire [511 : 0] axi_pcie_hbm_wdata;
+   wire [63 : 0] axi_pcie_hbm_wuser;
+   wire [63 : 0] axi_pcie_hbm_wstrb;
+   wire axi_pcie_hbm_wlast;
+   wire axi_pcie_hbm_wvalid;
+   wire axi_pcie_hbm_bready;
+   wire [3 : 0] axi_pcie_hbm_arid;
+   wire [63 : 0] axi_pcie_hbm_araddr;
+   wire [31 : 0] axi_pcie_hbm_aruser;
+   wire [7 : 0] axi_pcie_hbm_arlen;
+   wire [2 : 0] axi_pcie_hbm_arsize;
+   wire [1 : 0] axi_pcie_hbm_arburst;
+   wire [2 : 0] axi_pcie_hbm_arprot;
+   wire axi_pcie_hbm_arvalid;
+   wire axi_pcie_hbm_arlock;
+   wire [3 : 0] axi_pcie_hbm_arcache;
+   wire axi_pcie_hbm_rready;
 
   // QDMA subsystem interfaces to the box running at 250MHz
-  // (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tvalid;
-  // (* MARK_DEBUG="true" *)
+  
   wire [512*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tdata;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [64*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tkeep;
-  (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tlast;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_size;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_src;
-  // (* MARK_DEBUG="true" *)
+  
   wire  [16*NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tuser_dst;
-  // (* MARK_DEBUG="true" *)
+  
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_h2c_tready;
 
   wire     [NUM_PHYS_FUNC-1:0] axis_qdma_c2h_tvalid;
@@ -580,6 +585,32 @@ module pcie_spmv #(
     .axis_aclk                            (axis_aclk)
   );
 
+  wire [1*48-1 : 0] axi_Xi_araddr;
+  wire [1*2-1 : 0] axi_Xi_arburst;
+  wire [1*8-1 : 0] axi_Xi_arlen;
+  wire [1*3-1 : 0] axi_Xi_arsize;
+  wire [1*1-1 : 0]axi_Xi_arvalid;
+  wire [1*48-1 : 0] axi_Xi_awaddr;
+  wire [1*2-1 : 0] axi_Xi_awburst;
+  wire [1*8-1 : 0] axi_Xi_awlen;
+  wire [1*3-1 : 0] axi_Xi_awsize;
+  wire [1*1-1 : 0] axi_Xi_awvalid;
+  wire [1*1-1 : 0] axi_Xi_rready;
+  wire [1*1-1 : 0] axi_Xi_bready;
+  wire [1*64-1 : 0] axi_Xi_wdata;
+  wire [1*1-1 : 0] axi_Xi_wlast;
+  wire [1*8-1 : 0] axi_Xi_wstrb;
+  wire [1*1-1 : 0] axi_Xi_wvalid;
+  wire [1*1-1 : 0] axi_Xi_arready;
+  wire [1*1-1 : 0] axi_Xi_awready;
+  wire [1*64-1 : 0] axi_Xi_rdata;
+  wire [1*1-1 : 0] axi_Xi_rlast;
+  wire [1*2-1 : 0] axi_Xi_rresp;
+  wire [1*1-1 : 0] axi_Xi_rvalid;
+  wire [1*1-1 : 0] axi_Xi_wready;
+  wire [1*2-1 : 0] axi_Xi_bresp;
+  wire [1*1-1 : 0] axi_Xi_bvalid;
+
   spmv_vector_loader spmv_vector_loader(
     
     .s_axi_pcie_awready(axi_pcie_hbm_awready),
@@ -620,8 +651,11 @@ module pcie_spmv #(
     .s_axi_pcie_arlock(axi_pcie_hbm_arlock),                                                  // output wire s_axi_pcie_arlock
     .s_axi_pcie_arcache(axi_pcie_hbm_arcache),                                                // output wire [3 : 0] s_axi_pcie_arcache
     .s_axi_pcie_rready(axi_pcie_hbm_rready),                                                  // output wire s_axi_pcie_rready
-
-
+    .s_axi_pcie_awregion(0),
+    .s_axi_pcie_arregion(0),
+    .s_axi_pcie_awqos(0),
+    .s_axi_pcie_arqos(0),
+    
     .m_axi_hbm_araddr(axi_hbm_width_araddr),
     .m_axi_hbm_arburst(axi_hbm_width_arburst),
     .m_axi_hbm_arlen(axi_hbm_width_arlen),
@@ -649,8 +683,34 @@ module pcie_spmv #(
     .m_axi_hbm_bresp(axi_hbm_width_bresp),
 
 
-    .pcie_aclk(),
-    .pcie_aresetn()
+    .m_axi_bram_araddr(axi_Xi_araddr),
+    .m_axi_bram_arburst(axi_Xi_arburst),
+    .m_axi_bram_arlen(axi_Xi_arlen),
+    .m_axi_bram_arsize(axi_Xi_arsize),
+    .m_axi_bram_arvalid(axi_Xi_arvalid),
+    .m_axi_bram_awaddr(axi_Xi_awaddr),
+    .m_axi_bram_awburst(axi_Xi_awburst),
+    .m_axi_bram_awlen(axi_Xi_awlen),
+    .m_axi_bram_awsize(axi_Xi_awsize),
+    .m_axi_bram_awvalid(axi_Xi_awvalid),
+    .m_axi_bram_rready(axi_Xi_rready),
+    .m_axi_bram_bready(axi_Xi_bready),
+    .m_axi_bram_wdata(axi_Xi_wdata),
+    .m_axi_bram_wlast(axi_Xi_wlast),
+    .m_axi_bram_wstrb(axi_Xi_wstrb),
+    .m_axi_bram_wvalid(axi_Xi_wvalid),
+    .m_axi_bram_arready(axi_Xi_arready),
+    .m_axi_bram_awready(axi_Xi_awready),
+    .m_axi_bram_rdata(axi_Xi_rdata),
+    .m_axi_bram_rlast(axi_Xi_rlast),
+    .m_axi_bram_rresp(axi_Xi_rresp),
+    .m_axi_bram_rvalid(axi_Xi_rvalid),
+    .m_axi_bram_wready(axi_Xi_wready),
+    .m_axi_bram_bvalid(axi_Xi_bvalid),
+    .m_axi_bram_bresp(axi_Xi_bresp),
+
+    .pcie_aclk(axis_aclk),
+    .pcie_aresetn(box_250mhz_rstn)
   );
 
   generate for (genvar i = 0; i < 32; i++) 
@@ -684,70 +744,70 @@ module pcie_spmv #(
 
 
     end
-    else if(i<4)begin
+    // else if(i<4)begin
 
-      assign axi_bram_araddr[`getvec(33,i)] = axi_box_araddr[`getvec(48,i)];
-      assign axi_bram_arburst[`getvec(2,i)] = axi_box_arburst[`getvec(2,i)];
-      assign axi_bram_arlen[`getvec(4,i)] = axi_box_arlen[`getvec(8,i)];
-      assign axi_bram_arsize[`getvec(3,i)] = axi_box_arsize[`getvec(3,i)];
-      assign axi_bram_arvalid[`getvec(1,i)] = axi_box_arvalid[`getvec(1,i)];
-      assign axi_bram_awaddr[`getvec(33,i)] = axi_box_awaddr[`getvec(48,i)];
-      assign axi_bram_awburst[`getvec(2,i)] = axi_box_awburst[`getvec(2,i)];
-      assign axi_bram_awlen[`getvec(4,i)] = axi_box_awlen[`getvec(8,i)];
-      assign axi_bram_awsize[`getvec(3,i)] = axi_box_awsize[`getvec(3,i)];
-      assign axi_bram_awvalid[`getvec(1,i)] = axi_box_awvalid[`getvec(1,i)];
-      assign axi_bram_rready[`getvec(1,i)] = axi_box_rready[`getvec(1,i)];
-      assign axi_bram_bready[`getvec(1,i)] = axi_box_bready[`getvec(1,i)];
-      assign axi_bram_wdata[`getvec(256,i)] = axi_box_wdata[`getvec(256,i)];
-      assign axi_bram_wlast[`getvec(1,i)] = axi_box_wlast[`getvec(1,i)];
-      assign axi_bram_wstrb[`getvec(32,i)] = axi_box_wstrb[`getvec(32,i)];
-      assign axi_bram_wvalid[`getvec(1,i)] = axi_box_wvalid[`getvec(1,i)];
-      assign axi_bram_arready[`getvec(1,i)] = axi_box_arready[`getvec(1,i)];
-      assign axi_bram_awready[`getvec(1,i)] = axi_box_awready[`getvec(1,i)];
-      assign axi_bram_rdata[`getvec(256,i)] = axi_box_rdata[`getvec(256,i)];
-      assign axi_bram_rlast[`getvec(1,i)] = axi_box_rlast[`getvec(1,i)];
-      assign axi_bram_rresp[`getvec(2,i)] = axi_box_rresp[`getvec(2,i)];
-      assign axi_bram_rvalid[`getvec(1,i)] = axi_box_rvalid[`getvec(1,i)];
-      assign axi_bram_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
-      assign axi_bram_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
-      assign axi_bram_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
+    //   assign axi_bram_araddr[`getvec(33,i)] = axi_box_araddr[`getvec(48,i)];
+    //   assign axi_bram_arburst[`getvec(2,i)] = axi_box_arburst[`getvec(2,i)];
+    //   assign axi_bram_arlen[`getvec(4,i)] = axi_box_arlen[`getvec(8,i)];
+    //   assign axi_bram_arsize[`getvec(3,i)] = axi_box_arsize[`getvec(3,i)];
+    //   assign axi_bram_arvalid[`getvec(1,i)] = axi_box_arvalid[`getvec(1,i)];
+    //   assign axi_bram_awaddr[`getvec(33,i)] = axi_box_awaddr[`getvec(48,i)];
+    //   assign axi_bram_awburst[`getvec(2,i)] = axi_box_awburst[`getvec(2,i)];
+    //   assign axi_bram_awlen[`getvec(4,i)] = axi_box_awlen[`getvec(8,i)];
+    //   assign axi_bram_awsize[`getvec(3,i)] = axi_box_awsize[`getvec(3,i)];
+    //   assign axi_bram_awvalid[`getvec(1,i)] = axi_box_awvalid[`getvec(1,i)];
+    //   assign axi_bram_rready[`getvec(1,i)] = axi_box_rready[`getvec(1,i)];
+    //   assign axi_bram_bready[`getvec(1,i)] = axi_box_bready[`getvec(1,i)];
+    //   assign axi_bram_wdata[`getvec(256,i)] = axi_box_wdata[`getvec(256,i)];
+    //   assign axi_bram_wlast[`getvec(1,i)] = axi_box_wlast[`getvec(1,i)];
+    //   assign axi_bram_wstrb[`getvec(32,i)] = axi_box_wstrb[`getvec(32,i)];
+    //   assign axi_bram_wvalid[`getvec(1,i)] = axi_box_wvalid[`getvec(1,i)];
+    //   assign axi_bram_arready[`getvec(1,i)] = axi_box_arready[`getvec(1,i)];
+    //   assign axi_bram_awready[`getvec(1,i)] = axi_box_awready[`getvec(1,i)];
+    //   assign axi_bram_rdata[`getvec(256,i)] = axi_box_rdata[`getvec(256,i)];
+    //   assign axi_bram_rlast[`getvec(1,i)] = axi_box_rlast[`getvec(1,i)];
+    //   assign axi_bram_rresp[`getvec(2,i)] = axi_box_rresp[`getvec(2,i)];
+    //   assign axi_bram_rvalid[`getvec(1,i)] = axi_box_rvalid[`getvec(1,i)];
+    //   assign axi_bram_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
+    //   assign axi_bram_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
+    //   assign axi_bram_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
 
-      assign axi_bram_arid[`getvec(6,i)] = 0;
-      assign axi_bram_awid[`getvec(6,i)] = 0;
-      assign axi_bram_wdata_parity[`getvec(32,i)] = 0;
+    //   assign axi_bram_arid[`getvec(6,i)] = 0;
+    //   assign axi_bram_awid[`getvec(6,i)] = 0;
+    //   assign axi_bram_wdata_parity[`getvec(32,i)] = 0;
       
-    end
-    else if(i<4*CONF_NUM_KERNEL + 1)begin //assign Xi Kernel
+    // end
+    else if(i<CONF_NUM_KERNEL + 1)begin //assign Xi Kernel
 
-      assign axi_hbm_araddr[`getvec(33,i-4)] = axi_box_araddr[`getvec(48,i)];
-      assign axi_hbm_arburst[`getvec(2,i-4)] = axi_box_arburst[`getvec(2,i)];
-      assign axi_hbm_arlen[`getvec(4,i-4)] = axi_box_arlen[`getvec(8,i)];
-      assign axi_hbm_arsize[`getvec(3,i-4)] = axi_box_arsize[`getvec(3,i)];
-      assign axi_hbm_arvalid[`getvec(1,i-4)] = axi_box_arvalid[`getvec(1,i)];
-      assign axi_hbm_awaddr[`getvec(33,i-4)] = axi_box_awaddr[`getvec(48,i)];
-      assign axi_hbm_awburst[`getvec(2,i-4)] = axi_box_awburst[`getvec(2,i)];
-      assign axi_hbm_awlen[`getvec(4,i-4)] = axi_box_awlen[`getvec(8,i)];
-      assign axi_hbm_awsize[`getvec(3,i-4)] = axi_box_awsize[`getvec(3,i)];
-      assign axi_hbm_awvalid[`getvec(1,i-4)] = axi_box_awvalid[`getvec(1,i)];
-      assign axi_hbm_rready[`getvec(1,i-4)] = axi_box_rready[`getvec(1,i)];
-      assign axi_hbm_bready[`getvec(1,i-4)] = axi_box_bready[`getvec(1,i)];
-      assign axi_hbm_wdata[`getvec(256,i-4)] = axi_box_wdata[`getvec(256,i)];
-      assign axi_hbm_wlast[`getvec(1,i-4)] = axi_box_wlast[`getvec(1,i)];
-      assign axi_hbm_wstrb[`getvec(32,i-4)] = axi_box_wstrb[`getvec(32,i)];
-      assign axi_hbm_wvalid[`getvec(1,i-4)] = axi_box_wvalid[`getvec(1,i)];
-      assign axi_hbm_arready[`getvec(1,i-4)] = axi_box_arready[`getvec(1,i)];
-      assign axi_hbm_awready[`getvec(1,i-4)] = axi_box_awready[`getvec(1,i)];
-      assign axi_hbm_rdata[`getvec(256,i-4)] = axi_box_rdata[`getvec(256,i)];
-      assign axi_hbm_rlast[`getvec(1,i-4)] = axi_box_rlast[`getvec(1,i)];
-      assign axi_hbm_rresp[`getvec(2,i-4)] = axi_box_rresp[`getvec(2,i)];
-      assign axi_hbm_rvalid[`getvec(1,i-4)] = axi_box_rvalid[`getvec(1,i)];
-      assign axi_hbm_wready[`getvec(1,i-4)] = axi_box_wready[`getvec(1,i)];
-      assign axi_hbm_bresp[`getvec(2,i-4)] = axi_box_bresp[`getvec(2,i)];
-      assign axi_hbm_bvalid[`getvec(1,i-4)] = axi_box_bvalid[`getvec(1,i)];
+      assign axi_hbm_araddr[`getvec(33,i)] = axi_box_araddr[`getvec(48,i)];
+      assign axi_hbm_arburst[`getvec(2,i)] = axi_box_arburst[`getvec(2,i)];
+      assign axi_hbm_arlen[`getvec(4,i)] = axi_box_arlen[`getvec(8,i)];
+      assign axi_hbm_arsize[`getvec(3,i)] = axi_box_arsize[`getvec(3,i)];
+      assign axi_hbm_arvalid[`getvec(1,i)] = axi_box_arvalid[`getvec(1,i)];
+      assign axi_hbm_awaddr[`getvec(33,i)] = axi_box_awaddr[`getvec(48,i)];
+      assign axi_hbm_awburst[`getvec(2,i)] = axi_box_awburst[`getvec(2,i)];
+      assign axi_hbm_awlen[`getvec(4,i)] = axi_box_awlen[`getvec(8,i)];
+      assign axi_hbm_awsize[`getvec(3,i)] = axi_box_awsize[`getvec(3,i)];
+      assign axi_hbm_awvalid[`getvec(1,i)] = axi_box_awvalid[`getvec(1,i)];
+      assign axi_hbm_rready[`getvec(1,i)] = axi_box_rready[`getvec(1,i)];
+      assign axi_hbm_bready[`getvec(1,i)] = axi_box_bready[`getvec(1,i)];
+      assign axi_hbm_wdata[`getvec(256,i)] = axi_box_wdata[`getvec(256,i)];
+      assign axi_hbm_wlast[`getvec(1,i)] = axi_box_wlast[`getvec(1,i)];
+      assign axi_hbm_wstrb[`getvec(32,i)] = axi_box_wstrb[`getvec(32,i)];
+      assign axi_hbm_wvalid[`getvec(1,i)] = axi_box_wvalid[`getvec(1,i)];
+      assign axi_hbm_arready[`getvec(1,i)] = axi_box_arready[`getvec(1,i)];
+      assign axi_hbm_awready[`getvec(1,i)] = axi_box_awready[`getvec(1,i)];
+      assign axi_hbm_rdata[`getvec(256,i)] = axi_box_rdata[`getvec(256,i)];
+      assign axi_hbm_rlast[`getvec(1,i)] = axi_box_rlast[`getvec(1,i)];
+      assign axi_hbm_rresp[`getvec(2,i)] = axi_box_rresp[`getvec(2,i)];
+      assign axi_hbm_rvalid[`getvec(1,i)] = axi_box_rvalid[`getvec(1,i)];
+      assign axi_hbm_wready[`getvec(1,i)] = axi_box_wready[`getvec(1,i)];
+      assign axi_hbm_bresp[`getvec(2,i)] = axi_box_bresp[`getvec(2,i)];
+      assign axi_hbm_bvalid[`getvec(1,i)] = axi_box_bvalid[`getvec(1,i)];
 
-      assign axi_hbm_arid[`getvec(6,i-4)] = 0;
-      assign axi_hbm_awid[`getvec(6,i-4)] = 0;
-      assign axi_hbm_wdata_parity[`getvec(32,i-4)] = 0;
+      assign axi_hbm_arid[`getvec(6,i)] = 0;
+      assign axi_hbm_awid[`getvec(6,i)] = 0;
+      assign axi_hbm_wdata_parity[`getvec(32,i)] = 0;
 
     end
     
@@ -760,41 +820,40 @@ module pcie_spmv #(
     end
   endgenerate
 
-  generate for (genvar i = 0; i < 4; i++) begin
-    sim_blk_ram sim_blk_ram (
-            .s_aclk(axis_aclk),                // input wire s_aclk
-            .s_aresetn(box_250mhz_rstn),          // input wire s_aresetn
+  // generate for (genvar i = 0; i < 4; i++) begin
+  //   sim_blk_ram sim_blk_ram (
+  //           .s_aclk(axis_aclk),                // input wire s_aclk
+  //           .s_aresetn(box_250mhz_rstn),          // input wire s_aresetn
 
-            .s_axi_arid(0),
-            .s_axi_araddr(axi_bram_araddr[i*33 +: 33]),
-            .s_axi_arburst(axi_bram_arburst[i*2 +: 2]),
-            .s_axi_arlen(axi_bram_arlen[i*4 +: 4]),
-            .s_axi_arsize(axi_bram_arsize[i*3 +: 3]),
-            .s_axi_arvalid(axi_bram_arvalid[i*1 +: 1]),
-            .s_axi_awaddr(axi_bram_awaddr[i*33 +: 33]),
-            .s_axi_awburst(axi_bram_awburst[i*2 +: 2]),
-            .s_axi_awlen(axi_bram_awlen[i*4 +: 4]),
-            .s_axi_awsize(axi_bram_awsize[i*3 +: 3]),
-            .s_axi_awvalid(axi_bram_awvalid[i*1 +: 1]),
-            .s_axi_rready(axi_bram_rready[i*1 +: 1]),
-            .s_axi_bready(axi_bram_bready[i*1 +: 1]),
-            .s_axi_wdata(axi_bram_wdata[i*256 +: 256]),
-            .s_axi_wlast(axi_bram_wlast[i*1 +: 1]),
-            .s_axi_wstrb(axi_bram_wstrb[i*32 +: 32]),
-            .s_axi_wvalid(axi_bram_wvalid[i*1 +: 1]),
-            .s_axi_arready(axi_bram_arready[i*1 +: 1]),
-            .s_axi_awready(axi_bram_awready[i*1 +: 1]),
-            .s_axi_rdata(axi_bram_rdata[i*256 +: 256]),
-            .s_axi_rlast(axi_bram_rlast[i*1 +: 1]),
-            .s_axi_rresp(axi_bram_rresp[i*2 +: 2]),
-            .s_axi_rvalid(axi_bram_rvalid[i*1 +: 1]),
-            .s_axi_wready(axi_bram_wready[i*1 +: 1]),
-            .s_axi_bresp(axi_bram_bresp[i*2 +: 2]),
-            .s_axi_bvalid(axi_bram_bvalid[i*1 +: 1])
-            );
-
-  end
-  endgenerate
+  //           .s_axi_arid(0),
+  //           .s_axi_araddr(axi_bram_araddr[i*33 +: 33]),
+  //           .s_axi_arburst(axi_bram_arburst[i*2 +: 2]),
+  //           .s_axi_arlen(axi_bram_arlen[i*4 +: 4]),
+  //           .s_axi_arsize(axi_bram_arsize[i*3 +: 3]),
+  //           .s_axi_arvalid(axi_bram_arvalid[i*1 +: 1]),
+  //           .s_axi_awaddr(axi_bram_awaddr[i*33 +: 33]),
+  //           .s_axi_awburst(axi_bram_awburst[i*2 +: 2]),
+  //           .s_axi_awlen(axi_bram_awlen[i*4 +: 4]),
+  //           .s_axi_awsize(axi_bram_awsize[i*3 +: 3]),
+  //           .s_axi_awvalid(axi_bram_awvalid[i*1 +: 1]),
+  //           .s_axi_rready(axi_bram_rready[i*1 +: 1]),
+  //           .s_axi_bready(axi_bram_bready[i*1 +: 1]),
+  //           .s_axi_wdata(axi_bram_wdata[i*256 +: 256]),
+  //           .s_axi_wlast(axi_bram_wlast[i*1 +: 1]),
+  //           .s_axi_wstrb(axi_bram_wstrb[i*32 +: 32]),
+  //           .s_axi_wvalid(axi_bram_wvalid[i*1 +: 1]),
+  //           .s_axi_arready(axi_bram_arready[i*1 +: 1]),
+  //           .s_axi_awready(axi_bram_awready[i*1 +: 1]),
+  //           .s_axi_rdata(axi_bram_rdata[i*256 +: 256]),
+  //           .s_axi_rlast(axi_bram_rlast[i*1 +: 1]),
+  //           .s_axi_rresp(axi_bram_rresp[i*2 +: 2]),
+  //           .s_axi_rvalid(axi_bram_rvalid[i*1 +: 1]),
+  //           .s_axi_wready(axi_bram_wready[i*1 +: 1]),
+  //           .s_axi_bresp(axi_bram_bresp[i*2 +: 2]),
+  //           .s_axi_bvalid(axi_bram_bvalid[i*1 +: 1])
+  //           );
+  // end
+  // endgenerate
 
   hbm_ctrl hbm_ctrl(
     
@@ -888,6 +947,33 @@ module pcie_spmv #(
     .m_axi_ker_wready(axi_box_wready),
     .m_axi_ker_bresp(axi_box_bresp),
     .m_axi_ker_bvalid(axi_box_bvalid),
+
+    .s_axi_Xi_awaddr(axi_Xi_awaddr& 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_awaddr
+    .s_axi_Xi_awlen(axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
+    .s_axi_Xi_awsize(axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
+    .s_axi_Xi_awburst(axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
+    .s_axi_Xi_awvalid(axi_Xi_awvalid),    // input wire [0 : 0] s_axi_awvalid
+    .s_axi_Xi_awready(axi_Xi_awready),    // output wire [0 : 0] s_axi_awready
+    .s_axi_Xi_wdata(axi_Xi_wdata),        // input wire [63 : 0] s_axi_wdata
+    .s_axi_Xi_wstrb(axi_Xi_wstrb),        // input wire [7 : 0] s_axi_wstrb
+    .s_axi_Xi_wlast(axi_Xi_wlast),        // input wire [0 : 0] s_axi_wlast
+    .s_axi_Xi_wvalid(axi_Xi_wvalid),      // input wire [0 : 0] s_axi_wvalid
+    .s_axi_Xi_wready(axi_Xi_wready),      // output wire [0 : 0] s_axi_wready
+    .s_axi_Xi_bresp(axi_Xi_bresp),        // output wire [1 : 0] s_axi_bresp
+    .s_axi_Xi_bvalid(axi_Xi_bvalid),      // output wire [0 : 0] s_axi_bvalid
+    .s_axi_Xi_bready(axi_Xi_bready),      // input wire [0 : 0] s_axi_bready
+    .s_axi_Xi_araddr(axi_Xi_araddr & 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_araddr
+    .s_axi_Xi_arlen(axi_Xi_arlen),        // input wire [7 : 0] s_axi_arlen
+    .s_axi_Xi_arsize(axi_Xi_arsize),      // input wire [2 : 0] s_axi_arsize
+    .s_axi_Xi_arburst(axi_Xi_arburst),    // input wire [1 : 0] s_axi_arburst
+    .s_axi_Xi_arvalid(axi_Xi_arvalid),    // input wire [0 : 0] s_axi_arvalid
+    .s_axi_Xi_arready(axi_Xi_arready),    // output wire [0 : 0] s_axi_arready
+    .s_axi_Xi_rdata(axi_Xi_rdata),        // output wire [63 : 0] s_axi_rdata
+    .s_axi_Xi_rresp(axi_Xi_rresp),        // output wire [1 : 0] s_axi_rresp
+    .s_axi_Xi_rlast(axi_Xi_rlast),        // output wire [0 : 0] s_axi_rlast
+    .s_axi_Xi_rvalid(axi_Xi_rvalid),      // output wire [0 : 0] s_axi_rvalid
+    .s_axi_Xi_rready(axi_Xi_rready),      // input wire [0 : 0] s_axi_rready
+
 
     .s_axis_qdma_h2c_tvalid           (axis_qdma_h2c_tvalid),
     .s_axis_qdma_h2c_tdata            (axis_qdma_h2c_tdata),

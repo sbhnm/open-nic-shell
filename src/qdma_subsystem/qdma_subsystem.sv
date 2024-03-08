@@ -238,6 +238,35 @@ module qdma_subsystem #(
   wire   [3:0] h2c_byp_out_fmt;
   wire         h2c_byp_out_rdy;
 
+
+  wire [63 :0 ] h2c_byp_in_mm_radr;
+  wire [63 :0 ] h2c_byp_in_mm_wadr;
+  wire [15 :0 ] h2c_byp_in_mm_len;
+  wire h2c_byp_in_mm_mrkr_req;
+  wire [2 :0 ] h2c_byp_in_mm_port_id;
+  wire h2c_byp_in_mm_sdi;
+  wire [1 :0 ] h2c_byp_in_mm_qid;
+  wire h2c_byp_in_mm_error;
+  wire [7 :0 ] h2c_byp_in_mm_func;
+  wire [15 :0 ] h2c_byp_in_mm_cidx;
+  wire h2c_byp_in_mm_no_dma;
+  wire h2c_byp_in_mm_vld;
+  wire h2c_byp_in_mm_rdy;
+
+  wire [63 :0 ] c2h_byp_in_mm_radr;
+  wire [63 :0 ] c2h_byp_in_mm_wadr;
+  wire [15 :0 ] c2h_byp_in_mm_len;
+  wire c2h_byp_in_mm_mrkr_req;
+  wire [2 :0 ] c2h_byp_in_mm_port_id;
+  wire c2h_byp_in_mm_sdi;
+  wire [1 :0 ] c2h_byp_in_mm_qid;
+  wire c2h_byp_in_mm_error;
+  wire [7 :0 ] c2h_byp_in_mm_func;
+  wire [15 :0 ] c2h_byp_in_mm_cidx;
+  wire c2h_byp_in_mm_vld;
+  wire c2h_byp_in_mm_no_dma;
+  wire c2h_byp_in_mm_rdy;
+
   wire         h2c_byp_in_st_vld;
   wire  [63:0] h2c_byp_in_st_addr;
   wire  [15:0] h2c_byp_in_st_len;
@@ -323,6 +352,38 @@ module qdma_subsystem #(
   assign c2h_byp_in_st_csh_error    = 1'b0;
   assign c2h_byp_in_st_csh_func     = 0;
   assign c2h_byp_in_st_csh_pfch_tag = 0;
+
+
+
+
+  assign  h2c_byp_in_mm_radr = 0;
+  assign  h2c_byp_in_mm_wadr = 0;
+  assign  h2c_byp_in_mm_len = 0;
+  assign h2c_byp_in_mm_mrkr_req = 0;
+  assign  h2c_byp_in_mm_port_id = 0;
+  assign h2c_byp_in_mm_sdi = 0;
+  assign  h2c_byp_in_mm_qid = 0;
+  assign h2c_byp_in_mm_error = 0;
+  assign  h2c_byp_in_mm_func = 0;
+  assign  h2c_byp_in_mm_cidx = 0;
+  assign h2c_byp_in_mm_no_dma = 0;
+  assign h2c_byp_in_mm_vld = 0;
+  //  output wire h2c_byp_in_mm_rdy
+
+  assign  c2h_byp_in_mm_radr = 0;
+  assign  c2h_byp_in_mm_wadr = 0;
+  assign  c2h_byp_in_mm_len = 0;
+  assign c2h_byp_in_mm_mrkr_req = 0;
+  assign  c2h_byp_in_mm_port_id = 0;
+  assign c2h_byp_in_mm_sdi = 0;
+  assign  c2h_byp_in_mm_qid = 0;
+  assign c2h_byp_in_mm_error = 0;
+  assign  c2h_byp_in_mm_func = 0;
+  assign  c2h_byp_in_mm_cidx = 0;
+  assign c2h_byp_in_mm_vld = 0;
+  assign c2h_byp_in_mm_no_dma = 0;
+  //  output wire c2h_byp_in_mm_rdy 
+ 
 
   qdma_subsystem_qdma_wrapper qdma_wrapper_inst (
     .pcie_rxp                        (pcie_rxp),
@@ -476,6 +537,34 @@ module qdma_subsystem #(
     .c2h_byp_in_st_csh_pfch_tag      (c2h_byp_in_st_csh_pfch_tag),
     .c2h_byp_in_st_csh_rdy           (c2h_byp_in_st_csh_rdy),
 
+    .h2c_byp_in_mm_radr(h2c_byp_in_mm_radr),                                      // input wire [63 : ] h2c_byp_in_mm_radr
+    .h2c_byp_in_mm_wadr(h2c_byp_in_mm_wadr),                                      // input wire [63 : ] h2c_byp_in_mm_wadr
+    .h2c_byp_in_mm_len(h2c_byp_in_mm_len),                                        // input wire [15 : ] h2c_byp_in_mm_len
+    .h2c_byp_in_mm_mrkr_req(h2c_byp_in_mm_mrkr_req),                              // input wire h2c_byp_in_mm_mrkr_req
+    .h2c_byp_in_mm_port_id(h2c_byp_in_mm_port_id),                                // input wire [2 : ] h2c_byp_in_mm_port_id
+    .h2c_byp_in_mm_sdi(h2c_byp_in_mm_sdi),                                        // input wire h2c_byp_in_mm_sdi
+    .h2c_byp_in_mm_qid(h2c_byp_in_mm_qid),                                        // input wire [1 : ] h2c_byp_in_mm_qid
+    .h2c_byp_in_mm_error(h2c_byp_in_mm_error),                                    // input wire h2c_byp_in_mm_error
+    .h2c_byp_in_mm_func(h2c_byp_in_mm_func),                                      // input wire [7 : ] h2c_byp_in_mm_func
+    .h2c_byp_in_mm_cidx(h2c_byp_in_mm_cidx),                                      // input wire [15 : ] h2c_byp_in_mm_cidx
+    .h2c_byp_in_mm_no_dma(h2c_byp_in_mm_no_dma),                                  // input wire h2c_byp_in_mm_no_dma
+    .h2c_byp_in_mm_vld(h2c_byp_in_mm_vld),                                        // input wire h2c_byp_in_mm_vld
+    .h2c_byp_in_mm_rdy(h2c_byp_in_mm_rdy),                                        // output wire h2c_byp_in_mm_rdy
+
+    .c2h_byp_in_mm_radr(c2h_byp_in_mm_radr),                                      // input wire [63 : ] c2h_byp_in_mm_radr
+    .c2h_byp_in_mm_wadr(c2h_byp_in_mm_wadr),                                      // input wire [63 : ] c2h_byp_in_mm_wadr
+    .c2h_byp_in_mm_len(c2h_byp_in_mm_len),                                        // input wire [15 : ] c2h_byp_in_mm_len
+    .c2h_byp_in_mm_mrkr_req(c2h_byp_in_mm_mrkr_req),                              // input wire c2h_byp_in_mm_mrkr_req
+    .c2h_byp_in_mm_port_id(c2h_byp_in_mm_port_id),                                // input wire [2 : ] c2h_byp_in_mm_port_id
+    .c2h_byp_in_mm_sdi(c2h_byp_in_mm_sdi),                                        // input wire c2h_byp_in_mm_sdi
+    .c2h_byp_in_mm_qid(c2h_byp_in_mm_qid),                                        // input wire [1 : ] c2h_byp_in_mm_qid
+    .c2h_byp_in_mm_error(c2h_byp_in_mm_error),                                    // input wire c2h_byp_in_mm_error
+    .c2h_byp_in_mm_func(c2h_byp_in_mm_func),                                      // input wire [7 : ] c2h_byp_in_mm_func
+    .c2h_byp_in_mm_cidx(c2h_byp_in_mm_cidx),                                      // input wire [15 : ] c2h_byp_in_mm_cidx
+    .c2h_byp_in_mm_vld(c2h_byp_in_mm_vld),                                        // input wire c2h_byp_in_mm_vld
+    .c2h_byp_in_mm_no_dma(c2h_byp_in_mm_no_dma),                                  // input wire c2h_byp_in_mm_no_dma
+    .c2h_byp_in_mm_rdy(c2h_byp_in_mm_rdy),                                        // output wire c2h_byp_in_mm_rdy
+ 
     .pcie_refclk                     (pcie_refclk),
     .pcie_refclk_gt                  (pcie_refclk_gt),
     .pcie_rstn                       (pcie_rstn),

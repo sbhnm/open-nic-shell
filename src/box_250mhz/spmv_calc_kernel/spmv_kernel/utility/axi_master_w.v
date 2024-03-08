@@ -64,7 +64,7 @@
 		.C_M_AXI_ADDR_WIDTH(C_M_AXI_ADDR_WIDTH),
 		.C_M_AXI_DATA_WIDTH(C_M_AXI_DATA_WIDTH)
 	) axi_master_w_ctrl (
-		.INIT_AXI_READ(m_axi_init_axi_read),
+		// .INIT_AXI_READ(m_axi_init_axi_read),
         .INIT_AXI_WRITE(m_axi_init_axi_write),
 
 		.WRITE_DONE(m_axi_w_done),

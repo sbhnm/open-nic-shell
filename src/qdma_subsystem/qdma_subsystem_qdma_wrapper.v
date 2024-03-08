@@ -24,37 +24,37 @@ module qdma_subsystem_qdma_wrapper (
   input   [15:0] pcie_rxn,
   output  [15:0] pcie_txp,
   output  [15:0] pcie_txn,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_awvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_awaddr,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_awready,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_wvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_wdata,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_wready,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_bvalid,
-  //(* MARK_DEBUG="true" *)
+  
   input    [1:0] m_axil_bresp,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_bready,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_arvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axil_araddr,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_arready,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axil_rvalid,
-  //(* MARK_DEBUG="true" *)
+  
   input   [31:0] m_axil_rdata,
-  //(* MARK_DEBUG="true" *)
+  
   input    [1:0] m_axil_rresp,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axil_rready,
 
   input m_axi_awready,
@@ -97,27 +97,27 @@ module qdma_subsystem_qdma_wrapper (
   output m_axi_rready,
 
   
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tvalid,
-  //(* MARK_DEBUG="true" *)
+  
   output [511:0] m_axis_h2c_tdata,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axis_h2c_tcrc,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tlast,
-  //(* MARK_DEBUG="true" *)
+  
   output  [10:0] m_axis_h2c_tuser_qid,
-  //(* MARK_DEBUG="true" *)
+  
   output   [2:0] m_axis_h2c_tuser_port_id,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tuser_err,
-  //(* MARK_DEBUG="true" *)
+  
   output  [31:0] m_axis_h2c_tuser_mdata,
-  //(* MARK_DEBUG="true" *)
+  
   output   [5:0] m_axis_h2c_tuser_mty,
-  //(* MARK_DEBUG="true" *)
+  
   output         m_axis_h2c_tuser_zero_byte,
-  //(* MARK_DEBUG="true" *)
+  
   input          m_axis_h2c_tready,
 
   input          s_axis_c2h_tvalid,
@@ -196,6 +196,37 @@ module qdma_subsystem_qdma_wrapper (
   input    [7:0] c2h_byp_in_st_csh_func,
   input    [6:0] c2h_byp_in_st_csh_pfch_tag,
   output         c2h_byp_in_st_csh_rdy,
+  
+
+
+  input wire [63 :0 ] h2c_byp_in_mm_radr,
+  input wire [63 :0 ] h2c_byp_in_mm_wadr,
+  input wire [15 :0 ] h2c_byp_in_mm_len,
+  input wire h2c_byp_in_mm_mrkr_req,
+  input wire [2 :0 ] h2c_byp_in_mm_port_id,
+  input wire h2c_byp_in_mm_sdi,
+  input wire [1 :0 ] h2c_byp_in_mm_qid,
+  input wire h2c_byp_in_mm_error,
+  input wire [7 :0 ] h2c_byp_in_mm_func,
+  input wire [15 :0 ] h2c_byp_in_mm_cidx,
+  input wire h2c_byp_in_mm_no_dma,
+  input wire h2c_byp_in_mm_vld,
+  output wire h2c_byp_in_mm_rdy,
+
+  input wire [63 :0 ] c2h_byp_in_mm_radr,
+  input wire [63 :0 ] c2h_byp_in_mm_wadr,
+  input wire [15 :0 ] c2h_byp_in_mm_len,
+  input wire c2h_byp_in_mm_mrkr_req,
+  input wire [2 :0 ] c2h_byp_in_mm_port_id,
+  input wire c2h_byp_in_mm_sdi,
+  input wire [1 :0 ] c2h_byp_in_mm_qid,
+  input wire c2h_byp_in_mm_error,
+  input wire [7 :0 ] c2h_byp_in_mm_func,
+  input wire [15 :0 ] c2h_byp_in_mm_cidx,
+  input wire c2h_byp_in_mm_vld,
+  input wire c2h_byp_in_mm_no_dma,
+  output wire c2h_byp_in_mm_rdy,
+
 
   input          pcie_refclk,
   input          pcie_refclk_gt,
@@ -353,44 +384,44 @@ module qdma_subsystem_qdma_wrapper (
     .axi_aresetn                          (aresetn_250mhz),
 
 
-    // .m_axi_awready(m_axi_awready),                                                // input wire m_axi_awready
-    // .m_axi_wready(m_axi_wready),                                                  // input wire m_axi_wready
-    // .m_axi_bid(m_axi_bid),                                                        // input wire [3 : 0] m_axi_bid
-    // .m_axi_bresp(m_axi_bresp),                                                    // input wire [1 : 0] m_axi_bresp
-    // .m_axi_bvalid(m_axi_bvalid),                                                  // input wire m_axi_bvalid
-    // .m_axi_arready(m_axi_arready),                                                // input wire m_axi_arready
-    // .m_axi_rid(m_axi_rid),                                                        // input wire [3 : 0] m_axi_rid
-    // .m_axi_rdata(m_axi_rdata),                                                    // input wire [511 : 0] m_axi_rdata
-    // .m_axi_rresp(m_axi_rresp),                                                    // input wire [1 : 0] m_axi_rresp
-    // .m_axi_rlast(m_axi_rlast),                                                    // input wire m_axi_rlast
-    // .m_axi_rvalid(m_axi_rvalid),                                                  // input wire m_axi_rvalid
-    // .m_axi_awid(m_axi_awid),                                                      // output wire [3 : 0] m_axi_awid
-    // .m_axi_awaddr(m_axi_awaddr),                                                  // output wire [63 : 0] m_axi_awaddr
-    // .m_axi_awuser(m_axi_awuser),                                                  // output wire [31 : 0] m_axi_awuser
-    // .m_axi_awlen(m_axi_awlen),                                                    // output wire [7 : 0] m_axi_awlen
-    // .m_axi_awsize(m_axi_awsize),                                                  // output wire [2 : 0] m_axi_awsize
-    // .m_axi_awburst(m_axi_awburst),                                                // output wire [1 : 0] m_axi_awburst
-    // .m_axi_awprot(m_axi_awprot),                                                  // output wire [2 : 0] m_axi_awprot
-    // .m_axi_awvalid(m_axi_awvalid),                                                // output wire m_axi_awvalid
-    // .m_axi_awlock(m_axi_awlock),                                                  // output wire m_axi_awlock
-    // .m_axi_awcache(m_axi_awcache),                                                // output wire [3 : 0] m_axi_awcache
-    // .m_axi_wdata(m_axi_wdata),                                                    // output wire [511 : 0] m_axi_wdata
-    // .m_axi_wuser(m_axi_wuser),                                                    // output wire [63 : 0] m_axi_wuser
-    // .m_axi_wstrb(m_axi_wstrb),                                                    // output wire [63 : 0] m_axi_wstrb
-    // .m_axi_wlast(m_axi_wlast),                                                    // output wire m_axi_wlast
-    // .m_axi_wvalid(m_axi_wvalid),                                                  // output wire m_axi_wvalid
-    // .m_axi_bready(m_axi_bready),                                                  // output wire m_axi_bready
-    // .m_axi_arid(m_axi_arid),                                                      // output wire [3 : 0] m_axi_arid
-    // .m_axi_araddr(m_axi_araddr),                                                  // output wire [63 : 0] m_axi_araddr
-    // .m_axi_aruser(m_axi_aruser),                                                  // output wire [31 : 0] m_axi_aruser
-    // .m_axi_arlen(m_axi_arlen),                                                    // output wire [7 : 0] m_axi_arlen
-    // .m_axi_arsize(m_axi_arsize),                                                  // output wire [2 : 0] m_axi_arsize
-    // .m_axi_arburst(m_axi_arburst),                                                // output wire [1 : 0] m_axi_arburst
-    // .m_axi_arprot(m_axi_arprot),                                                  // output wire [2 : 0] m_axi_arprot
-    // .m_axi_arvalid(m_axi_arvalid),                                                // output wire m_axi_arvalid
-    // .m_axi_arlock(m_axi_arlock),                                                  // output wire m_axi_arlock
-    // .m_axi_arcache(m_axi_arcache),                                                // output wire [3 : 0] m_axi_arcache
-    // .m_axi_rready(m_axi_rready),                                                  // output wire m_axi_rready
+    .m_axi_awready(m_axi_awready),                                                // input wire m_axi_awready
+    .m_axi_wready(m_axi_wready),                                                  // input wire m_axi_wready
+    .m_axi_bid(m_axi_bid),                                                        // input wire [3 : 0] m_axi_bid
+    .m_axi_bresp(m_axi_bresp),                                                    // input wire [1 : 0] m_axi_bresp
+    .m_axi_bvalid(m_axi_bvalid),                                                  // input wire m_axi_bvalid
+    .m_axi_arready(m_axi_arready),                                                // input wire m_axi_arready
+    .m_axi_rid(m_axi_rid),                                                        // input wire [3 : 0] m_axi_rid
+    .m_axi_rdata(m_axi_rdata),                                                    // input wire [511 : 0] m_axi_rdata
+    .m_axi_rresp(m_axi_rresp),                                                    // input wire [1 : 0] m_axi_rresp
+    .m_axi_rlast(m_axi_rlast),                                                    // input wire m_axi_rlast
+    .m_axi_rvalid(m_axi_rvalid),                                                  // input wire m_axi_rvalid
+    .m_axi_awid(m_axi_awid),                                                      // output wire [3 : 0] m_axi_awid
+    .m_axi_awaddr(m_axi_awaddr),                                                  // output wire [63 : 0] m_axi_awaddr
+    .m_axi_awuser(m_axi_awuser),                                                  // output wire [31 : 0] m_axi_awuser
+    .m_axi_awlen(m_axi_awlen),                                                    // output wire [7 : 0] m_axi_awlen
+    .m_axi_awsize(m_axi_awsize),                                                  // output wire [2 : 0] m_axi_awsize
+    .m_axi_awburst(m_axi_awburst),                                                // output wire [1 : 0] m_axi_awburst
+    .m_axi_awprot(m_axi_awprot),                                                  // output wire [2 : 0] m_axi_awprot
+    .m_axi_awvalid(m_axi_awvalid),                                                // output wire m_axi_awvalid
+    .m_axi_awlock(m_axi_awlock),                                                  // output wire m_axi_awlock
+    .m_axi_awcache(m_axi_awcache),                                                // output wire [3 : 0] m_axi_awcache
+    .m_axi_wdata(m_axi_wdata),                                                    // output wire [511 : 0] m_axi_wdata
+    .m_axi_wuser(m_axi_wuser),                                                    // output wire [63 : 0] m_axi_wuser
+    .m_axi_wstrb(m_axi_wstrb),                                                    // output wire [63 : 0] m_axi_wstrb
+    .m_axi_wlast(m_axi_wlast),                                                    // output wire m_axi_wlast
+    .m_axi_wvalid(m_axi_wvalid),                                                  // output wire m_axi_wvalid
+    .m_axi_bready(m_axi_bready),                                                  // output wire m_axi_bready
+    .m_axi_arid(m_axi_arid),                                                      // output wire [3 : 0] m_axi_arid
+    .m_axi_araddr(m_axi_araddr),                                                  // output wire [63 : 0] m_axi_araddr
+    .m_axi_aruser(m_axi_aruser),                                                  // output wire [31 : 0] m_axi_aruser
+    .m_axi_arlen(m_axi_arlen),                                                    // output wire [7 : 0] m_axi_arlen
+    .m_axi_arsize(m_axi_arsize),                                                  // output wire [2 : 0] m_axi_arsize
+    .m_axi_arburst(m_axi_arburst),                                                // output wire [1 : 0] m_axi_arburst
+    .m_axi_arprot(m_axi_arprot),                                                  // output wire [2 : 0] m_axi_arprot
+    .m_axi_arvalid(m_axi_arvalid),                                                // output wire m_axi_arvalid
+    .m_axi_arlock(m_axi_arlock),                                                  // output wire m_axi_arlock
+    .m_axi_arcache(m_axi_arcache),                                                // output wire [3 : 0] m_axi_arcache
+    .m_axi_rready(m_axi_rready),                                                  // output wire m_axi_rready
 
     .m_axil_awvalid                       (qdma_axil_awvalid),
     .m_axil_awaddr                        (qdma_axil_awaddr),
@@ -531,33 +562,33 @@ module qdma_subsystem_qdma_wrapper (
     .s_axis_c2h_cmpt_tready               (s_axis_cpl_tready),
 
 
-    // .h2c_byp_in_mm_radr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_radr
-    // .h2c_byp_in_mm_wadr(0),                                      // input wire [63 : 0] h2c_byp_in_mm_wadr
-    // .h2c_byp_in_mm_len(0),                                        // input wire [15 : 0] h2c_byp_in_mm_len
-    // .h2c_byp_in_mm_mrkr_req(0),                              // input wire h2c_byp_in_mm_mrkr_req
-    // .h2c_byp_in_mm_port_id(0),                                // input wire [2 : 0] h2c_byp_in_mm_port_id
-    // .h2c_byp_in_mm_sdi(0),                                        // input wire h2c_byp_in_mm_sdi
-    // .h2c_byp_in_mm_qid(0),                                        // input wire [10 : 0] h2c_byp_in_mm_qid
-    // .h2c_byp_in_mm_error(0),                                    // input wire h2c_byp_in_mm_error
-    // .h2c_byp_in_mm_func(0),                                      // input wire [7 : 0] h2c_byp_in_mm_func
-    // .h2c_byp_in_mm_cidx(0),                                      // input wire [15 : 0] h2c_byp_in_mm_cidx
-    // .h2c_byp_in_mm_no_dma(0),                                  // input wire h2c_byp_in_mm_no_dma
-    // .h2c_byp_in_mm_vld(0),                                        // input wire h2c_byp_in_mm_vld
-    // .h2c_byp_in_mm_rdy(),                                        // output wire h2c_byp_in_mm_rdy
+    .h2c_byp_in_mm_radr(h2c_byp_in_mm_radr),                                      // input wire [63 : ] h2c_byp_in_mm_radr
+    .h2c_byp_in_mm_wadr(h2c_byp_in_mm_wadr),                                      // input wire [63 : ] h2c_byp_in_mm_wadr
+    .h2c_byp_in_mm_len(h2c_byp_in_mm_len),                                        // input wire [15 : ] h2c_byp_in_mm_len
+    .h2c_byp_in_mm_mrkr_req(h2c_byp_in_mm_mrkr_req),                              // input wire h2c_byp_in_mm_mrkr_req
+    .h2c_byp_in_mm_port_id(h2c_byp_in_mm_port_id),                                // input wire [2 : ] h2c_byp_in_mm_port_id
+    .h2c_byp_in_mm_sdi(h2c_byp_in_mm_sdi),                                        // input wire h2c_byp_in_mm_sdi
+    .h2c_byp_in_mm_qid(h2c_byp_in_mm_qid),                                        // input wire [1 : ] h2c_byp_in_mm_qid
+    .h2c_byp_in_mm_error(h2c_byp_in_mm_error),                                    // input wire h2c_byp_in_mm_error
+    .h2c_byp_in_mm_func(h2c_byp_in_mm_func),                                      // input wire [7 : ] h2c_byp_in_mm_func
+    .h2c_byp_in_mm_cidx(h2c_byp_in_mm_cidx),                                      // input wire [15 : ] h2c_byp_in_mm_cidx
+    .h2c_byp_in_mm_no_dma(h2c_byp_in_mm_no_dma),                                  // input wire h2c_byp_in_mm_no_dma
+    .h2c_byp_in_mm_vld(h2c_byp_in_mm_vld),                                        // input wire h2c_byp_in_mm_vld
+    .h2c_byp_in_mm_rdy(h2c_byp_in_mm_rdy),                                        // output wire h2c_byp_in_mm_rdy
 
-    // .c2h_byp_in_mm_radr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_radr
-    // .c2h_byp_in_mm_wadr(0),                                      // input wire [63 : 0] c2h_byp_in_mm_wadr
-    // .c2h_byp_in_mm_len(0),                                        // input wire [15 : 0] c2h_byp_in_mm_len
-    // .c2h_byp_in_mm_mrkr_req(0),                              // input wire c2h_byp_in_mm_mrkr_req
-    // .c2h_byp_in_mm_port_id(0),                                // input wire [2 : 0] c2h_byp_in_mm_port_id
-    // .c2h_byp_in_mm_sdi(0),                                        // input wire c2h_byp_in_mm_sdi
-    // .c2h_byp_in_mm_qid(0),                                        // input wire [10 : 0] c2h_byp_in_mm_qid
-    // .c2h_byp_in_mm_error(0),                                    // input wire c2h_byp_in_mm_error
-    // .c2h_byp_in_mm_func(0),                                      // input wire [7 : 0] c2h_byp_in_mm_func
-    // .c2h_byp_in_mm_cidx(0),                                      // input wire [15 : 0] c2h_byp_in_mm_cidx
-    // .c2h_byp_in_mm_vld(0),                                        // input wire c2h_byp_in_mm_vld
-    // .c2h_byp_in_mm_no_dma(0),                                  // input wire c2h_byp_in_mm_no_dma
-    // .c2h_byp_in_mm_rdy(),                                        // output wire c2h_byp_in_mm_rdy
+    .c2h_byp_in_mm_radr(c2h_byp_in_mm_radr),                                      // input wire [63 : ] c2h_byp_in_mm_radr
+    .c2h_byp_in_mm_wadr(c2h_byp_in_mm_wadr),                                      // input wire [63 : ] c2h_byp_in_mm_wadr
+    .c2h_byp_in_mm_len(c2h_byp_in_mm_len),                                        // input wire [15 : ] c2h_byp_in_mm_len
+    .c2h_byp_in_mm_mrkr_req(c2h_byp_in_mm_mrkr_req),                              // input wire c2h_byp_in_mm_mrkr_req
+    .c2h_byp_in_mm_port_id(c2h_byp_in_mm_port_id),                                // input wire [2 : ] c2h_byp_in_mm_port_id
+    .c2h_byp_in_mm_sdi(c2h_byp_in_mm_sdi),                                        // input wire c2h_byp_in_mm_sdi
+    .c2h_byp_in_mm_qid(c2h_byp_in_mm_qid),                                        // input wire [1 : ] c2h_byp_in_mm_qid
+    .c2h_byp_in_mm_error(c2h_byp_in_mm_error),                                    // input wire c2h_byp_in_mm_error
+    .c2h_byp_in_mm_func(c2h_byp_in_mm_func),                                      // input wire [7 : ] c2h_byp_in_mm_func
+    .c2h_byp_in_mm_cidx(c2h_byp_in_mm_cidx),                                      // input wire [15 : ] c2h_byp_in_mm_cidx
+    .c2h_byp_in_mm_vld(c2h_byp_in_mm_vld),                                        // input wire c2h_byp_in_mm_vld
+    .c2h_byp_in_mm_no_dma(c2h_byp_in_mm_no_dma),                                  // input wire c2h_byp_in_mm_no_dma
+    .c2h_byp_in_mm_rdy(c2h_byp_in_mm_rdy),                                        // output wire c2h_byp_in_mm_rdy
  
 
 
