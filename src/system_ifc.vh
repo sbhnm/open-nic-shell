@@ -149,3 +149,26 @@ output			WVALID
 );
 
 endinterface
+
+
+interface stream #(
+parameter	DATA_WIDTH
+);
+`KEEP logic [DATA_WIDTH-1] tdata;
+`KEEP logic  tvalid;
+`KEEP logic  tready;
+
+modport		master
+(
+    input tready,
+    output tvalid,
+    output tdata
+);
+
+modport		slave
+(
+    output tready,
+    input tvalid,
+    input tdata
+);
+endinterface
