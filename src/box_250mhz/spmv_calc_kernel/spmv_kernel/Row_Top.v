@@ -1,3 +1,5 @@
+`include "pcie_spmv_macros.vh"
+`include "system_ifc.vh"
 module Row_Top#(
     parameter  COLINDEX_BASE_ADDR_1	= 48'h10000000,
     parameter  XVal_BASE_ADDR_1	= 0,
@@ -37,8 +39,8 @@ module Row_Top#(
 
     output wire [3-1 : 0] m_axi_NNZ_arid,
     
-    output wire [48-1 : 0] m_axi_NNZ_araddr,
-    output wire [7 : 0] m_axi_NNZ_arlen,
+    `DEBUG output wire [48-1 : 0] m_axi_NNZ_araddr,
+    `DEBUG output wire [7 : 0] m_axi_NNZ_arlen,
     output wire [2 : 0] m_axi_NNZ_arsize,
     output wire [1 : 0] m_axi_NNZ_arburst,
     output wire  m_axi_NNZ_arlock,
@@ -46,19 +48,19 @@ module Row_Top#(
     output wire [2 : 0] m_axi_NNZ_arprot,
     output wire [3 : 0] m_axi_NNZ_arqos,
     
-    output wire  m_axi_NNZ_arvalid,
+    `DEBUG output wire  m_axi_NNZ_arvalid,
     
     input wire  m_axi_NNZ_arready,
     input wire [3-1 : 0] m_axi_NNZ_rid,
     
-    input wire [256-1 : 0] m_axi_NNZ_rdata,
+    `DEBUG input wire [256-1 : 0] m_axi_NNZ_rdata,
     input wire [1 : 0] m_axi_NNZ_rresp,
     
-    input wire  m_axi_NNZ_rlast,
+    `DEBUG input wire  m_axi_NNZ_rlast,
     
-    input wire  m_axi_NNZ_rvalid,
+    `DEBUG input wire  m_axi_NNZ_rvalid,
     
-    output wire  m_axi_NNZ_rready,
+    `DEBUG output wire  m_axi_NNZ_rready,
 
     
     //colIndex Buffer

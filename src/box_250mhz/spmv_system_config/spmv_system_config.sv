@@ -114,10 +114,10 @@ module spmv_system_config #(
                                     reg_dout<= nnz_num[`getvec(32,i)];
                                 end
                                 CNT_LSB_OFFSET:begin
-                                    reg_dout<=cnt_data[`getvec(32,i)];
+                                    reg_dout<=cnt_data[`getvec(32,2*i)];
                                 end
                                 CNT_MSB_OFFSET:begin
-                                    reg_dout<=cnt_data[`getvec(32,i+1)];
+                                    reg_dout<=cnt_data[`getvec(32,2*i+1)];
                                 end
                                 
 
