@@ -24,6 +24,8 @@
 #		[Place 30-739] the GT ref clock should be within 2 quads from all txvrs.
 # Dual x8 Bifrucation on Lane 0-7 AF8(N)/AF9(P)
 #	Note: The AU50 Vitis shell uses this pair, thus used here.
+
+
 set_property PACKAGE_PIN AF8 [get_ports pcie_refclk_n]
 set_property PACKAGE_PIN AF9 [get_ports pcie_refclk_p]
 

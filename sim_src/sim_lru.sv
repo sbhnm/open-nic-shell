@@ -50,8 +50,9 @@ module sim_lru #(
       
     end
     task req_data(int addr);
-        @(posedge clk);
+        @(negedge clk);
         fontend_addr_stream.tdata=  addr;
+        @(posedge clk);
         fontend_addr_stream.tvalid= 1;
         #10
         fontend_addr_stream.tvalid=0;
@@ -70,12 +71,13 @@ module sim_lru #(
         if(~rstn)begin
            fontend_data_stream.tready<=1; 
         end
-        if(fontend_data_stream.tready & fontend_data_stream.tvalid) begin
-            fontend_data_stream.tready<=0;
-        end
         else if(fontend_addr_stream.tready & fontend_addr_stream.tvalid)begin
             fontend_data_stream.tready<=1;
         end
+        else if(fontend_data_stream.tready & fontend_data_stream.tvalid) begin
+            fontend_data_stream.tready<=0;
+        end
+        
     end
     initial begin
         backend_addr_stream.tready = 1;
@@ -102,9 +104,16 @@ module sim_lru #(
         req_data(1);
         req_data(0);
         req_data(3);
+        req_data(3);
+        req_data(3);
+        req_data(3);
+        req_data(3);    
         
 
     end
+
+
+
     read_ram read_ram(
         .clk(clk),
         .rstn(rstn),

@@ -982,5 +982,21 @@ module spmv_calc_kernel #(
         // .m_axi_bid(m_axi_Val_bid),
         // .m_axi_rid(m_axi_Val_rid)
 );
+parameter integer TAGS_WIDTH = 48;
+parameter integer CACHE_SIZE=512;
+parameter integer DATA_WIDTH=64;
+    stream #(TAGS_WIDTH)  fontend_addr_stream();
+    stream #(DATA_WIDTH)  fontend_data_stream();
+    stream #(TAGS_WIDTH)  backend_addr_stream();
+    stream #(CACHE_SIZE)  backend_data_stream();
+    lru_way lru_way(        
+        .clk(clk),
+        .rstn(rstn),
 
+        .fontend_addr_stream(fontend_addr_stream),
+        .fontend_data_stream(fontend_data_stream),
+        .backend_addr_stream(backend_addr_stream),
+        .backend_data_stream(backend_data_stream)
+        
+    );
 endmodule
