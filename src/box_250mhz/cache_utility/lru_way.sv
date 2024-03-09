@@ -1,24 +1,5 @@
 `include "interface.vh"
-// interface my_interface #(parameter DATA_WIDTH = 8);
-//     // 数据信号
-//     logic [DATA_WIDTH-1:0] data;
-//     // 控制信号
-//     logic enable, reset;
 
-//     // 时钟信号
-//     logic clk;
-
-//     // 方法声明
-//     task send_data(input logic [DATA_WIDTH-1:0] data);
-//         // 在此添加发送数据的逻辑
-//     endtask
-
-//     task receive_data(output logic [DATA_WIDTH-1:0] received_data);
-//         // 在此添加接收数据的逻辑
-//     endtask
-
-//     // 其他信号或方法
-// endinterface
 
 module lru_way #
 (
@@ -33,14 +14,17 @@ module lru_way #
     
 )(
     input wire clk,
-    input wire rstn
-);
-    
-    stream #(TAGS_WIDTH)  fontend_addr_stream();
-    stream #(DATA_WIDTH)  fontend_data_stream();
-    stream #(TAGS_WIDTH)  backend_addr_stream();
-    stream #(CACHE_DEPTH)  backend_data_stream();
+    input wire rstn,
 
+    stream.slave   fontend_addr_stream,
+    stream.master   fontend_data_stream,
+    stream.master   backend_addr_stream,
+    stream.slave   backend_data_stream
+);
+    always @(posedge rstn) begin
+        fontend_addr_stream.tready=1;    
+    end
+    
 
     function integer clogb2 (input integer bit_depth);              
     begin                                                           
@@ -49,19 +33,22 @@ module lru_way #
     end                 
 
     endfunction
-
+    always @(*) begin
+        fontend_data_stream.tvalid = fontend_data_stream.tready & cache_hit;
+        fontend_data_stream.tdata = cache_data[seq_mapping[0]];
+    end
     task swap_seq_mapping(
         output logic [clogb2(CACHE_DEPTH-1)-1:0]  new_seq_mapping [CACHE_DEPTH-1:0],
         input logic [clogb2(CACHE_DEPTH-1)-1:0]  pre_seq_mapping [CACHE_DEPTH-1:0],
         input logic [clogb2(CACHE_DEPTH-1)-1:0] hit_seq
     );
+        for(int i =  0 ; i < CACHE_DEPTH;i++)begin
+           new_seq_mapping[i] = pre_seq_mapping[i];
+        end
         for(int i = 0;i < hit_seq;i++) begin
             new_seq_mapping[i+1] = pre_seq_mapping[i];
         end
         new_seq_mapping[0] = pre_seq_mapping[hit_seq];
-        for(int i =  CACHE_DEPTH-1 ; i >=  hit_seq+1;i--)begin
-           new_seq_mapping[i] = pre_seq_mapping[i];
-        end
     endtask
 
 
@@ -70,19 +57,41 @@ module lru_way #
         input logic [TAGS_WIDTH-1:0] pre_cache_tags [CACHE_DEPTH-1:0],
         input logic [clogb2(CACHE_DEPTH-1)-1:0] hit_seq
         );
-
+        
         for(int i = 0;i < hit_seq;i++) begin
             new_cache_tags[i+1] = pre_cache_tags[i];
         end
         new_cache_tags[0] = pre_cache_tags[hit_seq];
-       for(int i =  CACHE_DEPTH-1 ; i >=  hit_seq+1;i--)begin
-           new_cache_tags[i] = pre_cache_tags[i];
-       end
+       
     endtask
 
 
+    logic read_lock;
+    logic [TAGS_WIDTH-1:0] req_tags_buffer;
+    always_comb begin
+        backend_data_stream.tready=1;
+    end
+    task read_from_backend(
+        logic [TAGS_WIDTH-1:0] req_tags
+    ); 
+        
+            wait(backend_addr_stream.tready);
+            @(posedge clk);
+            backend_addr_stream.tvalid=1;
+            backend_addr_stream.tdata=req_tags;
+            req_tags_buffer = req_tags;
+            
+            wait(~clk);
+            backend_addr_stream.tvalid=0;
+            backend_addr_stream.tdata=0;
+            
+            wait(backend_data_stream.tvalid);
 
-
+            cache_tags[CACHE_DEPTH-1] = req_tags_buffer;
+            cache_data[seq_mapping[CACHE_DEPTH-1]] = backend_data_stream.tdata;
+            
+        
+    endtask
 
     logic [CACHE_SIZE-1:0] cache_data [CACHE_DEPTH-1:0];
 
@@ -92,13 +101,13 @@ module lru_way #
 
     
  
-    logic cache_hit;
+    wire cache_hit;
 
     logic [clogb2(CACHE_DEPTH-1)-1:0] hit_seq;
-    logic [CACHE_DEPTH-1:0] cache_line_hit;
+    wire [CACHE_DEPTH-1:0] cache_line_hit;
      generate for(genvar i = 0;i<CACHE_DEPTH;i++)begin
+        assign cache_line_hit[i] = cache_tags[i] == fontend_addr_stream.tdata;
         always_comb begin 
-                cache_line_hit[i] = cache_tags[i] == fontend_addr_stream.tdata;
                 if(cache_tags[i] == fontend_addr_stream.tdata) begin
                     hit_seq = i;
                 end
@@ -110,37 +119,44 @@ module lru_way #
 
 
     logic [TAGS_WIDTH-1:0] new_cache_tags [CACHE_DEPTH-1:0];
-
+    logic [clogb2(CACHE_DEPTH-1)-1:0]  new_seq_mapping [CACHE_DEPTH-1:0];
     always @(posedge clk or negedge rstn) begin
         if(!rstn)begin
+            read_lock<=0;
+            
+            for(int i = 0;i<CACHE_DEPTH;i++)begin
+                seq_mapping[i] = i;
+            end
+
             for(int i = 0;i<CACHE_DEPTH;i++)begin
                 cache_tags[i]<= {TAGS_WIDTH{1'b0}} |32'hdeadc0de;
             end
         end
         else if(fontend_addr_stream.tvalid & fontend_addr_stream.tready) begin
             if(cache_hit) begin
+                $display("---------------------nmsl");
                 swap_cacheline(new_cache_tags,cache_tags,hit_seq);
                 cache_tags<=new_cache_tags;
+                swap_seq_mapping(new_seq_mapping,seq_mapping,hit_seq);
+                seq_mapping<=new_seq_mapping;
             end
-            else if(~cache_hit)begin
-                
+            if(~cache_hit)begin
+                if(~read_lock)begin
+                    read_lock=1;
+                    $display("---------------------kknmsl");
+                    read_from_backend(fontend_addr_stream.tdata);
+                    
+                    swap_cacheline(new_cache_tags,cache_tags,CACHE_DEPTH-1);
+                    cache_tags<=new_cache_tags;
+                    
+                    swap_seq_mapping(new_seq_mapping,seq_mapping,CACHE_DEPTH-1);
+                    seq_mapping<=new_seq_mapping;
+                    read_lock=0;
+                end
             end
         end
         
     end
-    logic [clogb2(CACHE_DEPTH-1)-1:0]  new_seq_mapping [CACHE_DEPTH-1:0];
-    always @(posedge clk or negedge rstn) begin
-        if(!rstn)begin
-        end
-        else if(fontend_addr_stream.tvalid & fontend_addr_stream.tready) begin
-            if(cache_hit) begin
-                swap_seq_mapping(new_seq_mapping,seq_mapping,hit_seq);
-                seq_mapping<=new_seq_mapping;
-            end
-            else if(~cache_hit)begin
-                
+    
 
-            end
-        end
-    end
 endmodule
