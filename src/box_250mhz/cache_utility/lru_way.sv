@@ -4,12 +4,13 @@
 module lru_way #
 (
     parameter integer TAGS_WIDTH = 48,
-    
-    parameter integer DATA_WIDTH=64,
 
     parameter integer CACHE_SIZE=512,
 
+    parameter integer DATA_PORT_SIZE=512,
+
     parameter integer CACHE_DEPTH=8
+
 
     
 )(
@@ -91,7 +92,6 @@ module lru_way #
     //         cache_tags[CACHE_DEPTH-1] = req_tags_buffer;
     //         cache_data[seq_mapping[CACHE_DEPTH-1]] = backend_data_stream.tdata;
             
-        
     // endtask
 
     logic [CACHE_SIZE-1:0] cache_data [CACHE_DEPTH-1:0];
@@ -123,9 +123,11 @@ module lru_way #
     logic [TAGS_WIDTH-1:0] new_cache_tags [CACHE_DEPTH-1:0];
     logic [clogb2(CACHE_DEPTH-1)-1:0]  new_seq_mapping [CACHE_DEPTH-1:0];
     logic [2:0] cache_miss_fsm_status;
+    logic [4:0] data_ptr;
     always @(posedge clk or negedge rstn) begin
         if(!rstn)begin
             cache_miss_fsm_status = 0;
+            data_ptr <=0;
             for(int i = 0;i<CACHE_DEPTH;i++)begin
                 seq_mapping[i] = i;
             end
@@ -150,10 +152,13 @@ module lru_way #
         end
         else if(cache_miss_fsm_status == 1)begin
             if(backend_fsm_status==2 & backend_data_stream.tvalid) begin
-                cache_miss_fsm_status <= 0;
+                data_ptr<=data_ptr+1;
+                if(data_ptr==(CACHE_SIZE/DATA_PORT_SIZE)-1)begin
+                    cache_miss_fsm_status <= 0;
+                end
 
                 cache_tags[CACHE_DEPTH-1] = req_tags_buffer;
-                cache_data[seq_mapping[CACHE_DEPTH-1]] = backend_data_stream.tdata;
+                cache_data[seq_mapping[CACHE_DEPTH-1]] = {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
                 
                 swap_cacheline(new_cache_tags,cache_tags,CACHE_DEPTH-1);
                 cache_tags<=new_cache_tags;

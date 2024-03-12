@@ -585,31 +585,7 @@ module pcie_spmv #(
     .axis_aclk                            (axis_aclk)
   );
 
-  wire [1*48-1 : 0] axi_Xi_araddr;
-  wire [1*2-1 : 0] axi_Xi_arburst;
-  wire [1*8-1 : 0] axi_Xi_arlen;
-  wire [1*3-1 : 0] axi_Xi_arsize;
-  wire [1*1-1 : 0]axi_Xi_arvalid;
-  wire [1*48-1 : 0] axi_Xi_awaddr;
-  wire [1*2-1 : 0] axi_Xi_awburst;
-  wire [1*8-1 : 0] axi_Xi_awlen;
-  wire [1*3-1 : 0] axi_Xi_awsize;
-  wire [1*1-1 : 0] axi_Xi_awvalid;
-  wire [1*1-1 : 0] axi_Xi_rready;
-  wire [1*1-1 : 0] axi_Xi_bready;
-  wire [1*64-1 : 0] axi_Xi_wdata;
-  wire [1*1-1 : 0] axi_Xi_wlast;
-  wire [1*8-1 : 0] axi_Xi_wstrb;
-  wire [1*1-1 : 0] axi_Xi_wvalid;
-  wire [1*1-1 : 0] axi_Xi_arready;
-  wire [1*1-1 : 0] axi_Xi_awready;
-  wire [1*64-1 : 0] axi_Xi_rdata;
-  wire [1*1-1 : 0] axi_Xi_rlast;
-  wire [1*2-1 : 0] axi_Xi_rresp;
-  wire [1*1-1 : 0] axi_Xi_rvalid;
-  wire [1*1-1 : 0] axi_Xi_wready;
-  wire [1*2-1 : 0] axi_Xi_bresp;
-  wire [1*1-1 : 0] axi_Xi_bvalid;
+
 
   spmv_vector_loader spmv_vector_loader(
     
@@ -682,32 +658,6 @@ module pcie_spmv #(
     .m_axi_hbm_bvalid(axi_hbm_width_bvalid),
     .m_axi_hbm_bresp(axi_hbm_width_bresp),
 
-
-    .m_axi_bram_araddr(axi_Xi_araddr),
-    .m_axi_bram_arburst(axi_Xi_arburst),
-    .m_axi_bram_arlen(axi_Xi_arlen),
-    .m_axi_bram_arsize(axi_Xi_arsize),
-    .m_axi_bram_arvalid(axi_Xi_arvalid),
-    .m_axi_bram_awaddr(axi_Xi_awaddr),
-    .m_axi_bram_awburst(axi_Xi_awburst),
-    .m_axi_bram_awlen(axi_Xi_awlen),
-    .m_axi_bram_awsize(axi_Xi_awsize),
-    .m_axi_bram_awvalid(axi_Xi_awvalid),
-    .m_axi_bram_rready(axi_Xi_rready),
-    .m_axi_bram_bready(axi_Xi_bready),
-    .m_axi_bram_wdata(axi_Xi_wdata),
-    .m_axi_bram_wlast(axi_Xi_wlast),
-    .m_axi_bram_wstrb(axi_Xi_wstrb),
-    .m_axi_bram_wvalid(axi_Xi_wvalid),
-    .m_axi_bram_arready(axi_Xi_arready),
-    .m_axi_bram_awready(axi_Xi_awready),
-    .m_axi_bram_rdata(axi_Xi_rdata),
-    .m_axi_bram_rlast(axi_Xi_rlast),
-    .m_axi_bram_rresp(axi_Xi_rresp),
-    .m_axi_bram_rvalid(axi_Xi_rvalid),
-    .m_axi_bram_wready(axi_Xi_wready),
-    .m_axi_bram_bvalid(axi_Xi_bvalid),
-    .m_axi_bram_bresp(axi_Xi_bresp),
 
     .pcie_aclk(axis_aclk),
     .pcie_aresetn(box_250mhz_rstn)
@@ -948,31 +898,7 @@ module pcie_spmv #(
     .m_axi_ker_bresp(axi_box_bresp),
     .m_axi_ker_bvalid(axi_box_bvalid),
 
-    .s_axi_Xi_awaddr(axi_Xi_awaddr& 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_awaddr
-    .s_axi_Xi_awlen(axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
-    .s_axi_Xi_awsize(axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
-    .s_axi_Xi_awburst(axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
-    .s_axi_Xi_awvalid(axi_Xi_awvalid),    // input wire [0 : 0] s_axi_awvalid
-    .s_axi_Xi_awready(axi_Xi_awready),    // output wire [0 : 0] s_axi_awready
-    .s_axi_Xi_wdata(axi_Xi_wdata),        // input wire [63 : 0] s_axi_wdata
-    .s_axi_Xi_wstrb(axi_Xi_wstrb),        // input wire [7 : 0] s_axi_wstrb
-    .s_axi_Xi_wlast(axi_Xi_wlast),        // input wire [0 : 0] s_axi_wlast
-    .s_axi_Xi_wvalid(axi_Xi_wvalid),      // input wire [0 : 0] s_axi_wvalid
-    .s_axi_Xi_wready(axi_Xi_wready),      // output wire [0 : 0] s_axi_wready
-    .s_axi_Xi_bresp(axi_Xi_bresp),        // output wire [1 : 0] s_axi_bresp
-    .s_axi_Xi_bvalid(axi_Xi_bvalid),      // output wire [0 : 0] s_axi_bvalid
-    .s_axi_Xi_bready(axi_Xi_bready),      // input wire [0 : 0] s_axi_bready
-    .s_axi_Xi_araddr(axi_Xi_araddr & 48'h000F_FFFF_FFFF),      // input wire [47 : 0] s_axi_araddr
-    .s_axi_Xi_arlen(axi_Xi_arlen),        // input wire [7 : 0] s_axi_arlen
-    .s_axi_Xi_arsize(axi_Xi_arsize),      // input wire [2 : 0] s_axi_arsize
-    .s_axi_Xi_arburst(axi_Xi_arburst),    // input wire [1 : 0] s_axi_arburst
-    .s_axi_Xi_arvalid(axi_Xi_arvalid),    // input wire [0 : 0] s_axi_arvalid
-    .s_axi_Xi_arready(axi_Xi_arready),    // output wire [0 : 0] s_axi_arready
-    .s_axi_Xi_rdata(axi_Xi_rdata),        // output wire [63 : 0] s_axi_rdata
-    .s_axi_Xi_rresp(axi_Xi_rresp),        // output wire [1 : 0] s_axi_rresp
-    .s_axi_Xi_rlast(axi_Xi_rlast),        // output wire [0 : 0] s_axi_rlast
-    .s_axi_Xi_rvalid(axi_Xi_rvalid),      // output wire [0 : 0] s_axi_rvalid
-    .s_axi_Xi_rready(axi_Xi_rready),      // input wire [0 : 0] s_axi_rready
+
 
 
     .s_axis_qdma_h2c_tvalid           (axis_qdma_h2c_tvalid),

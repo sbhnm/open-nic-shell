@@ -1,7 +1,6 @@
 //#`include "system_ifc.vh"
 module lru#(
-    parameter LUR_DEPTH = 16,
-    parameter CACHE_WAY = 4,
+    parameter LRU_DEPTH = 16,
     parameter CACHE_SIZE = 512,
 
     parameter ADDR_WIDTH = 48,
@@ -14,48 +13,65 @@ module lru#(
     
     )
 (
-//    axi_4.slave #(
-//        .ADDR_WIDTH(ADDR_WIDTH),
-//        .DATA_WIDTH(FONTEND_DATA_WIDTH),
-//        .ID_WIDTH(FONTEND_ID_WIDTH),
-//    ) 
-//    axi_fontend(),
-//    axi_4.slave #(
-//        .ADDR_WIDTH(ADDR_WIDTH),
-//        .DATA_WIDTH(BACKEND_DATA_WIDTH),
-//        .ID_WIDTH(BACKEND_ID_WIDTH),
-//    ) 
-//    axi_backend(),
+    input wire clk,
+    input wire rstn,
 
+    axi4.slave axi_fondend_req,
+    axi4.master axi_backend_req
 );
-//    function integer clogb2 (input integer bit_depth);              
-//  	begin                                                           
-//    for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
-//      bit_depth = bit_depth >> 1;                                 
-//    end                                                           
-//  	endfunction
 
-//    localparam offset_bit_width = clogb2(CACHE_SIZE-1);
-//    localparam way_bit_width = clogb2(CACHE_WAY-1);
-//    localparam tags_bit_width = ADDR_WIDTH - offset_bit_width - way_bit_width;
-
-//    wire [offset_bit_width-1:0] req_addr_offset;
-//    wire [way_bit_width-1:0] req_addr_way;
-//    wire [tags_bit_width-1:0] req_addr_tags;
-
-
-//    // assign 
+    parameter int TAGS_WIDTH = ADDR_WIDTH - clogb2(CACHE_SIZE/8-1);
+    function integer clogb2 (input integer bit_depth);              
+    begin                                                           
+    for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
+    bit_depth = bit_depth >> 1;                                 
+    end   
+    endfunction
     
-//    axi_fontend req_addr_offset = axi_fontend.ARADDR[0+:offset_bit_width];
-//    axi_fontend req_addr_way = axi_fontend.ARADDR[offset_bit_width+:way_bit_width];
-//    axi_fontend req_addr_tags = axi_fontend.ARADDR[offset_bit_width+way_bit_width+:tags_bit_width];
+    // 前端，直接连线
 
-    
-    
-    
+    always_comb begin
+        fontend_addr_stream.tvalid = axi_fondend_req.ARVALID;
+        fontend_addr_stream.tdata = axi_fondend_req.ARADDR[TAGS_WIDTH-1:0];
+        axi_fondend_req.ARREADY = fontend_addr_stream.tready;
 
+        axi_fondend_req.RVALID = fontend_data_stream.tvalid;
+        axi_fondend_req.RDATA = fontend_data_stream.tdata;
+        fontend_data_stream.tready= axi_fondend_req.RREADY;
+    end
+    always @(negedge rstn) begin
+        axi_backend_req.ARLEN = CACHE_SIZE/BACKEND_DATA_WIDTH;
+        
+        axi_backend_req.ARVALID = backend_addr_stream.tvalid;
+        axi_backend_req.ARADDR = backend_addr_stream.tdata <<(ADDR_WIDTH-TAGS_WIDTH);
+        backend_addr_stream.tready = axi_backend_req.ARREADY;
 
+        backend_data_stream.tvalid = axi_backend_req.RVALID;
+        backend_data_stream.tdata = axi_backend_req.RDATA;
+        axi_backend_req.RREADY = backend_data_stream.tready;
+    end
+
+    always_comb begin
+    end
+    stream #(ADDR_WIDTH)  fontend_addr_stream();
+    stream #(FONTEND_DATA_WIDTH)  fontend_data_stream();
     
+    // 后端，促发传输支持
+    stream #(ADDR_WIDTH)  backend_addr_stream();
+    stream #(BACKEND_DATA_WIDTH)  backend_data_stream();
 
+    lru_way #(
+        .CACHE_DEPTH(LRU_DEPTH),
+        .CACHE_SIZE(CACHE_SIZE),
+        .TAGS_WIDTH(TAGS_WIDTH),
+        .DATA_PORT_SIZE(BACKEND_DATA_WIDTH)
+    )  lru_way_inst (
+        .clk(clk),
+        .rstn(rstn),
+        .fontend_addr_stream(fontend_addr_stream),
+        .fontend_data_stream(fontend_data_stream),
+        .backend_addr_stream(backend_addr_stream),
+        .backend_data_stream(backend_data_stream)
+    );
      
 endmodule

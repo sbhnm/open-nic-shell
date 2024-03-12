@@ -41,32 +41,7 @@ module box_250mhz #(
   output                   [1:0] s_axil_rresp,
   input                          s_axil_rready,
 
-  input [1*48-1 : 0] s_axi_Xi_araddr,
-  input [1*2-1 : 0] s_axi_Xi_arburst,
-  input [1*8-1 : 0] s_axi_Xi_arlen,
-  input [1*3-1 : 0] s_axi_Xi_arsize,
-  input [1*1-1 : 0]s_axi_Xi_arvalid,
-  input [1*48-1 : 0] s_axi_Xi_awaddr,
-  input [1*2-1 : 0] s_axi_Xi_awburst,
-  input [1*8-1 : 0] s_axi_Xi_awlen,
-  input [1*3-1 : 0] s_axi_Xi_awsize,
-  input [1*1-1 : 0] s_axi_Xi_awvalid,
-  input [1*1-1 : 0] s_axi_Xi_rready,
-  input [1*1-1 : 0] s_axi_Xi_bready,
-  input [1*64-1 : 0] s_axi_Xi_wdata,
-  input [1*1-1 : 0] s_axi_Xi_wlast,
-  input [1*8-1 : 0] s_axi_Xi_wstrb,
-  input [1*1-1 : 0] s_axi_Xi_wvalid,
-  
-  output [1*1-1 : 0] s_axi_Xi_arready,
-  output [1*1-1 : 0] s_axi_Xi_awready,
-  output [1*64-1 : 0] s_axi_Xi_rdata,
-  output [1*1-1 : 0] s_axi_Xi_rlast,
-  output [1*2-1 : 0] s_axi_Xi_rresp,
-  output [1*1-1 : 0] s_axi_Xi_rvalid,
-  output [1*1-1 : 0] s_axi_Xi_wready,
-  output [1*2-1 : 0] s_axi_Xi_bresp,
-  output [1*1-1 : 0] s_axi_Xi_bvalid,
+
 
   output [(CONF_NUM_KERNEL*4+1)*48-1 : 0] m_axi_ker_araddr,
   output [(CONF_NUM_KERNEL*4+1)*2-1 : 0] m_axi_ker_arburst,
@@ -153,7 +128,7 @@ module box_250mhz #(
     assign m_axis_qdma_c2h_tuser_size = 0;
     assign m_axis_qdma_c2h_tuser_src  = 0;
     assign m_axis_qdma_c2h_tuser_dst  = 0;
-
+    axi4 #(48,256,1) axi_Xi[CONF_NUM_KERNEL];
     spmv_calc_top #(
       .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )spmv_calc_top(
@@ -230,41 +205,8 @@ module box_250mhz #(
         .m_axi_hbm_Val_wready(m_axi_ker_wready[(CONF_NUM_KERNEL)*1 +: 1]),
         .m_axi_hbm_Val_bresp(m_axi_ker_bresp[(CONF_NUM_KERNEL)*2 +: 2]),
         .m_axi_hbm_Val_bvalid(m_axi_ker_bvalid[(CONF_NUM_KERNEL)*1 +: 1]),
-
-        .s_axi_Xi_awaddr(s_axi_Xi_awaddr),      // input wire [47 : 0] s_axi_awaddr
-        .s_axi_Xi_awlen(s_axi_Xi_awlen),        // input wire [7 : 0] s_axi_awlen
-        .s_axi_Xi_awsize(s_axi_Xi_awsize),      // input wire [2 : 0] s_axi_awsize
-        .s_axi_Xi_awburst(s_axi_Xi_awburst),    // input wire [1 : 0] s_axi_awburst
-        .s_axi_Xi_awvalid(s_axi_Xi_awvalid),    // input wire [0 : 0] s_axi_awvalid
-        .s_axi_Xi_awready(s_axi_Xi_awready),    // output wire [0 : 0] s_axi_awready
-        .s_axi_Xi_wdata(s_axi_Xi_wdata),        // input wire [63 : 0] s_axi_wdata
-        .s_axi_Xi_wstrb(s_axi_Xi_wstrb),        // input wire [7 : 0] s_axi_wstrb
-        .s_axi_Xi_wlast(s_axi_Xi_wlast),        // input wire [0 : 0] s_axi_wlast
-        .s_axi_Xi_wvalid(s_axi_Xi_wvalid),      // input wire [0 : 0] s_axi_wvalid
-        .s_axi_Xi_wready(s_axi_Xi_wready),      // output wire [0 : 0] s_axi_wready
-        .s_axi_Xi_bresp(s_axi_Xi_bresp),        // output wire [1 : 0] s_axi_bresp
-        .s_axi_Xi_bvalid(s_axi_Xi_bvalid),      // output wire [0 : 0] s_axi_bvalid
-        .s_axi_Xi_bready(s_axi_Xi_bready),      // input wire [0 : 0] s_axi_bready
-        .s_axi_Xi_araddr(s_axi_Xi_araddr),      // input wire [47 : 0] s_axi_araddr
-        .s_axi_Xi_arlen(s_axi_Xi_arlen),        // input wire [7 : 0] s_axi_arlen
-        .s_axi_Xi_arsize(s_axi_Xi_arsize),      // input wire [2 : 0] s_axi_arsize
-        .s_axi_Xi_arburst(s_axi_Xi_arburst),    // input wire [1 : 0] s_axi_arburst
-        .s_axi_Xi_arvalid(s_axi_Xi_arvalid),    // input wire [0 : 0] s_axi_arvalid
-        .s_axi_Xi_arready(s_axi_Xi_arready),    // output wire [0 : 0] s_axi_arready
-        .s_axi_Xi_rdata(s_axi_Xi_rdata),        // output wire [63 : 0] s_axi_rdata
-        .s_axi_Xi_rresp(s_axi_Xi_rresp),        // output wire [1 : 0] s_axi_rresp
-        .s_axi_Xi_rlast(s_axi_Xi_rlast),        // output wire [0 : 0] s_axi_rlast
-        .s_axi_Xi_rvalid(s_axi_Xi_rvalid),      // output wire [0 : 0] s_axi_rvalid
-        .s_axi_Xi_rready(s_axi_Xi_rready),      // input wire [0 : 0] s_axi_rready
-        .s_axi_Xi_awcache(4'b0010),
-        .s_axi_Xi_awprot(0),
-        .s_axi_Xi_awqos(0),
-        .s_axi_Xi_awlock(0),
-        .s_axi_Xi_arcache(4'b0010),
-        .s_axi_Xi_arprot(0),
-        .s_axi_Xi_arqos(0),
-        .s_axi_Xi_arlock(0)
-
+        // TODO
+        .m_axi_Xi(axi_Xi)
     );
     
 

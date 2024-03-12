@@ -51,6 +51,10 @@ module sim_Multi_Kernel #(
     wire                   [1:0] s_axil_rresp;
     reg                          s_axil_rready;
 
+    axi4 #(
+        .ADDR_WIDTH(48),
+        .DATA_WIDTH(256),
+        .ID_WIDTH(1)) axi_Xi[CONF_NUM_KERNEL]();
 
   wire [(CONF_NUM_KERNEL+1)*48-1 : 0] axi_hbm_araddr;
   wire [(CONF_NUM_KERNEL+1)*2-1 : 0] axi_hbm_arburst;
@@ -282,7 +286,9 @@ module sim_Multi_Kernel #(
         .m_axi_hbm_Val_rvalid(axi_hbm_rvalid[(CONF_NUM_KERNEL)*1 +: 1]),
         .m_axi_hbm_Val_wready(axi_hbm_wready[(CONF_NUM_KERNEL)*1 +: 1]),
         .m_axi_hbm_Val_bresp(axi_hbm_bresp[(CONF_NUM_KERNEL)*2 +: 2]),
-        .m_axi_hbm_Val_bvalid(axi_hbm_bvalid[(CONF_NUM_KERNEL)*1 +: 1])
+        .m_axi_hbm_Val_bvalid(axi_hbm_bvalid[(CONF_NUM_KERNEL)*1 +: 1]),
+
+        .m_axi_Xi(axi_Xi)
 
     );
 
