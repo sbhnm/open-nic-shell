@@ -95,6 +95,19 @@ module spmv_calc_top #(
     axi4.master m_axi_Xi[CONF_NUM_KERNEL-1:0],
     input rstn
 );
+    // `KEEP reg rstn_buf;
+    // always @(posedge axis_clk) begin
+    //     rstn_buf<=rstn;
+    // end
+
+    wire rstn_buf;
+    BUFG bufg_inst (
+    .I(rstn),  // 将rstn连接到BUFG的输入端口
+    .O(rstn_buf)      // BUFG的输出端口，如果不需要可以不连接
+//    .OBUFG(),  // 如果需要BUFG的输出作为其他BUFG的输入时使用
+//    .CE(1'b1), // 时钟使能端口，保持为1以确保BUFG工作
+// .S()       // 用于同步重置的端口，如果不需要可以不连接
+    );
     wire [32*3*CONF_NUM_KERNEL-1:0] config_wire;
     wire [32*3*CONF_NUM_KERNEL-1:0] status_wire;
     
@@ -129,7 +142,7 @@ generate
     if (CONF_NUM_KERNEL >1)begin
         axi_hbm_val_crossbar axi_hbm_val_crossbar (
             .aclk(axis_clk),                      // input wire aclk
-            .aresetn(rstn),                // input wire aresetn
+            .aresetn(rstn_buf),                // input wire aresetn
 
             .s_axi_arid(0),
             .s_axi_awid(0),
@@ -258,13 +271,13 @@ endgenerate
         .status_wire(status_wire),
 
         .aclk(axil_clk),
-        .aresetn(rstn)
+        .aresetn(rstn_buf)
     );
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
         axi4 #(48,256,2) axi_Xi[4]();
         axi_colxi_crossbar axi_Xi_crossbar (
         .aclk(axis_clk),                      // input wire aclk
-        .aresetn(rstn),                // input wire aresetn
+        .aresetn(rstn_buf),                // input wire aresetn
 
         .s_axi_awid(2'b01),          // input wire [1 : 0] s_axi_awid
         .s_axi_awaddr(0),      // input wire [95 : 0] s_axi_awaddr
@@ -372,7 +385,7 @@ endgenerate
             
         )spmv_calc_kernel (
             .clk(axis_clk),
-            .rstn(rstn && ~(config_wire[32*3 *i + 7]) ),
+            .rstn(rstn_buf && ~(config_wire[32*3 *i + 7]) ),
             .config_wire(config_wire[`getvec(32*3,i)]),
             .status_wire(status_wire[`getvec(32*3,i)]),
             .m_axi_Col_araddr(m_axi_Col_araddr[`getvec(48,i)]),

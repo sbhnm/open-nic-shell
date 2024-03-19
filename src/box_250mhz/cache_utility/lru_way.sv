@@ -17,10 +17,10 @@ module lru_way #
     input wire clk,
     input wire rstn,
 
-     stream.slave   fontend_addr_stream,
-     stream.master   fontend_data_stream,
-     stream.master   backend_addr_stream,
-     stream.slave   backend_data_stream
+    stream.slave   fontend_addr_stream,
+    stream.master   fontend_data_stream,
+    stream.master   backend_addr_stream,
+    stream.slave   backend_data_stream
 );
     // always @(posedge rstn) begin
     //     fontend_addr_stream.tready=1;    
@@ -130,7 +130,7 @@ module lru_way #
             cache_miss_fsm_status = 0;
             data_ptr <=0;
             for(int i = 0;i<CACHE_DEPTH;i++)begin
-                seq_mapping[i] = i;
+                seq_mapping[i] <= i;
             end
 
             for(int i = 0;i<CACHE_DEPTH;i++)begin
@@ -160,8 +160,8 @@ module lru_way #
                     cache_miss_fsm_status <= 0;
                 end
                 fontend_addr_stream.tready<=1;
-                cache_tags[CACHE_DEPTH-1] = req_tags_buffer;
-                cache_data[seq_mapping[CACHE_DEPTH-1]] = {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
+                cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
+                cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
                 
                 swap_cacheline(new_cache_tags,cache_tags,CACHE_DEPTH-1);
                 cache_tags<=new_cache_tags;
@@ -175,31 +175,30 @@ module lru_way #
     logic [2:0] backend_fsm_status;
     always @(posedge clk) begin
         if(~rstn)begin
-            backend_fsm_status = 0;
-            backend_addr_stream.tvalid=0;
-            backend_addr_stream.tdata=0;
+            backend_fsm_status <= 0;
+            backend_addr_stream.tvalid<=0;
+            backend_addr_stream.tdata<=0;
                 
         end
         else begin
             if(backend_fsm_status == 0 )begin
                 if(cache_miss_fsm_status ==1) begin
-                    backend_addr_stream.tvalid=1;
-                    backend_addr_stream.tdata=fontend_addr_stream.tdata;
-                    req_tags_buffer = fontend_addr_stream.tdata;
+                    backend_addr_stream.tvalid<=1;
+                    backend_addr_stream.tdata<=fontend_addr_stream.tdata;
+                    req_tags_buffer <= fontend_addr_stream.tdata;
                     if(backend_addr_stream.tready & backend_addr_stream.tvalid)begin
                         backend_fsm_status <= 1;
+                        backend_addr_stream.tvalid<=0;
+                        backend_addr_stream.tdata<=0;
                     end
                     
                 end
             end
             if(backend_fsm_status==1)begin
-                backend_addr_stream.tvalid=0;
-                backend_addr_stream.tdata=0;
                 backend_fsm_status <= 2;
             end
             if(backend_fsm_status==2) begin
                 if(backend_data_stream.tvalid)begin
-                    
                     backend_fsm_status<= 0;
                 end
             end 
