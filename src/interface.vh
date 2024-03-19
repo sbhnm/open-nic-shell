@@ -8,54 +8,50 @@
   parameter	DATA_WIDTH = 32,
   parameter	ID_WIDTH   = 4
   );
-  `KEEP logic		ACLK;
-  `KEEP logic		ARESETN;
-  `KEEP logic		[ADDR_WIDTH-1:0]ARADDR;
-  `KEEP logic		[1:0]ARBURST;
-  `KEEP logic		[3:0]ARCACHE;
-  `KEEP logic		[ID_WIDTH-1:0]ARID;
-  `KEEP logic		[7:0]ARLEN;
-  `KEEP logic		ARLOCK;
-  `KEEP logic		[2:0]ARPROT;
-  `KEEP logic		[3:0]ARQOS;
-  `KEEP logic		ARREADY;
-  `KEEP logic		[3:0]ARREGION;
-  `KEEP logic		[2:0]ARSIZE;
-  `KEEP logic		ARVALID;
-  `KEEP logic		[ADDR_WIDTH-1:0]AWADDR;
-  `KEEP logic		[1:0]AWBURST;
-  `KEEP logic		[3:0]AWCACHE;
-  `KEEP logic		[ID_WIDTH-1:0]AWID;
-  `KEEP logic		[7:0]AWLEN;
-  `KEEP logic		AWLOCK;
-  `KEEP logic		[2:0]AWPROT;
-  `KEEP logic		[3:0]AWQOS;
-  `KEEP logic		AWREADY;
-  `KEEP logic		[3:0]AWREGION;
-  `KEEP logic		[2:0]AWSIZE;
-  `KEEP logic		AWVALID;
-  `KEEP logic		[ID_WIDTH-1:0]BID;
-  `KEEP logic		BREADY;
-  `KEEP logic		[1:0]BRESP;
-  `KEEP logic		BVALID;
-  `KEEP logic		[DATA_WIDTH-1:0]RDATA;
-  `KEEP logic		[ID_WIDTH-1:0]RID;
-  `KEEP logic		RLAST;
-  `KEEP logic		RREADY;
-  `KEEP logic		[1:0]RRESP;
-  `KEEP logic		RVALID;
-  `KEEP logic		[DATA_WIDTH-1:0]WDATA;
-  `KEEP logic		WLAST;
-  `KEEP logic		WREADY;
-  `KEEP logic		[DATA_WIDTH/8-1:0]WSTRB;
-  `KEEP logic		WVALID;
+   logic		[ADDR_WIDTH-1:0]ARADDR;
+   logic		[1:0]ARBURST;
+   logic		[3:0]ARCACHE;
+   logic		[ID_WIDTH-1:0]ARID;
+   logic		[7:0]ARLEN;
+   logic		ARLOCK;
+   logic		[2:0]ARPROT;
+   logic		[3:0]ARQOS;
+   logic		ARREADY;
+   logic		[3:0]ARREGION;
+   logic		[2:0]ARSIZE;
+   logic		ARVALID;
+   logic		[ADDR_WIDTH-1:0]AWADDR;
+   logic		[1:0]AWBURST;
+   logic		[3:0]AWCACHE;
+   logic		[ID_WIDTH-1:0]AWID;
+   logic		[7:0]AWLEN;
+   logic		AWLOCK;
+   logic		[2:0]AWPROT;
+   logic		[3:0]AWQOS;
+   logic		AWREADY;
+   logic		[3:0]AWREGION;
+   logic		[2:0]AWSIZE;
+   logic		AWVALID;
+   logic		[ID_WIDTH-1:0]BID;
+   logic		BREADY;
+   logic		[1:0]BRESP;
+   logic		BVALID;
+   logic		[DATA_WIDTH-1:0]RDATA;
+   logic		[ID_WIDTH-1:0]RID;
+   logic		RLAST;
+   logic		RREADY;
+   logic		[1:0]RRESP;
+   logic		RVALID;
+   logic		[DATA_WIDTH-1:0]WDATA;
+   logic		WLAST;
+   logic		WREADY;
+   logic		[DATA_WIDTH/8-1:0]WSTRB;
+   logic		WVALID;
 
 
   //interconnect  -> S_AXI 
   modport		slave
   (
-  input			ACLK,
-  input			ARESETN,
   input			ARADDR,
   input			ARBURST,
   input			ARCACHE,
@@ -103,8 +99,6 @@
   //interconnect M_AXI -> connect
   modport		master
   (
-  input			ACLK,
-  input			ARESETN,
   output			ARADDR,
   output			ARBURST,
   output			ARCACHE,
@@ -154,9 +148,9 @@
 interface stream #(
 parameter	DATA_WIDTH = 1
 );
-`KEEP logic [DATA_WIDTH-1:0] tdata;
-`KEEP logic  tvalid;
-`KEEP logic  tready;
+ logic [DATA_WIDTH-1:0] tdata;
+ logic  tvalid;
+ logic  tready;
 
 modport		master
 (

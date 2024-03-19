@@ -113,7 +113,7 @@ module spmv_vector_loader #(
     .s_axi_arcache(s_axi_pcie_arcache[`getvec(4,0)]),    // output wire [7 : 0] s_axi_arcache
     .s_axi_arprot(s_axi_pcie_arprot[`getvec(3,0)]),      // output wire [5 : 0] s_axi_arprot
     // .s_axi_arregion(s_axi_pcie_arregion[`getvec(8,0)]),  // output wire [7 : 0] s_axi_arregion
-    .s_axi_arqos(s_axi_pcie_arqos[`getvec(4,0)]),        // output wire [7 : 0] s_axi_arqos
+    .s_axi_arqos(s_axi_pcie_arqos[`getvec(1,0)]),        // output wire [7 : 0] s_axi_arqos
     .s_axi_arvalid(s_axi_pcie_arvalid[`getvec(1,0)]),    // output wire [1 : 0] s_axi_arvalid
     .s_axi_arready(s_axi_pcie_arready[`getvec(1,0)]),    // input wire [1 : 0] s_axi_arready
     .s_axi_rdata(s_axi_pcie_rdata[`getvec(512,0)]),        // input wire [511 : 0] s_axi_rdata

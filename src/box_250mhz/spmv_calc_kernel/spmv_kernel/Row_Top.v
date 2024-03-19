@@ -39,8 +39,8 @@ module Row_Top#(
 
     output wire [3-1 : 0] m_axi_NNZ_arid,
     
-    `DEBUG output wire [48-1 : 0] m_axi_NNZ_araddr,
-    `DEBUG output wire [7 : 0] m_axi_NNZ_arlen,
+     output wire [48-1 : 0] m_axi_NNZ_araddr,
+     output wire [7 : 0] m_axi_NNZ_arlen,
     output wire [2 : 0] m_axi_NNZ_arsize,
     output wire [1 : 0] m_axi_NNZ_arburst,
     output wire  m_axi_NNZ_arlock,
@@ -48,19 +48,19 @@ module Row_Top#(
     output wire [2 : 0] m_axi_NNZ_arprot,
     output wire [3 : 0] m_axi_NNZ_arqos,
     
-    `DEBUG output wire  m_axi_NNZ_arvalid,
+     output wire  m_axi_NNZ_arvalid,
     
     input wire  m_axi_NNZ_arready,
     input wire [3-1 : 0] m_axi_NNZ_rid,
     
-    `DEBUG input wire [256-1 : 0] m_axi_NNZ_rdata,
+     input wire [256-1 : 0] m_axi_NNZ_rdata,
     input wire [1 : 0] m_axi_NNZ_rresp,
     
-    `DEBUG input wire  m_axi_NNZ_rlast,
+     input wire  m_axi_NNZ_rlast,
     
-    `DEBUG input wire  m_axi_NNZ_rvalid,
+     input wire  m_axi_NNZ_rvalid,
     
-    `DEBUG output wire  m_axi_NNZ_rready,
+     output wire  m_axi_NNZ_rready,
 
     
     //colIndex Buffer

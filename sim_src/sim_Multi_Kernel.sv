@@ -210,7 +210,44 @@ module sim_Multi_Kernel #(
         end
     endgenerate
 
+    generate
+        for(genvar i = 0;i<CONF_NUM_KERNEL ;i = i+1)begin
+            sim_blk_ram sim_blk_ram_Xi (
+            .s_aclk(clk),                // input wire s_aclk
+            .s_aresetn(rstn),          // input wire s_aresetn
 
+            .s_axi_awid(axi_Xi[i].AWID),
+            .s_axi_awaddr(axi_Xi[i].AWADDR),
+            .s_axi_awlen(axi_Xi[i].AWLEN),
+            .s_axi_awsize(axi_Xi[i].AWSIZE),
+            .s_axi_awburst(axi_Xi[i].AWBURST),
+            .s_axi_awvalid(axi_Xi[i].AWVALID),
+            .s_axi_awready(axi_Xi[i].AWREADY),
+            .s_axi_wdata(axi_Xi[i].WDATA),
+            .s_axi_wstrb(axi_Xi[i].WSTRB),
+            .s_axi_wlast(axi_Xi[i].WLAST),
+            .s_axi_wvalid(axi_Xi[i].WVALID),
+            .s_axi_wready(axi_Xi[i].WREADY),
+            .s_axi_bid(axi_Xi[i].BID),
+            .s_axi_bresp(axi_Xi[i].BRESP),
+            .s_axi_bvalid(axi_Xi[i].BVALID),
+            .s_axi_bready(axi_Xi[i].BREADY),
+            .s_axi_arid(axi_Xi[i].ARID),
+            .s_axi_araddr(axi_Xi[i].ARADDR),
+            .s_axi_arlen(axi_Xi[i].ARLEN),
+            .s_axi_arsize(axi_Xi[i].ARSIZE),
+            .s_axi_arburst(axi_Xi[i].ARBURST),
+            .s_axi_arvalid(axi_Xi[i].ARVALID),
+            .s_axi_arready(axi_Xi[i].ARREADY),
+            .s_axi_rid(axi_Xi[i].RID),
+            .s_axi_rdata(axi_Xi[i].RDATA),
+            .s_axi_rresp(axi_Xi[i].RRESP),
+            .s_axi_rlast(axi_Xi[i].RLAST),
+            .s_axi_rvalid(axi_Xi[i].RVALID),
+            .s_axi_rready(axi_Xi[i].RREADY)
+            );
+        end
+    endgenerate
     spmv_calc_top #(
         .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )

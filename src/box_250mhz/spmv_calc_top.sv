@@ -95,7 +95,6 @@ module spmv_calc_top #(
     axi4.master m_axi_Xi[CONF_NUM_KERNEL-1:0],
     input rstn
 );
-    
     wire [32*3*CONF_NUM_KERNEL-1:0] config_wire;
     wire [32*3*CONF_NUM_KERNEL-1:0] status_wire;
     
@@ -262,31 +261,47 @@ endgenerate
         .aresetn(rstn)
     );
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
-        axi4 #(48,256,1) axi_Xi[4]();
+        axi4 #(48,256,2) axi_Xi[4]();
         axi_colxi_crossbar axi_Xi_crossbar (
-        .aclk(clk),                      // input wire aclk
+        .aclk(axis_clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
 
-        .s_axi_awid( {axi_Xi[0].AWID,axi_Xi[1].AWID,axi_Xi[2].AWID,axi_Xi[3].AWID} ),
-        .s_axi_awaddr( {axi_Xi[0].AWADDR,axi_Xi[1].AWADDR,axi_Xi[2].AWADDR,axi_Xi[3].AWADDR} ),
-        .s_axi_awlen( {axi_Xi[0].AWLEN,axi_Xi[1].AWLEN,axi_Xi[2].AWLEN,axi_Xi[3].AWLEN} ),
-        .s_axi_awsize( {axi_Xi[0].AWSIZE,axi_Xi[1].AWSIZE,axi_Xi[2].AWSIZE,axi_Xi[3].AWSIZE} ),
-        .s_axi_awburst( {axi_Xi[0].AWBURST,axi_Xi[1].AWBURST,axi_Xi[2].AWBURST,axi_Xi[3].AWBURST} ),
-        .s_axi_awlock( {axi_Xi[0].AWLOCK,axi_Xi[1].AWLOCK,axi_Xi[2].AWLOCK,axi_Xi[3].AWLOCK} ),
-        .s_axi_awcache( {axi_Xi[0].AWCACHE,axi_Xi[1].AWCACHE,axi_Xi[2].AWCACHE,axi_Xi[3].AWCACHE} ),
-        .s_axi_awprot( {axi_Xi[0].AWPROT,axi_Xi[1].AWPROT,axi_Xi[2].AWPROT,axi_Xi[3].AWPROT} ),
-        .s_axi_awqos( {axi_Xi[0].AWQOS,axi_Xi[1].AWQOS,axi_Xi[2].AWQOS,axi_Xi[3].AWQOS} ),
-        .s_axi_awvalid( {axi_Xi[0].AWVALID,axi_Xi[1].AWVALID,axi_Xi[2].AWVALID,axi_Xi[3].AWVALID} ),
+        .s_axi_awid(2'b01),          // input wire [1 : 0] s_axi_awid
+        .s_axi_awaddr(0),      // input wire [95 : 0] s_axi_awaddr
+        .s_axi_awlen(0),        // input wire [15 : 0] s_axi_awlen
+        .s_axi_awsize(0),      // input wire [5 : 0] s_axi_awsize
+        .s_axi_awburst(0),    // input wire [3 : 0] s_axi_awburst
+        .s_axi_awlock(0),      // input wire [1 : 0] s_axi_awlock
+        .s_axi_awcache(0),    // input wire [7 : 0] s_axi_awcache
+        .s_axi_awprot(0),      // input wire [5 : 0] s_axi_awprot
+        .s_axi_awqos(0),        // input wire [7 : 0] s_axi_awqos
+        .s_axi_awvalid(0),    // input wire [1 : 0] s_axi_awvalid
+        .s_axi_wdata(0),        // input wire [511 : 0] s_axi_wdata
+        .s_axi_wstrb(0),        // input wire [63 : 0] s_axi_wstrb
+        .s_axi_wlast(0),        // input wire [1 : 0] s_axi_wlast
+        .s_axi_wvalid(0),      // input wire [1 : 0] s_axi_wvalid
+        .s_axi_bready(0),      // input wire [1 : 0] s_axi_bready
+
+        // .s_axi_awid( {axi_Xi[0].AWID,axi_Xi[1].AWID,axi_Xi[2].AWID,axi_Xi[3].AWID} ),
+        // .s_axi_awaddr( {axi_Xi[0].AWADDR,axi_Xi[1].AWADDR,axi_Xi[2].AWADDR,axi_Xi[3].AWADDR} ),
+        // .s_axi_awlen( {axi_Xi[0].AWLEN,axi_Xi[1].AWLEN,axi_Xi[2].AWLEN,axi_Xi[3].AWLEN} ),
+        // .s_axi_awsize( {axi_Xi[0].AWSIZE,axi_Xi[1].AWSIZE,axi_Xi[2].AWSIZE,axi_Xi[3].AWSIZE} ),
+        // .s_axi_awburst( {axi_Xi[0].AWBURST,axi_Xi[1].AWBURST,axi_Xi[2].AWBURST,axi_Xi[3].AWBURST} ),
+        // .s_axi_awlock( {axi_Xi[0].AWLOCK,axi_Xi[1].AWLOCK,axi_Xi[2].AWLOCK,axi_Xi[3].AWLOCK} ),
+        // .s_axi_awcache( {axi_Xi[0].AWCACHE,axi_Xi[1].AWCACHE,axi_Xi[2].AWCACHE,axi_Xi[3].AWCACHE} ),
+        // .s_axi_awprot( {axi_Xi[0].AWPROT,axi_Xi[1].AWPROT,axi_Xi[2].AWPROT,axi_Xi[3].AWPROT} ),
+        // .s_axi_awqos( {axi_Xi[0].AWQOS,axi_Xi[1].AWQOS,axi_Xi[2].AWQOS,axi_Xi[3].AWQOS} ),
+        // .s_axi_awvalid( {axi_Xi[0].AWVALID,axi_Xi[1].AWVALID,axi_Xi[2].AWVALID,axi_Xi[3].AWVALID} ),
         .s_axi_awready( {axi_Xi[0].AWREADY,axi_Xi[1].AWREADY,axi_Xi[2].AWREADY,axi_Xi[3].AWREADY} ),
-        .s_axi_wdata( {axi_Xi[0].WDATA,axi_Xi[1].WDATA,axi_Xi[2].WDATA,axi_Xi[3].WDATA} ),
-        .s_axi_wstrb( {axi_Xi[0].WSTRB,axi_Xi[1].WSTRB,axi_Xi[2].WSTRB,axi_Xi[3].WSTRB} ),
-        .s_axi_wlast( {axi_Xi[0].WLAST,axi_Xi[1].WLAST,axi_Xi[2].WLAST,axi_Xi[3].WLAST} ),
-        .s_axi_wvalid( {axi_Xi[0].WVALID,axi_Xi[1].WVALID,axi_Xi[2].WVALID,axi_Xi[3].WVALID} ),
+        // .s_axi_wdata( {axi_Xi[0].WDATA,axi_Xi[1].WDATA,axi_Xi[2].WDATA,axi_Xi[3].WDATA} ),
+        // .s_axi_wstrb( {axi_Xi[0].WSTRB,axi_Xi[1].WSTRB,axi_Xi[2].WSTRB,axi_Xi[3].WSTRB} ),
+        // .s_axi_wlast( {axi_Xi[0].WLAST,axi_Xi[1].WLAST,axi_Xi[2].WLAST,axi_Xi[3].WLAST} ),
+        // .s_axi_wvalid( {axi_Xi[0].WVALID,axi_Xi[1].WVALID,axi_Xi[2].WVALID,axi_Xi[3].WVALID} ),
         .s_axi_wready( {axi_Xi[0].WREADY,axi_Xi[1].WREADY,axi_Xi[2].WREADY,axi_Xi[3].WREADY} ),
-        .s_axi_bid( {axi_Xi[0].BID,axi_Xi[1].BID,axi_Xi[2].BID,axi_Xi[3].BID} ),
-        .s_axi_bresp( {axi_Xi[0].BRESP,axi_Xi[1].BRESP,axi_Xi[2].BRESP,axi_Xi[3].BRESP} ),
-        .s_axi_bvalid( {axi_Xi[0].BVALID,axi_Xi[1].BVALID,axi_Xi[2].BVALID,axi_Xi[3].BVALID} ),
-        .s_axi_bready( {axi_Xi[0].BREADY,axi_Xi[1].BREADY,axi_Xi[2].BREADY,axi_Xi[3].BREADY} ),
+        // .s_axi_bid( {axi_Xi[0].BID,axi_Xi[1].BID,axi_Xi[2].BID,axi_Xi[3].BID} ),
+        // .s_axi_bresp( {axi_Xi[0].BRESP,axi_Xi[1].BRESP,axi_Xi[2].BRESP,axi_Xi[3].BRESP} ),
+        // .s_axi_bvalid( {axi_Xi[0].BVALID,axi_Xi[1].BVALID,axi_Xi[2].BVALID,axi_Xi[3].BVALID} ),
+        // .s_axi_bready( {axi_Xi[0].BREADY,axi_Xi[1].BREADY,axi_Xi[2].BREADY,axi_Xi[3].BREADY} ),
         .s_axi_arid( {axi_Xi[0].ARID,axi_Xi[1].ARID,axi_Xi[2].ARID,axi_Xi[3].ARID} ),
         .s_axi_araddr( {axi_Xi[0].ARADDR,axi_Xi[1].ARADDR,axi_Xi[2].ARADDR,axi_Xi[3].ARADDR} ),
         .s_axi_arlen( {axi_Xi[0].ARLEN,axi_Xi[1].ARLEN,axi_Xi[2].ARLEN,axi_Xi[3].ARLEN} ),

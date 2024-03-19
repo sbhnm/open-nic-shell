@@ -128,7 +128,7 @@ module box_250mhz #(
     assign m_axis_qdma_c2h_tuser_size = 0;
     assign m_axis_qdma_c2h_tuser_src  = 0;
     assign m_axis_qdma_c2h_tuser_dst  = 0;
-    axi4 #(48,256,1) axi_Xi[CONF_NUM_KERNEL];
+    axi4 #(48,256,2) axi_Xi[CONF_NUM_KERNEL]();
     spmv_calc_top #(
       .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )spmv_calc_top(

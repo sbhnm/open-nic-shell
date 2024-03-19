@@ -40,8 +40,17 @@ module lru#(
         fontend_data_stream.tready= axi_fondend_req.RREADY;
     end
     always @(negedge rstn) begin
-        axi_backend_req.ARLEN = CACHE_SIZE/BACKEND_DATA_WIDTH;
-        
+        axi_backend_req.ARLEN = (CACHE_SIZE/BACKEND_DATA_WIDTH) -1;
+        axi_backend_req.ARID = 0;
+        axi_backend_req.ARSIZE=clogb2((BACKEND_DATA_WIDTH/8)-1);
+        axi_backend_req.ARBURST= 2'b01;
+        axi_backend_req.ARLOCK= 1'b0;
+        axi_backend_req.ARCACHE= 4'b0010;
+        axi_backend_req.ARPROT= 3'h0;
+        axi_backend_req.ARQOS= 4'h0;
+
+    end
+    always_comb begin
         axi_backend_req.ARVALID = backend_addr_stream.tvalid;
         axi_backend_req.ARADDR = backend_addr_stream.tdata <<(ADDR_WIDTH-TAGS_WIDTH);
         backend_addr_stream.tready = axi_backend_req.ARREADY;
@@ -49,7 +58,7 @@ module lru#(
         backend_data_stream.tvalid = axi_backend_req.RVALID;
         backend_data_stream.tdata = axi_backend_req.RDATA;
         axi_backend_req.RREADY = backend_data_stream.tready;
-    end
+    end    
 
     always_comb begin
     end
