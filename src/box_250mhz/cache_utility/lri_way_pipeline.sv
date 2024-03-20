@@ -50,47 +50,58 @@ module lru_way_pipeline #(
      endgenerate
     assign hit_seq =  {hit_seq_v[0]|hit_seq_v[1]|hit_seq_v[2]|hit_seq_v[3]|hit_seq_v[4]|hit_seq_v[5]|hit_seq_v[6]|hit_seq_v[7]};
     assign cache_hit = | cache_line_hit;
-    wire Hit_Fifo_full;
-    wire Hit_Fifo_empty;
-    wire Hit_Fifo_read;
-    assign fontend_addr_stream.tready = ~Hit_Fifo_full;
-    wire [clogb2(CACHE_DEPTH-1):0] Hit_Fifo_data_out;
-    // 一级流水，形成是否命中
-    Fifo #(
-        .DATA_WIDTH(clogb2(CACHE_DEPTH-1)-1 +1),
-        .DEPTH(4)
-    ) Hit_Fifo(
-        .clk(clk),
-        .rst(!rstn),
-        .wr_en(fontend_addr_stream.tvalid & fontend_addr_stream.tready ),
-        .data_in({cache_hit,hit_seq}),
-        .full(Hit_Fifo_full),
-        .data_out(Hit_Fifo_data_out),
-        .empty(Hit_Fifo_empty),
-        .rd_en(!Hit_Fifo_empty& ),
-    );
-    // 二级流水，阻塞未命中 
-    // 当遇到未命中的Tag时，首先进行读取，
-    // 读取完成后，应当进行前递
+    reg [3:0] lru_fsm_state;
 
-    //
+
+
+    task swap_seq_mapping(
+        output logic [clogb2(CACHE_DEPTH-1)-1:0]  new_seq_mapping [CACHE_DEPTH-1:0],
+        input logic [clogb2(CACHE_DEPTH-1)-1:0]  pre_seq_mapping [CACHE_DEPTH-1:0],
+        input logic [clogb2(CACHE_DEPTH-1)-1:0] hit_seq
+    );
+        for(int i =  0 ; i < CACHE_DEPTH;i++)begin
+           new_seq_mapping[i] = pre_seq_mapping[i];
+        end
+        for(int i = 0;i < hit_seq;i++) begin
+            new_seq_mapping[i+1] = pre_seq_mapping[i];
+        end
+        new_seq_mapping[0] = pre_seq_mapping[hit_seq];
+    endtask
+
+
+    task swap_cacheline(
+        output logic [TAGS_WIDTH-1:0] new_cache_tags [CACHE_DEPTH-1:0],
+        input logic [TAGS_WIDTH-1:0] pre_cache_tags [CACHE_DEPTH-1:0],
+        input logic [clogb2(CACHE_DEPTH-1)-1:0] hit_seq
+        );
+        
+        for(int i = 0;i < hit_seq;i++) begin
+            new_cache_tags[i+1] = pre_cache_tags[i];
+        end
+        new_cache_tags[0] = pre_cache_tags[hit_seq];
+       
+    endtask
+
+
 
     
-    reg [3:0] cache_fsm_status;
-    always@(posedge clk)begin
+
+    always @(posedge clk) begin
         if(~rstn)begin
-            cache_fsm_status<=0;
+            lru_fsm_state<=0;
         end
         else begin
-            if(cache_fsm_status==0)begin
-                if(!Hit_Fifo_empty)begin
-                    if()begin
-                    end
-
-
-
+            if(lru_fsm_state ==0)begin
+                if(~cache_hit)begin
+                //进入 置换状态
+                    lru_fsm_state<=1;
                 end
-            end
+                else if(cache_hit)begin
+                    // 连续命中
+                    lru_fsm_state<=0;
+                end    
+            end 
+            
         end
     end
 endmodule
