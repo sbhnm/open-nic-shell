@@ -69,7 +69,7 @@ module lru#(
     stream #(ADDR_WIDTH)  backend_addr_stream();
     stream #(BACKEND_DATA_WIDTH)  backend_data_stream();
 
-    lru_way #(
+    lru_way_pipeline #(
         .CACHE_DEPTH(LRU_DEPTH),
         .CACHE_SIZE(CACHE_SIZE),
         .TAGS_WIDTH(TAGS_WIDTH),

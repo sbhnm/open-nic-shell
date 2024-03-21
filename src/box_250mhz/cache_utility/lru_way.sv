@@ -102,7 +102,7 @@ module lru_way #
 
     
  
-    `KEEP wire cache_hit;
+    wire cache_hit;
 
     wire [clogb2(CACHE_DEPTH-1)-1:0] hit_seq;
     wire [clogb2(CACHE_DEPTH-1)-1:0] hit_seq_v [CACHE_DEPTH-1:0];
