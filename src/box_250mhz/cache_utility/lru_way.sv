@@ -158,16 +158,19 @@ module lru_way #
                 data_ptr<=data_ptr+1;
                 if(data_ptr==(CACHE_SIZE/DATA_PORT_SIZE)-1)begin
                     cache_miss_fsm_status <= 0;
+                    fontend_addr_stream.tready<=1;
+                    swap_cacheline(new_cache_tags,cache_tags,CACHE_DEPTH-1);
+                    cache_tags<=new_cache_tags;
+                    swap_seq_mapping(new_seq_mapping,seq_mapping,CACHE_DEPTH-1);
+                    seq_mapping<=new_seq_mapping;
+                    
                 end
-                fontend_addr_stream.tready<=1;
-                cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
-                cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
+                else begin
+                    cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
+                    cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};    
+                end
                 
-                swap_cacheline(new_cache_tags,cache_tags,CACHE_DEPTH-1);
-                cache_tags<=new_cache_tags;
                 
-                swap_seq_mapping(new_seq_mapping,seq_mapping,CACHE_DEPTH-1);
-                seq_mapping<=new_seq_mapping;
             end
         end
         

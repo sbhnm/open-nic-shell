@@ -31,7 +31,7 @@ module pcie_spmv #(
   parameter int    NUM_PHYS_FUNC   = 1,
   parameter int    NUM_QUEUE       = 512,
   parameter int    NUM_CMAC_PORT   = 1,
-  parameter int CONF_NUM_KERNEL = 32'h2
+  parameter int CONF_NUM_KERNEL = 32'h4
 ) (
  `ifdef __au280__
    output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
