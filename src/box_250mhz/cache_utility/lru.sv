@@ -1,6 +1,6 @@
 //#`include "system_ifc.vh"
 module lru#(
-    parameter LRU_DEPTH = 16,
+    parameter LRU_DEPTH = 8,
     parameter CACHE_SIZE = 512,
 
     parameter ADDR_WIDTH = 48,
@@ -29,10 +29,21 @@ module lru#(
     endfunction
     
     // 前端，直接连线
-
+    logic [16:0] bias;
+    // always @(posedge clk) begin
+    //     if(~rstn)begin
+    //         bias <= 0;
+    //     end
+    //     else begin
+    //         if(fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
+    //             bias <= (bias +1)%7;
+    //         end
+    //     end
+    // end
     always_comb begin
         fontend_addr_stream.tvalid = axi_fondend_req.ARVALID;
         fontend_addr_stream.tdata = axi_fondend_req.ARADDR[TAGS_WIDTH-1:0];
+        // fontend_addr_stream.tdata = bias;
         axi_fondend_req.ARREADY = fontend_addr_stream.tready;
 
         axi_fondend_req.RVALID = fontend_data_stream.tvalid;
@@ -60,8 +71,6 @@ module lru#(
         axi_backend_req.RREADY = backend_data_stream.tready;
     end    
 
-    always_comb begin
-    end
     stream #(ADDR_WIDTH)  fontend_addr_stream();
     stream #(FONTEND_DATA_WIDTH)  fontend_data_stream();
     

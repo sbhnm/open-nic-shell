@@ -88,7 +88,6 @@ module lru_way_pipeline #(
        
     endtask
 
-
     always @(posedge clk) begin
         if(~rstn) begin
             cache_hit_pre<=0;
@@ -99,20 +98,22 @@ module lru_way_pipeline #(
             if(fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
                 cache_hit_pre<=cache_hit;
                 hit_seq_pre<=hit_seq;
-
-                hit_seq_de_swap <=  (hit_seq_pre == hit_seq)? 0:0|
-                            (hit_seq_pre < hit_seq)? hit_seq:0|
-                            (hit_seq_pre > hit_seq)? hit_seq+1:0;
+                hit_seq_de_swap <=  (hit_seq_de_swap == hit_seq)? 0:0|
+                            (hit_seq_de_swap < hit_seq)? hit_seq:0|
+                            (hit_seq_de_swap > hit_seq)? (hit_seq+1):0;
                 tags_pre <= fontend_addr_stream.tdata;
                 end
         end
     end
-    
+    logic cahce_font_valid_pre;
+    always @(posedge clk) begin
+        cahce_font_valid_pre <= fontend_addr_stream.tvalid & fontend_addr_stream.tready;
+    end
     // form and back;
     always @(*) begin
         fontend_data_stream.tvalid = 
-                fontend_data_stream.tready & cache_hit_pre & lru_fsm_state == 0 | 
-                fontend_data_stream.tready & lru_fsm_state == 2;
+                (fontend_data_stream.tready & cahce_font_valid_pre & lru_fsm_state == 0) | 
+                (fontend_data_stream.tready & lru_fsm_state == 2);
         fontend_data_stream.tdata = (lru_fsm_state == 0? cache_data[seq_mapping[hit_seq_de_swap]] : 0)|
                                     (lru_fsm_state == 2? cache_data[seq_mapping[CACHE_DEPTH-1]] : 0);
     end
@@ -149,7 +150,7 @@ module lru_way_pipeline #(
                 backend_addr_stream.tvalid<=0;
                 backend_addr_stream.tdata<=0;
                 if(~cache_hit & fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
-                //进入 置换状态
+                    //进入 置换状态
                     lru_fsm_state<=1;
                     data_ptr<=0;
                     fontend_addr_stream.tready<=0;
@@ -159,11 +160,12 @@ module lru_way_pipeline #(
                     lru_fsm_state<=0;
 
                 end
-                if(cache_hit_pre & fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
-                    swap_cacheline(new_cache_tags,cache_tags,hit_seq_pre);
+                if(cache_hit_pre!=0 &fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
+                    swap_cacheline(new_cache_tags,cache_tags,hit_seq_de_swap);
                     cache_tags<=new_cache_tags;
-                    swap_seq_mapping(new_seq_mapping,seq_mapping,hit_seq_pre);
+                    swap_seq_mapping(new_seq_mapping,seq_mapping,hit_seq_de_swap);
                     seq_mapping<=new_seq_mapping;
+                    
                 end
             end 
             if(lru_fsm_state == 1)begin //发起请求，等待返回
@@ -182,7 +184,8 @@ module lru_way_pipeline #(
                         lru_fsm_state <= 2;
                     end
                     cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
-                    cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
+                    cache_data[seq_mapping[CACHE_DEPTH-1]] <= req_tags_buffer;
+                    // cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};
                 end
             end
             if(lru_fsm_state ==2)begin //置换
@@ -193,8 +196,6 @@ module lru_way_pipeline #(
                 seq_mapping<=new_seq_mapping;
                 
                 lru_fsm_state<=0;
-
-
 
             end
             

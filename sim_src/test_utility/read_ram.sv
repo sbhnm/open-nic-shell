@@ -3,7 +3,7 @@ module read_ram #(
     
     parameter integer DATA_WIDTH=64,
 
-    parameter integer read_time = 32
+    parameter integer read_time = 16
 
 ) (
     input wire clk,

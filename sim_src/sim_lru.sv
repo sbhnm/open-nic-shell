@@ -49,69 +49,55 @@ module sim_lru #(
         rstn <=1;
       
     end
+    int req_addr;
+    int bak_data;
+    always @(posedge clk) begin
+        if(rstn & fontend_data_stream.tvalid &fontend_data_stream.tready)begin
+            // $display("data read %d",fontend_data_stream.tdata);
+            bak_data <= fontend_data_stream.tdata;
+            if(fontend_data_stream.tdata != req_addr) begin
+                $display("err");
+            end
+        end
+        if(rstn & fontend_addr_stream.tvalid &fontend_addr_stream.tready)begin
+            // $display("addr req %d",fontend_addr_stream.tdata);
+            req_addr<=fontend_addr_stream.tdata;
+        end
+
+    end
     task req_data(int addr);
-        @(negedge clk);
-        fontend_addr_stream.tdata=  addr;
+        // $display("req for addr : %d",addr);
         @(posedge clk);
-        fontend_addr_stream.tvalid= 1;
-        #10
-        fontend_addr_stream.tvalid=0;
-        // fontend_addr_stream.tdata=0;
-        wait(fontend_data_stream.tvalid & fontend_data_stream.tready);
+        wait(fontend_addr_stream.tready);
+        fontend_addr_stream.tdata<=  addr;
+        fontend_addr_stream.tvalid<= 1;
+        @(posedge clk);
+        wait(fontend_addr_stream.tready);
+        // @(posedge clk);
+        // fontend_addr_stream.tvalid<=0;
+        // fontend_addr_stream.tdata<=0;
+        // wait(fontend_data_stream.tready);
     endtask
     stream #(TAGS_WIDTH)  fontend_addr_stream();
     stream #(DATA_WIDTH)  fontend_data_stream();
     stream #(TAGS_WIDTH)  backend_addr_stream();
     stream #(CACHE_SIZE)  backend_data_stream();
-    // initial begin
-    //     fontend_data_stream.tready = 1;
-    // end
+    initial begin
+        fontend_data_stream.tready = 1;
+    end
+
+
 
     always @(posedge clk) begin
         if(~rstn)begin
-           fontend_data_stream.tready<=1; 
+            fontend_addr_stream.tvalid<=0;
+            fontend_addr_stream.tdata<=0;
         end
-        else if(fontend_addr_stream.tready & fontend_addr_stream.tvalid)begin
-            fontend_data_stream.tready<=1;
+        else begin
+            req_data($random%5 + 50);
+            
         end
-        else if(fontend_data_stream.tready & fontend_data_stream.tvalid) begin
-            fontend_data_stream.tready<=0;
-        end
-        
     end
-    initial begin
-        backend_addr_stream.tready = 1;
-    end
-    initial begin
-        fontend_addr_stream.tvalid=0;
-        fontend_addr_stream.tdata=0;
-        #300
-        wait(rstn);
-        #20
-        req_data(0);
-        req_data(1);
-
-        req_data(1);
-        req_data(0);
-
-        req_data(2);
-        req_data(3);
-        req_data(4);
-        req_data(5);
-        req_data(6);
-        req_data(7);
-        
-        req_data(1);
-        req_data(0);
-        req_data(3);
-        req_data(3);
-        req_data(3);
-        req_data(3);
-        req_data(3);    
-        
-
-    end
-
 
 
     read_ram read_ram(
@@ -120,7 +106,11 @@ module sim_lru #(
         .req_addr_stream(backend_addr_stream),
         .bak_data_stream(backend_data_stream)
     );
-    lru_way lru_way(
+    lru_way_pipeline#(
+        .DATA_PORT_SIZE(256),
+        .TAGS_WIDTH(64)
+    )
+     lru_way_pipeline_inst(
         .clk(clk),
         .rstn(rstn),
 

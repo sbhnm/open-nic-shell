@@ -7,7 +7,7 @@ module lru_way #
 
     parameter integer CACHE_SIZE=512,
 
-    parameter integer DATA_PORT_SIZE=512,
+    parameter integer DATA_PORT_SIZE=256,
 
     parameter integer CACHE_DEPTH=8
 
@@ -166,7 +166,7 @@ module lru_way #
                     
                 end
                 else begin
-                    cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
+                    // cache_tags[CACHE_DEPTH-1] <= req_tags_buffer;
                     cache_data[seq_mapping[CACHE_DEPTH-1]] <= {cache_data[seq_mapping[CACHE_DEPTH-1]][CACHE_SIZE-DATA_PORT_SIZE-1:0] , backend_data_stream.tdata};    
                 end
                 

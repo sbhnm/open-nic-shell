@@ -370,6 +370,11 @@ endgenerate
         .m_axi_rready(m_axi_Xi[i].RREADY)
         );
 
+        reg usr_rst_buf ;
+        always @(posedge axil_clk) begin
+            usr_rst_buf <= rstn_buf && ~(config_wire[32*3 *i + 7]);
+        end
+
         spmv_calc_kernel #(
             .COLINDEX_BASE_ADDR_1(i * 48'h10000000 + 48'h02000000),
             .COLINDEX_BASE_ADDR_2(i * 48'h10000000 + 48'h03000000),
@@ -385,7 +390,7 @@ endgenerate
             
         )spmv_calc_kernel (
             .clk(axis_clk),
-            .rstn(rstn_buf && ~(config_wire[32*3 *i + 7]) ),
+            .rstn(usr_rst_buf),
             .config_wire(config_wire[`getvec(32*3,i)]),
             .status_wire(status_wire[`getvec(32*3,i)]),
             .m_axi_Col_araddr(m_axi_Col_araddr[`getvec(48,i)]),
