@@ -57,7 +57,13 @@ module lru_way_pipeline #(
 
     reg cache_hit_pre;
     reg [clogb2(CACHE_DEPTH-1)-1:0] hit_seq_pre;
-    reg [clogb2(CACHE_DEPTH-1)-1:0] hit_seq_de_swap;
+    wire [clogb2(CACHE_DEPTH-1)-1:0] hit_seq_de_swap;
+    assign hit_seq_de_swap = (hit_seq_de_swap_pre == hit_seq_pre)? 0:0|
+                            (hit_seq_de_swap_pre < hit_seq_pre)? hit_seq_pre:0|
+                            (hit_seq_de_swap_pre > hit_seq_pre)? (hit_seq_pre+1):0;
+
+    reg [clogb2(CACHE_DEPTH-1)-1:0] hit_seq_de_swap_pre;
+
     reg [TAGS_WIDTH-1:0] tags_pre;
 
     task swap_seq_mapping(
@@ -92,15 +98,14 @@ module lru_way_pipeline #(
         if(~rstn) begin
             cache_hit_pre<=0;
             hit_seq_pre<=0;
-            hit_seq_de_swap<=0;
+            // hit_seq_de_swap<=0;
+            hit_seq_de_swap_pre<=0;
         end
         else begin
             if(fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
                 cache_hit_pre<=cache_hit;
                 hit_seq_pre<=hit_seq;
-                hit_seq_de_swap <=  (hit_seq_de_swap == hit_seq)? 0:0|
-                            (hit_seq_de_swap < hit_seq)? hit_seq:0|
-                            (hit_seq_de_swap > hit_seq)? (hit_seq+1):0;
+                hit_seq_de_swap_pre <= hit_seq_de_swap;
                 tags_pre <= fontend_addr_stream.tdata;
                 end
         end

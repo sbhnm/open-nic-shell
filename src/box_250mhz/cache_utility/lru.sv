@@ -29,25 +29,28 @@ module lru#(
     endfunction
     
     // 前端，直接连线
-    logic [16:0] bias;
-    // always @(posedge clk) begin
-    //     if(~rstn)begin
-    //         bias <= 0;
-    //     end
-    //     else begin
-    //         if(fontend_addr_stream.tvalid & fontend_addr_stream.tready)begin
-    //             bias <= (bias +1)%7;
-    //         end
-    //     end
-    // end
+    
+
+
+    logic [clogb2(CACHE_SIZE/8-1) -1 :0] req_addr_bias;
+    always @(posedge clk) begin 
+        if(~rstn)begin
+            req_addr_bias<=0;
+        end
+        else begin
+            if(fontend_addr_stream.tvalid & fontend_addr_stream.tready) begin
+                req_addr_bias <= axi_fondend_req.ARADDR;
+            end
+        end
+    end
     always_comb begin
         fontend_addr_stream.tvalid = axi_fondend_req.ARVALID;
-        fontend_addr_stream.tdata = axi_fondend_req.ARADDR[TAGS_WIDTH-1:0];
-        // fontend_addr_stream.tdata = bias;
+        fontend_addr_stream.tdata = axi_fondend_req.ARADDR[ADDR_WIDTH -1:ADDR_WIDTH - TAGS_WIDTH];
+
         axi_fondend_req.ARREADY = fontend_addr_stream.tready;
 
         axi_fondend_req.RVALID = fontend_data_stream.tvalid;
-        axi_fondend_req.RDATA = fontend_data_stream.tdata;
+        axi_fondend_req.RDATA = fontend_data_stream.tdata[req_addr_bias*8 +: FONTEND_DATA_WIDTH];
         fontend_data_stream.tready= axi_fondend_req.RREADY;
     end
     always @(negedge rstn) begin
@@ -71,11 +74,11 @@ module lru#(
         axi_backend_req.RREADY = backend_data_stream.tready;
     end    
 
-    stream #(ADDR_WIDTH)  fontend_addr_stream();
-    stream #(FONTEND_DATA_WIDTH)  fontend_data_stream();
+    stream #(TAGS_WIDTH)  fontend_addr_stream();
+    stream #(CACHE_SIZE)  fontend_data_stream();
     
     // 后端，促发传输支持
-    stream #(ADDR_WIDTH)  backend_addr_stream();
+    stream #(TAGS_WIDTH)  backend_addr_stream();
     stream #(BACKEND_DATA_WIDTH)  backend_data_stream();
 
     lru_way_pipeline #(
