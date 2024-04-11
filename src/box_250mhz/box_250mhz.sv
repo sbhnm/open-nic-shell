@@ -16,6 +16,7 @@
 //
 // *************************************************************************
 `timescale 1ns/1ps
+`include "pcie_spmv_macros.vh"
 module box_250mhz #(
   parameter int MIN_PKT_LEN   = 64,
   parameter int MAX_PKT_LEN   = 1518,
@@ -129,6 +130,39 @@ module box_250mhz #(
     assign m_axis_qdma_c2h_tuser_src  = 0;
     assign m_axis_qdma_c2h_tuser_dst  = 0;
     axi4 #(48,256,2) axi_Xi[CONF_NUM_KERNEL]();
+
+    generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
+      assign m_axi_ker_araddr[`getvec(48,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].ARADDR;
+      assign m_axi_ker_arburst[`getvec(2,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].ARBURST;
+      assign m_axi_ker_arlen[`getvec(8,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].ARLEN;
+      assign m_axi_ker_arsize[`getvec(3,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].ARSIZE;
+      assign m_axi_ker_arvalid[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].ARVALID;
+      assign m_axi_ker_awaddr[`getvec(48,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].AWADDR;
+      assign m_axi_ker_awburst[`getvec(2,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].AWBURST;
+      assign m_axi_ker_awlen[`getvec(8,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].AWLEN;
+      assign m_axi_ker_awsize[`getvec(3,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].AWSIZE;
+      assign m_axi_ker_awvalid[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].AWVALID;
+      assign m_axi_ker_rready[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].RREADY;
+      assign m_axi_ker_bready[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].BREADY;
+      assign m_axi_ker_wdata[`getvec(256,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].WDATA;
+      assign m_axi_ker_wlast[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].WLAST;
+      assign m_axi_ker_wstrb[`getvec(32,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].WSTRB;
+      assign m_axi_ker_wvalid[`getvec(1,CONF_NUM_KERNEL+1+i)] = axi_Xi[i].WVALID;
+
+
+      assign axi_Xi[i].ARREADY = m_axi_ker_arready[`getvec(1,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].AWREADY = m_axi_ker_awready[`getvec(1,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].RDATA = m_axi_ker_rdata[`getvec(256,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].RLAST = m_axi_ker_rlast[`getvec(1,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].RRESP = m_axi_ker_rresp[`getvec(2,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].RVALID = m_axi_ker_rvalid[`getvec(1,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].WREADY = m_axi_ker_wready[`getvec(1,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].BRESP = m_axi_ker_bresp[`getvec(2,CONF_NUM_KERNEL+1+i)];
+      assign axi_Xi[i].BVALID = m_axi_ker_bvalid[`getvec(1,CONF_NUM_KERNEL+1+i)];
+    end
+    endgenerate
+
+
     spmv_calc_top #(
       .CONF_NUM_KERNEL(CONF_NUM_KERNEL)
     )spmv_calc_top(

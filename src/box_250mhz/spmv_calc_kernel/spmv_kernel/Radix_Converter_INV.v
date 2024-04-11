@@ -25,7 +25,7 @@ module Radix_Converter_INV(
     input wire [1:0]Ctrl_sig;
     input wire input_valid;
     output wire input_ready;
-    input wire [255:0] input_data;
+    input wire [63:0] input_data;
     
     output wire output_double_valid;
     input wire output_double_ready;
@@ -61,15 +61,19 @@ module Radix_Converter_INV(
                                     (Ctrl_sig==0 & output_half_ready);
 
     
-    Fix2Double Fix2Double (
-    .aclk(clk),                                  // input wire aclk
-    .s_axis_a_tvalid(input_valid),            // input wire s_axis_a_tvalid
-    .s_axis_a_tready(input_ready),            // output wire s_axis_a_tready
-    .s_axis_a_tdata(input_data),              // input wire [63 : 0] s_axis_a_tdata
-    .m_axis_result_tvalid(output_double_valid),  // output wire m_axis_result_tvalid
-    .m_axis_result_tready(Fix2Double_res_ready),  // input wire m_axis_result_tready
-    .m_axis_result_tdata(output_double_data)    // output wire [63 : 0] m_axis_result_tdata
-    );
+    // Fix2Double Fix2Double (
+    // .aclk(clk),                                  // input wire aclk
+    // .s_axis_a_tvalid(input_valid),            // input wire s_axis_a_tvalid
+    // .s_axis_a_tready(input_ready),            // output wire s_axis_a_tready
+    // .s_axis_a_tdata(input_data),              // input wire [63 : 0] s_axis_a_tdata
+    // .m_axis_result_tvalid(output_double_valid),  // output wire m_axis_result_tvalid
+    // .m_axis_result_tready(Fix2Double_res_ready),  // input wire m_axis_result_tready
+    // .m_axis_result_tdata(output_double_data)    // output wire [63 : 0] m_axis_result_tdata
+    // );
+    assign output_double_valid = input_valid;
+    assign input_ready = Fix2Double_res_ready;
+    assign output_double_data = input_data;
+    
     Double2Single Double2Single (
     .aclk(clk),                                  // input wire aclk
     .s_axis_a_tvalid(output_double_valid&(Ctrl_sig==0|Ctrl_sig==1)),            // input wire s_axis_a_tvalid

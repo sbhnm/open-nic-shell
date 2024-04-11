@@ -89,7 +89,31 @@ module spmv_calc_kernel #(
     input rstn
 
 );
-
+    wire [47 : 0] mat_wb_araddr;
+    wire [1 : 0] mat_wb_arburst;
+    wire [7 : 0] mat_wb_arlen;
+    wire [2 : 0] mat_wb_arsize;
+    wire mat_wb_arvalid;
+    wire [47 : 0] mat_wb_awaddr;
+    wire [1 : 0] mat_wb_awburst;
+    wire [7 : 0] mat_wb_awlen;
+    wire [2 : 0] mat_wb_awsize;
+    wire mat_wb_awvalid;
+    wire mat_wb_rready;
+    wire mat_wb_bready;
+    wire [255 : 0] mat_wb_wdata;
+    wire mat_wb_wlast;
+    wire [31 : 0] mat_wb_wstrb;
+    wire mat_wb_wvalid;
+    wire mat_wb_arready;
+    wire mat_wb_awready;
+    wire [255 : 0] mat_wb_rdata;
+    wire mat_wb_rlast;
+    wire [1 : 0] mat_wb_rresp;
+    wire mat_wb_rvalid;
+    wire mat_wb_wready;
+    wire [1:0] mat_wb_bresp;
+    wire mat_wb_bvalid;
     
     wire [3:0] axi_Xi_Width_arregion;
     wire [4*1-1 : 0]        axi_Col_arid;
@@ -537,6 +561,8 @@ module spmv_calc_kernel #(
   end
   endgenerate
     // TODO 聚合 Col 
+
+        axi4 #(48,256,2) axi_colXi_slice();
         axi_colxi_crossbar axi_colxi_crossbar (
         .aclk(clk),                      // input wire aclk
         .aresetn(rstn),                // input wire aresetn
@@ -577,35 +603,115 @@ module spmv_calc_kernel #(
 
 
 
-        .m_axi_awaddr(m_axi_Col_awaddr),      // output wire [32 : 0] m_axi_awaddr
-        .m_axi_awlen(m_axi_Col_awlen),        // output wire [7 : 0] m_axi_awlen
-        .m_axi_awsize(m_axi_Col_awsize),      // output wire [2 : 0] m_axi_awsize
-        .m_axi_awburst(m_axi_Col_awburst),    // output wire [1 : 0] m_axi_awburst
-        .m_axi_awvalid(m_axi_Col_awvalid),    // output wire [0 : 0] m_axi_awvalid
-        .m_axi_awready(m_axi_Col_awready),    // input wire [0 : 0] m_axi_awready
-        .m_axi_wdata(m_axi_Col_wdata),        // output wire [255 : 0] m_axi_wdata
-        .m_axi_wstrb(m_axi_Col_wstrb),        // output wire [31 : 0] m_axi_wstrb
-        .m_axi_wlast(m_axi_Col_wlast),        // output wire [0 : 0] m_axi_wlast
-        .m_axi_wvalid(m_axi_Col_wvalid),      // output wire [0 : 0] m_axi_wvalid
-        .m_axi_wready(m_axi_Col_wready),      // input wire [0 : 0] m_axi_wready
-        .m_axi_bresp(m_axi_Col_bresp),        // input wire [1 : 0] m_axi_bresp
-        .m_axi_bvalid(m_axi_Col_bvalid),      // input wire [0 : 0] m_axi_bvalid
-        .m_axi_bready(m_axi_Col_bready),      // output wire [0 : 0] m_axi_bready
-        .m_axi_araddr(m_axi_Col_araddr),      // output wire [32 : 0] m_axi_araddr
-        .m_axi_arlen(m_axi_Col_arlen),        // output wire [7 : 0] m_axi_arlen
-        .m_axi_arsize(m_axi_Col_arsize),      // output wire [2 : 0] m_axi_arsize
-        .m_axi_arburst(m_axi_Col_arburst),    // output wire [1 : 0] m_axi_arburst
-        .m_axi_arvalid(m_axi_Col_arvalid),    // output wire [0 : 0] m_axi_arvalid
-        .m_axi_arready(m_axi_Col_arready),    // input wire [0 : 0] m_axi_arready
-        .m_axi_rdata(m_axi_Col_rdata),        // input wire [255 : 0] m_axi_rdata
-        .m_axi_rresp(m_axi_Col_rresp),        // input wire [1 : 0] m_axi_rresp
-        .m_axi_rlast(m_axi_Col_rlast),        // input wire [0 : 0] m_axi_rlast
-        .m_axi_rvalid(m_axi_Col_rvalid),      // input wire [0 : 0] m_axi_rvalid
-        .m_axi_rready(m_axi_Col_rready)      // output wire [0 : 0] m_axi_rready
+        .m_axi_awaddr(axi_colXi_slice.AWADDR),
+        .m_axi_awlen(axi_colXi_slice.AWLEN),
+        .m_axi_awsize(axi_colXi_slice.AWSIZE),
+        .m_axi_awburst(axi_colXi_slice.AWBURST),
+        .m_axi_awlock(axi_colXi_slice.AWLOCK),
+        .m_axi_awcache(axi_colXi_slice.AWCACHE),
+        .m_axi_awprot(axi_colXi_slice.AWPROT),
+        .m_axi_awregion(axi_colXi_slice.AWREGION),
+        .m_axi_awqos(axi_colXi_slice.AWQOS),
+        .m_axi_awvalid(axi_colXi_slice.AWVALID),
+        .m_axi_awready(axi_colXi_slice.AWREADY),
+        .m_axi_wdata(axi_colXi_slice.WDATA),
+        .m_axi_wstrb(axi_colXi_slice.WSTRB),
+        .m_axi_wlast(axi_colXi_slice.WLAST),
+        .m_axi_wvalid(axi_colXi_slice.WVALID),
+        .m_axi_wready(axi_colXi_slice.WREADY),
+        .m_axi_bresp(axi_colXi_slice.BRESP),
+        .m_axi_bvalid(axi_colXi_slice.BVALID),
+        .m_axi_bready(axi_colXi_slice.BREADY),
+        .m_axi_araddr(axi_colXi_slice.ARADDR),
+        .m_axi_arlen(axi_colXi_slice.ARLEN),
+        .m_axi_arsize(axi_colXi_slice.ARSIZE),
+        .m_axi_arburst(axi_colXi_slice.ARBURST),
+        .m_axi_arlock(axi_colXi_slice.ARLOCK),
+        .m_axi_arcache(axi_colXi_slice.ARCACHE),
+        .m_axi_arprot(axi_colXi_slice.ARPROT),
+        .m_axi_arregion(axi_colXi_slice.ARREGION),
+        .m_axi_arqos(axi_colXi_slice.ARQOS),
+        .m_axi_arvalid(axi_colXi_slice.ARVALID),
+        .m_axi_arready(axi_colXi_slice.ARREADY),
+        .m_axi_rdata(axi_colXi_slice.RDATA),
+        .m_axi_rresp(axi_colXi_slice.RRESP),
+        .m_axi_rlast(axi_colXi_slice.RLAST),
+        .m_axi_rvalid(axi_colXi_slice.RVALID),
+        .m_axi_rready(axi_colXi_slice.RREADY)
 
         // .m_axi_bid(1'b0),
         // .m_axi_rid(1'b0)
     );
+    axi_Xi_register_slice axi_ColXi_register_slice (
+            .aclk(clk),                    // input wire aclk
+            .aresetn(rstn),              // input wire aresetn
+
+            .s_axi_awaddr(axi_colXi_slice.AWADDR),
+            .s_axi_awlen(axi_colXi_slice.AWLEN),
+            .s_axi_awsize(axi_colXi_slice.AWSIZE),
+            .s_axi_awburst(axi_colXi_slice.AWBURST),
+            .s_axi_awlock(axi_colXi_slice.AWLOCK),
+            .s_axi_awcache(axi_colXi_slice.AWCACHE),
+            .s_axi_awprot(axi_colXi_slice.AWPROT),
+            .s_axi_awregion(axi_colXi_slice.AWREGION),
+            .s_axi_awqos(axi_colXi_slice.AWQOS),
+            .s_axi_awvalid(axi_colXi_slice.AWVALID),
+            .s_axi_awready(axi_colXi_slice.AWREADY),
+            .s_axi_wdata(axi_colXi_slice.WDATA),
+            .s_axi_wstrb(axi_colXi_slice.WSTRB),
+            .s_axi_wlast(axi_colXi_slice.WLAST),
+            .s_axi_wvalid(axi_colXi_slice.WVALID),
+            .s_axi_wready(axi_colXi_slice.WREADY),
+            .s_axi_bresp(axi_colXi_slice.BRESP),
+            .s_axi_bvalid(axi_colXi_slice.BVALID),
+            .s_axi_bready(axi_colXi_slice.BREADY),
+            .s_axi_araddr(axi_colXi_slice.ARADDR),
+            .s_axi_arlen(axi_colXi_slice.ARLEN),
+            .s_axi_arsize(axi_colXi_slice.ARSIZE),
+            .s_axi_arburst(axi_colXi_slice.ARBURST),
+            .s_axi_arlock(axi_colXi_slice.ARLOCK),
+            .s_axi_arcache(axi_colXi_slice.ARCACHE),
+            .s_axi_arprot(axi_colXi_slice.ARPROT),
+            .s_axi_arregion(axi_colXi_slice.ARREGION),
+            .s_axi_arqos(axi_colXi_slice.ARQOS),
+            .s_axi_arvalid(axi_colXi_slice.ARVALID),
+            .s_axi_arready(axi_colXi_slice.ARREADY),
+            .s_axi_rdata(axi_colXi_slice.RDATA),
+            .s_axi_rresp(axi_colXi_slice.RRESP),
+            .s_axi_rlast(axi_colXi_slice.RLAST),
+            .s_axi_rvalid(axi_colXi_slice.RVALID),
+            .s_axi_rready(axi_colXi_slice.RREADY),
+            
+
+            .m_axi_awaddr(m_axi_Col_awaddr),      // output wire [32 : 0] m_axi_awaddr
+            .m_axi_awlen(m_axi_Col_awlen),        // output wire [7 : 0] m_axi_awlen
+            .m_axi_awsize(m_axi_Col_awsize),      // output wire [2 : 0] m_axi_awsize
+            .m_axi_awburst(m_axi_Col_awburst),    // output wire [1 : 0] m_axi_awburst
+            .m_axi_awvalid(m_axi_Col_awvalid),    // output wire [0 : 0] m_axi_awvalid
+            .m_axi_awready(m_axi_Col_awready),    // input wire [0 : 0] m_axi_awready
+            .m_axi_wdata(m_axi_Col_wdata),        // output wire [255 : 0] m_axi_wdata
+            .m_axi_wstrb(m_axi_Col_wstrb),        // output wire [31 : 0] m_axi_wstrb
+            .m_axi_wlast(m_axi_Col_wlast),        // output wire [0 : 0] m_axi_wlast
+            .m_axi_wvalid(m_axi_Col_wvalid),      // output wire [0 : 0] m_axi_wvalid
+            .m_axi_wready(m_axi_Col_wready),      // input wire [0 : 0] m_axi_wready
+            .m_axi_bresp(m_axi_Col_bresp),        // input wire [1 : 0] m_axi_bresp
+            .m_axi_bvalid(m_axi_Col_bvalid),      // input wire [0 : 0] m_axi_bvalid
+            .m_axi_bready(m_axi_Col_bready),      // output wire [0 : 0] m_axi_bready
+            .m_axi_araddr(m_axi_Col_araddr),      // output wire [32 : 0] m_axi_araddr
+            .m_axi_arlen(m_axi_Col_arlen),        // output wire [7 : 0] m_axi_arlen
+            .m_axi_arsize(m_axi_Col_arsize),      // output wire [2 : 0] m_axi_arsize
+            .m_axi_arburst(m_axi_Col_arburst),    // output wire [1 : 0] m_axi_arburst
+            .m_axi_arvalid(m_axi_Col_arvalid),    // output wire [0 : 0] m_axi_arvalid
+            .m_axi_arready(m_axi_Col_arready),    // input wire [0 : 0] m_axi_arready
+            .m_axi_rdata(m_axi_Col_rdata),        // input wire [255 : 0] m_axi_rdata
+            .m_axi_rresp(m_axi_Col_rresp),        // input wire [1 : 0] m_axi_rresp
+            .m_axi_rlast(m_axi_Col_rlast),        // input wire [0 : 0] m_axi_rlast
+            .m_axi_rvalid(m_axi_Col_rvalid),      // input wire [0 : 0] m_axi_rvalid
+            .m_axi_rready(m_axi_Col_rready)      // output wire [0 : 0] m_axi_rready
+            );
+    
+
+
 
     generate
         for(genvar i = 0;i<3;i++)begin
@@ -698,35 +804,109 @@ module spmv_calc_kernel #(
         .s_axi_rready(axi_NNZWB_rready),      // input wire [2 : 0] s_axi_rready
 
 
-        .m_axi_awaddr(m_axi_Val_awaddr),      // output wire [32 : 0] m_axi_awaddr
-        .m_axi_awlen(m_axi_Val_awlen),        // output wire [7 : 0] m_axi_awlen
-        .m_axi_awsize(m_axi_Val_awsize),      // output wire [2 : 0] m_axi_awsize
-        .m_axi_awburst(m_axi_Val_awburst),    // output wire [1 : 0] m_axi_awburst
-        .m_axi_awvalid(m_axi_Val_awvalid),    // output wire [0 : 0] m_axi_awvalid
-        .m_axi_awready(m_axi_Val_awready),    // input wire [0 : 0] m_axi_awready
-        .m_axi_wdata(m_axi_Val_wdata),        // output wire [255 : 0] m_axi_wdata
-        .m_axi_wstrb(m_axi_Val_wstrb),        // output wire [31 : 0] m_axi_wstrb
-        .m_axi_wlast(m_axi_Val_wlast),        // output wire [0 : 0] m_axi_wlast
-        .m_axi_wvalid(m_axi_Val_wvalid),      // output wire [0 : 0] m_axi_wvalid
-        .m_axi_wready(m_axi_Val_wready),      // input wire [0 : 0] m_axi_wready
-        .m_axi_bresp(m_axi_Val_bresp),        // input wire [1 : 0] m_axi_bresp
-        .m_axi_bvalid(m_axi_Val_bvalid),      // input wire [0 : 0] m_axi_bvalid
-        .m_axi_bready(m_axi_Val_bready),      // output wire [0 : 0] m_axi_bready
-        .m_axi_araddr(m_axi_Val_araddr),      // output wire [32 : 0] m_axi_araddr
-        .m_axi_arlen(m_axi_Val_arlen),        // output wire [7 : 0] m_axi_arlen
-        .m_axi_arsize(m_axi_Val_arsize),      // output wire [2 : 0] m_axi_arsize
-        .m_axi_arburst(m_axi_Val_arburst),    // output wire [1 : 0] m_axi_arburst
-        .m_axi_arvalid(m_axi_Val_arvalid),    // output wire [0 : 0] m_axi_arvalid
-        .m_axi_arready(m_axi_Val_arready),    // input wire [0 : 0] m_axi_arready
-        .m_axi_rdata(m_axi_Val_rdata),        // input wire [255 : 0] m_axi_rdata
-        .m_axi_rresp(m_axi_Val_rresp),        // input wire [1 : 0] m_axi_rresp
-        .m_axi_rlast(m_axi_Val_rlast),        // input wire [0 : 0] m_axi_rlast
-        .m_axi_rvalid(m_axi_Val_rvalid),      // input wire [0 : 0] m_axi_rvalid
-        .m_axi_rready(m_axi_Val_rready)      // output wire [0 : 0] m_axi_rready
+        .m_axi_awaddr(mat_wb_awaddr),      // output wire [32 : 0] m_axi_awaddr
+        .m_axi_awlen(mat_wb_awlen),        // output wire [7 : 0] m_axi_awlen
+        .m_axi_awsize(mat_wb_awsize),      // output wire [2 : 0] m_axi_awsize
+        .m_axi_awburst(mat_wb_awburst),    // output wire [1 : 0] m_axi_awburst
+        .m_axi_awvalid(mat_wb_awvalid),    // output wire [0 : 0] m_axi_awvalid
+        .m_axi_awready(mat_wb_awready),    // input wire [0 : 0] m_axi_awready
+        .m_axi_wdata(mat_wb_wdata),        // output wire [255 : 0] m_axi_wdata
+        .m_axi_wstrb(mat_wb_wstrb),        // output wire [31 : 0] m_axi_wstrb
+        .m_axi_wlast(mat_wb_wlast),        // output wire [0 : 0] m_axi_wlast
+        .m_axi_wvalid(mat_wb_wvalid),      // output wire [0 : 0] m_axi_wvalid
+        .m_axi_wready(mat_wb_wready),      // input wire [0 : 0] m_axi_wready
+        .m_axi_bresp(mat_wb_bresp),        // input wire [1 : 0] m_axi_bresp
+        .m_axi_bvalid(mat_wb_bvalid),      // input wire [0 : 0] m_axi_bvalid
+        .m_axi_bready(mat_wb_bready),      // output wire [0 : 0] m_axi_bready
+        .m_axi_araddr(mat_wb_araddr),      // output wire [32 : 0] m_axi_araddr
+        .m_axi_arlen(mat_wb_arlen),        // output wire [7 : 0] m_axi_arlen
+        .m_axi_arsize(mat_wb_arsize),      // output wire [2 : 0] m_axi_arsize
+        .m_axi_arburst(mat_wb_arburst),    // output wire [1 : 0] m_axi_arburst
+        .m_axi_arvalid(mat_wb_arvalid),    // output wire [0 : 0] m_axi_arvalid
+        .m_axi_arready(mat_wb_arready),    // input wire [0 : 0] m_axi_arready
+        .m_axi_rdata(mat_wb_rdata),        // input wire [255 : 0] m_axi_rdata
+        .m_axi_rresp(mat_wb_rresp),        // input wire [1 : 0] m_axi_rresp
+        .m_axi_rlast(mat_wb_rlast),        // input wire [0 : 0] m_axi_rlast
+        .m_axi_rvalid(mat_wb_rvalid),      // input wire [0 : 0] m_axi_rvalid
+        .m_axi_rready(mat_wb_rready)      // output wire [0 : 0] m_axi_rready
 
 
         // .m_axi_bid(m_axi_Val_bid),
         // .m_axi_rid(m_axi_Val_rid)
 );
+    axi_wb_register_slice axi_wb_register_slice (
+    .aclk(clk),                      // input wire aclk
+    .aresetn(rstn),                // input wire aresetn
+    .s_axi_awaddr(mat_wb_awaddr),      // input wire [47 : 0] s_axi_awaddr
+    .s_axi_awlen(mat_wb_awlen),        // input wire [7 : 0] s_axi_awlen
+    .s_axi_awsize(mat_wb_awsize),      // input wire [2 : 0] s_axi_awsize
+    .s_axi_awburst(mat_wb_awburst),    // input wire [1 : 0] s_axi_awburst
+    // .s_axi_awlock(mat_wb_awlock),      // input wire [0 : 0] s_axi_awlock
+    // .s_axi_awcache(mat_wb_awcache),    // input wire [3 : 0] s_axi_awcache
+    // .s_axi_awprot(mat_wb_awprot),      // input wire [2 : 0] s_axi_awprot
+    // .s_axi_awregion(mat_wb_awregion),  // input wire [3 : 0] s_axi_awregion
+    // .s_axi_awqos(mat_wb_awqos),        // input wire [3 : 0] s_axi_awqos
+    .s_axi_awvalid(mat_wb_awvalid),    // input wire s_axi_awvalid
+    .s_axi_awready(mat_wb_awready),    // output wire s_axi_awready
+    .s_axi_wdata(mat_wb_wdata),        // input wire [255 : 0] s_axi_wdata
+    .s_axi_wstrb(mat_wb_wstrb),        // input wire [31 : 0] s_axi_wstrb
+    .s_axi_wlast(mat_wb_wlast),        // input wire s_axi_wlast
+    .s_axi_wvalid(mat_wb_wvalid),      // input wire s_axi_wvalid
+    .s_axi_wready(mat_wb_wready),      // output wire s_axi_wready
+    .s_axi_bresp(mat_wb_bresp),        // output wire [1 : 0] s_axi_bresp
+    .s_axi_bvalid(mat_wb_bvalid),      // output wire s_axi_bvalid
+    .s_axi_bready(mat_wb_bready),      // input wire s_axi_bready
+    .s_axi_araddr(mat_wb_araddr),      // input wire [47 : 0] s_axi_araddr
+    .s_axi_arlen(mat_wb_arlen),        // input wire [7 : 0] s_axi_arlen
+    .s_axi_arsize(mat_wb_arsize),      // input wire [2 : 0] s_axi_arsize
+    .s_axi_arburst(mat_wb_arburst),    // input wire [1 : 0] s_axi_arburst
+    // .s_axi_arlock(mat_wb_arlock),      // input wire [0 : 0] s_axi_arlock
+    // .s_axi_arcache(mat_wb_arcache),    // input wire [3 : 0] s_axi_arcache
+    // .s_axi_arprot(mat_wb_arprot),      // input wire [2 : 0] s_axi_arprot
+    // .s_axi_arregion(mat_wb_arregion),  // input wire [3 : 0] s_axi_arregion
+    // .s_axi_arqos(mat_wb_arqos),        // input wire [3 : 0] s_axi_arqos
+    .s_axi_arvalid(mat_wb_arvalid),    // input wire s_axi_arvalid
+    .s_axi_arready(mat_wb_arready),    // output wire s_axi_arready
+    .s_axi_rdata(mat_wb_rdata),        // output wire [255 : 0] s_axi_rdata
+    .s_axi_rresp(mat_wb_rresp),        // output wire [1 : 0] s_axi_rresp
+    .s_axi_rlast(mat_wb_rlast),        // output wire s_axi_rlast
+    .s_axi_rvalid(mat_wb_rvalid),      // output wire s_axi_rvalid
+    .s_axi_rready(mat_wb_rready),      // input wire s_axi_rready
 
+    .m_axi_awaddr(m_axi_Val_awaddr),      // output wire [47 : 0] m_axi_awaddr
+    .m_axi_awlen(m_axi_Val_awlen),        // output wire [7 : 0] m_axi_awlen
+    .m_axi_awsize(m_axi_Val_awsize),      // output wire [2 : 0] m_axi_awsize
+    .m_axi_awburst(m_axi_Val_awburst),    // output wire [1 : 0] m_axi_awburst
+    // .m_axi_awlock(m_axi_Val_awlock),      // output wire [0 : 0] m_axi_awlock
+    // .m_axi_awcache(m_axi_Val_awcache),    // output wire [3 : 0] m_axi_awcache
+    // .m_axi_awprot(m_axi_Val_awprot),      // output wire [2 : 0] m_axi_awprot
+    // .m_axi_awregion(m_axi_Val_awregion),  // output wire [3 : 0] m_axi_awregion
+    // .m_axi_awqos(m_axi_Val_awqos),        // output wire [3 : 0] m_axi_awqos
+    .m_axi_awvalid(m_axi_Val_awvalid),    // output wire m_axi_awvalid
+    .m_axi_awready(m_axi_Val_awready),    // input wire m_axi_awready
+    .m_axi_wdata(m_axi_Val_wdata),        // output wire [255 : 0] m_axi_wdata
+    .m_axi_wstrb(m_axi_Val_wstrb),        // output wire [31 : 0] m_axi_wstrb
+    .m_axi_wlast(m_axi_Val_wlast),        // output wire m_axi_wlast
+    .m_axi_wvalid(m_axi_Val_wvalid),      // output wire m_axi_wvalid
+    .m_axi_wready(m_axi_Val_wready),      // input wire m_axi_wready
+    .m_axi_bresp(m_axi_Val_bresp),        // input wire [1 : 0] m_axi_bresp
+    .m_axi_bvalid(m_axi_Val_bvalid),      // input wire m_axi_bvalid
+    .m_axi_bready(m_axi_Val_bready),      // output wire m_axi_bready
+    .m_axi_araddr(m_axi_Val_araddr),      // output wire [47 : 0] m_axi_araddr
+    .m_axi_arlen(m_axi_Val_arlen),        // output wire [7 : 0] m_axi_arlen
+    .m_axi_arsize(m_axi_Val_arsize),      // output wire [2 : 0] m_axi_arsize
+    .m_axi_arburst(m_axi_Val_arburst),    // output wire [1 : 0] m_axi_arburst
+    // .m_axi_arlock(m_axi_Val_arlock),      // output wire [0 : 0] m_axi_arlock
+    // .m_axi_arcache(m_axi_Val_arcache),    // output wire [3 : 0] m_axi_arcache
+    // .m_axi_arprot(m_axi_Val_arprot),      // output wire [2 : 0] m_axi_arprot
+    // .m_axi_arregion(m_axi_Val_arregion),  // output wire [3 : 0] m_axi_arregion
+    // .m_axi_arqos(m_axi_Val_arqos),        // output wire [3 : 0] m_axi_arqos
+    .m_axi_arvalid(m_axi_Val_arvalid),    // output wire m_axi_arvalid
+    .m_axi_arready(m_axi_Val_arready),    // input wire m_axi_arready
+    .m_axi_rdata(m_axi_Val_rdata),        // input wire [255 : 0] m_axi_rdata
+    .m_axi_rresp(m_axi_Val_rresp),        // input wire [1 : 0] m_axi_rresp
+    .m_axi_rlast(m_axi_Val_rlast),        // input wire m_axi_rlast
+    .m_axi_rvalid(m_axi_Val_rvalid),      // input wire m_axi_rvalid
+    .m_axi_rready(m_axi_Val_rready)      // output wire m_axi_rready
+    );
 endmodule

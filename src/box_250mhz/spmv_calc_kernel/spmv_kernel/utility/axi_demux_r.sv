@@ -1,4 +1,5 @@
 //这个模块可以将连续但是分立的axi请求聚合成猝发的axi请求
+`include "interface.vh"
 module axi_demux_r #(
     parameter integer C_M_AXI_BURST_LEN	= 16,
     parameter integer C_M_AXI_ID_WIDTH	= 1,
@@ -230,11 +231,24 @@ module axi_demux_r #(
 	);
 	assign s_axi_arready = ~Fifo_ar_full;
 	// assign s_axi_arready = 1;
-	assign s_axi_rvalid = ~Fifo_ar_empty & 
+
+	stream #(C_M_AXI_DATA_WIDTH) slice_data();
+	axis_colidx_slice axis_colidx_slice (
+	.aclk(clk),                    // input wire aclk
+	.aresetn(rstn),              // input wire aresetn
+	.s_axis_tvalid(slice_data.tvalid),  // input wire s_axis_tvalid
+	.s_axis_tready(slice_data.tready),  // output wire s_axis_tready
+	.s_axis_tdata(slice_data.tdata),    // input wire [31 : 0] s_axis_tdata
+	.m_axis_tvalid(s_axi_rvalid),  // output wire m_axis_tvalid
+	.m_axis_tready(s_axi_rready),  // input wire m_axis_tready
+	.m_axis_tdata(s_axi_rdata)    // output wire [31 : 0] m_axis_tdata
+	);
+
+	assign slice_data.tvalid = ~Fifo_ar_empty & 
 		addr_hit & 
 		BufferValidMap[(Req_addr-m_axi_read_addr) * C_M_AXI_BURST_LEN / addr_gap] &
-		s_axi_rready;
-	assign s_axi_rdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
+		slice_data.tready;
+	assign slice_data.tdata = BurstDataBuffer[(Req_addr-m_axi_read_addr) * (C_M_AXI_DATA_WIDTH/C_S_AXI_DATA_WIDTH)*(C_M_AXI_BURST_LEN)/addr_gap ];
 
 
 

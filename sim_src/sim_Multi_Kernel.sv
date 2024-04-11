@@ -18,7 +18,7 @@
 // Additional Comments:
 // 
 //////////////////////////////////////////////////////////////////////////////////
-
+`include "interface.vh"
 
 module sim_Multi_Kernel #(
     parameter int CONF_NUM_KERNEL = 32'h1

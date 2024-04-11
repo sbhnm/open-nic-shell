@@ -79,8 +79,8 @@ module hbm_ctrl #(
   assign APB_1_PSEL=0;
   assign APB_1_PWRITE=0;
 
-  assign HBM_REF_CLK_0 = clk;
-  assign HBM_REF_CLK_1 = clk;
+  //assign HBM_REF_CLK_0 = clk;
+  //assign HBM_REF_CLK_1 = clk;
 
     hbm_clk_wiz hbm_clk_wiz
    (
@@ -90,7 +90,16 @@ module hbm_ctrl #(
     .clk_in1_p(hbm_diff_clk_p),    // input clk_in1_p
     .clk_in1_n(hbm_diff_clk_n)    // input clk_in1_n
 );
-
+      BUFG bufg_inst_1 (
+      .I(clk),  // 将rstn连接到BUFG的输入端口
+      .O(HBM_REF_CLK_0)      // BUFG的输出端口，如果不需要可以不连接
+ 
+      );     
+       BUFG bufg_inst_2 (
+      .I(clk),  // 将rstn连接到BUFG的输入端口
+      .O(HBM_REF_CLK_1)      // BUFG的输出端口，如果不需要可以不连接
+ 
+      );
     hbm_0 hbm (
   .HBM_REF_CLK_0(HBM_REF_CLK_0),              // input wire HBM_REF_CLK_0
   .HBM_REF_CLK_1(HBM_REF_CLK_1),              // input wire HBM_REF_CLK_1

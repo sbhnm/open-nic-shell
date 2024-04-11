@@ -101,13 +101,9 @@ module spmv_calc_top #(
     // end
 
     wire rstn_buf;
-    BUFG bufg_inst (
-    .I(rstn),  // 将rstn连接到BUFG的输入端口
-    .O(rstn_buf)      // BUFG的输出端口，如果不需要可以不连接
-//    .OBUFG(),  // 如果需要BUFG的输出作为其他BUFG的输入时使用
-//    .CE(1'b1), // 时钟使能端口，保持为1以确保BUFG工作
-// .S()       // 用于同步重置的端口，如果不需要可以不连接
-    );
+
+
+    assign rstn_buf = rstn;
     wire [32*3*CONF_NUM_KERNEL-1:0] config_wire;
     wire [32*3*CONF_NUM_KERNEL-1:0] status_wire;
     
@@ -140,6 +136,9 @@ module spmv_calc_top #(
 generate
     
     if (CONF_NUM_KERNEL >1)begin
+
+        axi4 #(48,256,2) axi_hbm_slice(); 
+
         axi_hbm_val_crossbar axi_hbm_val_crossbar (
             .aclk(axis_clk),                      // input wire aclk
             .aresetn(rstn_buf),                // input wire aresetn
@@ -181,7 +180,86 @@ generate
             .s_axi_awprot(0),
             .s_axi_awqos(0),
 
-            // .m_axi_rid(0),
+            .m_axi_awaddr(axi_hbm_slice.AWADDR),
+            .m_axi_awlen(axi_hbm_slice.AWLEN),
+            .m_axi_awsize(axi_hbm_slice.AWSIZE),
+            .m_axi_awburst(axi_hbm_slice.AWBURST),
+            .m_axi_awlock(axi_hbm_slice.AWLOCK),
+            .m_axi_awcache(axi_hbm_slice.AWCACHE),
+            .m_axi_awprot(axi_hbm_slice.AWPROT),
+            .m_axi_awregion(axi_hbm_slice.AWREGION),
+            .m_axi_awqos(axi_hbm_slice.AWQOS),
+            .m_axi_awvalid(axi_hbm_slice.AWVALID),
+            .m_axi_awready(axi_hbm_slice.AWREADY),
+            .m_axi_wdata(axi_hbm_slice.WDATA),
+            .m_axi_wstrb(axi_hbm_slice.WSTRB),
+            .m_axi_wlast(axi_hbm_slice.WLAST),
+            .m_axi_wvalid(axi_hbm_slice.WVALID),
+            .m_axi_wready(axi_hbm_slice.WREADY),
+            .m_axi_bresp(axi_hbm_slice.BRESP),
+            .m_axi_bvalid(axi_hbm_slice.BVALID),
+            .m_axi_bready(axi_hbm_slice.BREADY),
+            .m_axi_araddr(axi_hbm_slice.ARADDR),
+            .m_axi_arlen(axi_hbm_slice.ARLEN),
+            .m_axi_arsize(axi_hbm_slice.ARSIZE),
+            .m_axi_arburst(axi_hbm_slice.ARBURST),
+            .m_axi_arlock(axi_hbm_slice.ARLOCK),
+            .m_axi_arcache(axi_hbm_slice.ARCACHE),
+            .m_axi_arprot(axi_hbm_slice.ARPROT),
+            .m_axi_arregion(axi_hbm_slice.ARREGION),
+            .m_axi_arqos(axi_hbm_slice.ARQOS),
+            .m_axi_arvalid(axi_hbm_slice.ARVALID),
+            .m_axi_arready(axi_hbm_slice.ARREADY),
+            .m_axi_rdata(axi_hbm_slice.RDATA),
+            .m_axi_rresp(axi_hbm_slice.RRESP),
+            .m_axi_rlast(axi_hbm_slice.RLAST),
+            .m_axi_rvalid(axi_hbm_slice.RVALID),
+            .m_axi_rready(axi_hbm_slice.RREADY)
+
+        );
+
+        axi_Xi_register_slice axi_hbm_Val_register_slice (
+
+            .aclk(axis_clk),                    // input wire aclk
+            .aresetn(rstn_buf),              // input wire aresetn
+
+            .s_axi_awaddr(axi_hbm_slice.AWADDR),
+            .s_axi_awlen(axi_hbm_slice.AWLEN),
+            .s_axi_awsize(axi_hbm_slice.AWSIZE),
+            .s_axi_awburst(axi_hbm_slice.AWBURST),
+            .s_axi_awlock(axi_hbm_slice.AWLOCK),
+            .s_axi_awcache(axi_hbm_slice.AWCACHE),
+            .s_axi_awprot(axi_hbm_slice.AWPROT),
+            .s_axi_awregion(axi_hbm_slice.AWREGION),
+            .s_axi_awqos(axi_hbm_slice.AWQOS),
+            .s_axi_awvalid(axi_hbm_slice.AWVALID),
+            .s_axi_awready(axi_hbm_slice.AWREADY),
+            .s_axi_wdata(axi_hbm_slice.WDATA),
+            .s_axi_wstrb(axi_hbm_slice.WSTRB),
+            .s_axi_wlast(axi_hbm_slice.WLAST),
+            .s_axi_wvalid(axi_hbm_slice.WVALID),
+            .s_axi_wready(axi_hbm_slice.WREADY),
+            .s_axi_bresp(axi_hbm_slice.BRESP),
+            .s_axi_bvalid(axi_hbm_slice.BVALID),
+            .s_axi_bready(axi_hbm_slice.BREADY),
+            .s_axi_araddr(axi_hbm_slice.ARADDR),
+            .s_axi_arlen(axi_hbm_slice.ARLEN),
+            .s_axi_arsize(axi_hbm_slice.ARSIZE),
+            .s_axi_arburst(axi_hbm_slice.ARBURST),
+            .s_axi_arlock(axi_hbm_slice.ARLOCK),
+            .s_axi_arcache(axi_hbm_slice.ARCACHE),
+            .s_axi_arprot(axi_hbm_slice.ARPROT),
+            .s_axi_arregion(axi_hbm_slice.ARREGION),
+            .s_axi_arqos(axi_hbm_slice.ARQOS),
+            .s_axi_arvalid(axi_hbm_slice.ARVALID),
+            .s_axi_arready(axi_hbm_slice.ARREADY),
+            .s_axi_rdata(axi_hbm_slice.RDATA),
+            .s_axi_rresp(axi_hbm_slice.RRESP),
+            .s_axi_rlast(axi_hbm_slice.RLAST),
+            .s_axi_rvalid(axi_hbm_slice.RVALID),
+            .s_axi_rready(axi_hbm_slice.RREADY),
+            
+                        // .m_axi_rid(0),
             // .m_axi_bid(0),
             .m_axi_araddr(m_axi_hbm_Val_araddr),
             .m_axi_arburst(m_axi_hbm_Val_arburst),
@@ -208,7 +286,9 @@ generate
             .m_axi_wready(m_axi_hbm_Val_wready),
             .m_axi_bresp(m_axi_hbm_Val_bresp),
             .m_axi_bvalid(m_axi_hbm_Val_bvalid)
-        );
+            );
+
+
     end
     else if (CONF_NUM_KERNEL == 1) begin
         assign                   m_axi_hbm_Val_araddr =  axi_Val_araddr;
@@ -273,10 +353,20 @@ endgenerate
         .aclk(axil_clk),
         .aresetn(rstn_buf)
     );
+    
      generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
         axi4 #(48,256,2) axi_Xi[4]();
+        wire axis_clk_buf;
+        assign axis_clk_buf = axis_clk;
+            // BUFG bufg_inst (
+            // .I(axis_clk),  // 将rstn连接到BUFG的输入端口
+            // .O(axis_clk_buf)      // BUFG的输出端口，如果不需要可以不连接
+            // );
+
+        axi4 #(48,256,2) axi_Xi_slice();
+
         axi_colxi_crossbar axi_Xi_crossbar (
-        .aclk(axis_clk),                      // input wire aclk
+        .aclk(axis_clk_buf),                      // input wire aclk
         .aresetn(rstn_buf),                // input wire aresetn
 
         .s_axi_awid(2'b01),          // input wire [1 : 0] s_axi_awid
@@ -333,42 +423,118 @@ endgenerate
         .s_axi_rvalid( {axi_Xi[0].RVALID,axi_Xi[1].RVALID,axi_Xi[2].RVALID,axi_Xi[3].RVALID} ),
         .s_axi_rready( {axi_Xi[0].RREADY,axi_Xi[1].RREADY,axi_Xi[2].RREADY,axi_Xi[3].RREADY} ),
 
-        .m_axi_awaddr(m_axi_Xi[i].AWADDR),
-        .m_axi_awlen(m_axi_Xi[i].AWLEN),
-        .m_axi_awsize(m_axi_Xi[i].AWSIZE),
-        .m_axi_awburst(m_axi_Xi[i].AWBURST),
-        .m_axi_awlock(m_axi_Xi[i].AWLOCK),
-        .m_axi_awcache(m_axi_Xi[i].AWCACHE),
-        .m_axi_awprot(m_axi_Xi[i].AWPROT),
-        .m_axi_awregion(m_axi_Xi[i].AWREGION),
-        .m_axi_awqos(m_axi_Xi[i].AWQOS),
-        .m_axi_awvalid(m_axi_Xi[i].AWVALID),
-        .m_axi_awready(m_axi_Xi[i].AWREADY),
-        .m_axi_wdata(m_axi_Xi[i].WDATA),
-        .m_axi_wstrb(m_axi_Xi[i].WSTRB),
-        .m_axi_wlast(m_axi_Xi[i].WLAST),
-        .m_axi_wvalid(m_axi_Xi[i].WVALID),
-        .m_axi_wready(m_axi_Xi[i].WREADY),
-        .m_axi_bresp(m_axi_Xi[i].BRESP),
-        .m_axi_bvalid(m_axi_Xi[i].BVALID),
-        .m_axi_bready(m_axi_Xi[i].BREADY),
-        .m_axi_araddr(m_axi_Xi[i].ARADDR),
-        .m_axi_arlen(m_axi_Xi[i].ARLEN),
-        .m_axi_arsize(m_axi_Xi[i].ARSIZE),
-        .m_axi_arburst(m_axi_Xi[i].ARBURST),
-        .m_axi_arlock(m_axi_Xi[i].ARLOCK),
-        .m_axi_arcache(m_axi_Xi[i].ARCACHE),
-        .m_axi_arprot(m_axi_Xi[i].ARPROT),
-        .m_axi_arregion(m_axi_Xi[i].ARREGION),
-        .m_axi_arqos(m_axi_Xi[i].ARQOS),
-        .m_axi_arvalid(m_axi_Xi[i].ARVALID),
-        .m_axi_arready(m_axi_Xi[i].ARREADY),
-        .m_axi_rdata(m_axi_Xi[i].RDATA),
-        .m_axi_rresp(m_axi_Xi[i].RRESP),
-        .m_axi_rlast(m_axi_Xi[i].RLAST),
-        .m_axi_rvalid(m_axi_Xi[i].RVALID),
-        .m_axi_rready(m_axi_Xi[i].RREADY)
+        .m_axi_awaddr(axi_Xi_slice.AWADDR),
+        .m_axi_awlen(axi_Xi_slice.AWLEN),
+        .m_axi_awsize(axi_Xi_slice.AWSIZE),
+        .m_axi_awburst(axi_Xi_slice.AWBURST),
+        .m_axi_awlock(axi_Xi_slice.AWLOCK),
+        .m_axi_awcache(axi_Xi_slice.AWCACHE),
+        .m_axi_awprot(axi_Xi_slice.AWPROT),
+        .m_axi_awregion(axi_Xi_slice.AWREGION),
+        .m_axi_awqos(axi_Xi_slice.AWQOS),
+        .m_axi_awvalid(axi_Xi_slice.AWVALID),
+        .m_axi_awready(axi_Xi_slice.AWREADY),
+        .m_axi_wdata(axi_Xi_slice.WDATA),
+        .m_axi_wstrb(axi_Xi_slice.WSTRB),
+        .m_axi_wlast(axi_Xi_slice.WLAST),
+        .m_axi_wvalid(axi_Xi_slice.WVALID),
+        .m_axi_wready(axi_Xi_slice.WREADY),
+        .m_axi_bresp(axi_Xi_slice.BRESP),
+        .m_axi_bvalid(axi_Xi_slice.BVALID),
+        .m_axi_bready(axi_Xi_slice.BREADY),
+        .m_axi_araddr(axi_Xi_slice.ARADDR),
+        .m_axi_arlen(axi_Xi_slice.ARLEN),
+        .m_axi_arsize(axi_Xi_slice.ARSIZE),
+        .m_axi_arburst(axi_Xi_slice.ARBURST),
+        .m_axi_arlock(axi_Xi_slice.ARLOCK),
+        .m_axi_arcache(axi_Xi_slice.ARCACHE),
+        .m_axi_arprot(axi_Xi_slice.ARPROT),
+        .m_axi_arregion(axi_Xi_slice.ARREGION),
+        .m_axi_arqos(axi_Xi_slice.ARQOS),
+        .m_axi_arvalid(axi_Xi_slice.ARVALID),
+        .m_axi_arready(axi_Xi_slice.ARREADY),
+        .m_axi_rdata(axi_Xi_slice.RDATA),
+        .m_axi_rresp(axi_Xi_slice.RRESP),
+        .m_axi_rlast(axi_Xi_slice.RLAST),
+        .m_axi_rvalid(axi_Xi_slice.RVALID),
+        .m_axi_rready(axi_Xi_slice.RREADY)
         );
+        axi_Xi_register_slice axi_Xi_register_slice (
+            .aclk(axis_clk_buf),                    // input wire aclk
+            .aresetn(rstn_buf),              // input wire aresetn
+
+            .s_axi_awaddr(axi_Xi_slice.AWADDR),
+            .s_axi_awlen(axi_Xi_slice.AWLEN),
+            .s_axi_awsize(axi_Xi_slice.AWSIZE),
+            .s_axi_awburst(axi_Xi_slice.AWBURST),
+            .s_axi_awlock(axi_Xi_slice.AWLOCK),
+            .s_axi_awcache(axi_Xi_slice.AWCACHE),
+            .s_axi_awprot(axi_Xi_slice.AWPROT),
+            .s_axi_awregion(axi_Xi_slice.AWREGION),
+            .s_axi_awqos(axi_Xi_slice.AWQOS),
+            .s_axi_awvalid(axi_Xi_slice.AWVALID),
+            .s_axi_awready(axi_Xi_slice.AWREADY),
+            .s_axi_wdata(axi_Xi_slice.WDATA),
+            .s_axi_wstrb(axi_Xi_slice.WSTRB),
+            .s_axi_wlast(axi_Xi_slice.WLAST),
+            .s_axi_wvalid(axi_Xi_slice.WVALID),
+            .s_axi_wready(axi_Xi_slice.WREADY),
+            .s_axi_bresp(axi_Xi_slice.BRESP),
+            .s_axi_bvalid(axi_Xi_slice.BVALID),
+            .s_axi_bready(axi_Xi_slice.BREADY),
+            .s_axi_araddr(axi_Xi_slice.ARADDR),
+            .s_axi_arlen(axi_Xi_slice.ARLEN),
+            .s_axi_arsize(axi_Xi_slice.ARSIZE),
+            .s_axi_arburst(axi_Xi_slice.ARBURST),
+            .s_axi_arlock(axi_Xi_slice.ARLOCK),
+            .s_axi_arcache(axi_Xi_slice.ARCACHE),
+            .s_axi_arprot(axi_Xi_slice.ARPROT),
+            .s_axi_arregion(axi_Xi_slice.ARREGION),
+            .s_axi_arqos(axi_Xi_slice.ARQOS),
+            .s_axi_arvalid(axi_Xi_slice.ARVALID),
+            .s_axi_arready(axi_Xi_slice.ARREADY),
+            .s_axi_rdata(axi_Xi_slice.RDATA),
+            .s_axi_rresp(axi_Xi_slice.RRESP),
+            .s_axi_rlast(axi_Xi_slice.RLAST),
+            .s_axi_rvalid(axi_Xi_slice.RVALID),
+            .s_axi_rready(axi_Xi_slice.RREADY),
+            
+            .m_axi_awaddr(m_axi_Xi[i].AWADDR),
+            .m_axi_awlen(m_axi_Xi[i].AWLEN),
+            .m_axi_awsize(m_axi_Xi[i].AWSIZE),
+            .m_axi_awburst(m_axi_Xi[i].AWBURST),
+            .m_axi_awlock(m_axi_Xi[i].AWLOCK),
+            .m_axi_awcache(m_axi_Xi[i].AWCACHE),
+            .m_axi_awprot(m_axi_Xi[i].AWPROT),
+            .m_axi_awregion(m_axi_Xi[i].AWREGION),
+            .m_axi_awqos(m_axi_Xi[i].AWQOS),
+            .m_axi_awvalid(m_axi_Xi[i].AWVALID),
+            .m_axi_awready(m_axi_Xi[i].AWREADY),
+            .m_axi_wdata(m_axi_Xi[i].WDATA),
+            .m_axi_wstrb(m_axi_Xi[i].WSTRB),
+            .m_axi_wlast(m_axi_Xi[i].WLAST),
+            .m_axi_wvalid(m_axi_Xi[i].WVALID),
+            .m_axi_wready(m_axi_Xi[i].WREADY),
+            .m_axi_bresp(m_axi_Xi[i].BRESP),
+            .m_axi_bvalid(m_axi_Xi[i].BVALID),
+            .m_axi_bready(m_axi_Xi[i].BREADY),
+            .m_axi_araddr(m_axi_Xi[i].ARADDR),
+            .m_axi_arlen(m_axi_Xi[i].ARLEN),
+            .m_axi_arsize(m_axi_Xi[i].ARSIZE),
+            .m_axi_arburst(m_axi_Xi[i].ARBURST),
+            .m_axi_arlock(m_axi_Xi[i].ARLOCK),
+            .m_axi_arcache(m_axi_Xi[i].ARCACHE),
+            .m_axi_arprot(m_axi_Xi[i].ARPROT),
+            .m_axi_arregion(m_axi_Xi[i].ARREGION),
+            .m_axi_arqos(m_axi_Xi[i].ARQOS),
+            .m_axi_arvalid(m_axi_Xi[i].ARVALID),
+            .m_axi_arready(m_axi_Xi[i].ARREADY),
+            .m_axi_rdata(m_axi_Xi[i].RDATA),
+            .m_axi_rresp(m_axi_Xi[i].RRESP),
+            .m_axi_rlast(m_axi_Xi[i].RLAST),
+            .m_axi_rvalid(m_axi_Xi[i].RVALID),
+            .m_axi_rready(m_axi_Xi[i].RREADY)
+            );
 
         reg usr_rst_buf ;
         always @(posedge axil_clk) begin
@@ -389,7 +555,7 @@ endgenerate
             .Val_BASE_ADDR(i * 48'h10000000 + 48'h06000000)
             
         )spmv_calc_kernel (
-            .clk(axis_clk),
+            .clk(axis_clk_buf),
             .rstn(usr_rst_buf),
             .config_wire(config_wire[`getvec(32*3,i)]),
             .status_wire(status_wire[`getvec(32*3,i)]),

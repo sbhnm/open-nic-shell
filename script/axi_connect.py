@@ -56,7 +56,7 @@ wirewidthlist = [
 hbmwidth = [
   1,
   1,
-  33,
+  48,
   2,
   6,
   4,
@@ -129,7 +129,8 @@ for i in range(len(hbmname)):
 
 for i in range(len(wirenamelist)):
     
-    print('assign axi_hbm_{}[`getvec({},i)] = axi_box_{}[`getvec({},i)];'.format(wirenamelist[i],hbmdic[wirenamelist[i]],wirenamelist[i],wirewidthlist[i]))
+    # print('assign m_axi_ker_{}[`getvec({},CONF_NUM_KERNEL+1+i)] = axi_Xi[i].{};'.format(wirenamelist[i],hbmdic[wirenamelist[i]],wirenamelist[i].upper()))
+    print('assign axi_Xi[i].{} = m_axi_ker_{}[`getvec({},CONF_NUM_KERNEL+1+i)];'.format(wirenamelist[i].upper(),wirenamelist[i],wirewidthlist[i]))
     
 #     for i in  range(len(wirenamelist)):
         

@@ -21,4 +21,5 @@
 `define getbit(width, index, offset)    ((index)*(width) + (offset))
 `define getvec(width, index)            ((index)*(width)) +: (width)
 
+
 `endif
