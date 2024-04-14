@@ -87,7 +87,7 @@ module pcie_spmv #(
   parameter int    NUM_PHYS_FUNC   = 1,
   parameter int    NUM_QUEUE       = 512,
   parameter int    NUM_CMAC_PORT   = 1,
-  parameter int CONF_NUM_KERNEL = 32'h4
+  parameter int CONF_NUM_KERNEL = 32'h3
 ) (
  `ifdef __au280__
    output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
@@ -454,14 +454,24 @@ module pcie_spmv #(
 
   // Unused pairs must have their rst_done signals tied to 1
   assign user_rst_done[29:24] = {6{1'b1}};
-
-    clk_wiz_0 clk_wiz_0
+  wire hbm_clk;
+    hbm_clk_wiz hbm_clk_wiz
    (
     // Clock out ports
-    .clk_out1(axis_aclk),     // output clk_out1
+    .clk_out1( hbm_clk),     // output clk_out1
+    .clk_out2(axis_aclk),
    // Clock in ports
-    .clk_in1(qdma_clk)      // input clk_in1
-  );
+    .clk_in1_p(hbm_diff_clk_p),    // input clk_in1_p
+    .clk_in1_n(hbm_diff_clk_n)    // input clk_in1_n
+);
+
+  //   clk_wiz_0 clk_wiz_0
+  //  (
+  //   // Clock out ports
+  //   .clk_out1(axis_aclk),     // output clk_out1
+  //  // Clock in ports
+  //   .clk_in1(qdma_clk)      // input clk_in1
+  // );
 
 
 
@@ -742,8 +752,8 @@ module pcie_spmv #(
   `axi_kern_connect(16,2);
   `axi_kern_connect(17,1 + CONF_NUM_KERNEL + 2);
 
-  `axi_kern_connect(2,3);
-  `axi_kern_connect(3,1 + CONF_NUM_KERNEL + 3);
+  // `axi_kern_connect(2,3);
+  // `axi_kern_connect(3,1 + CONF_NUM_KERNEL + 3);
 
   // generate for (genvar i = 0; i < CONF_NUM_KERNEL; i++) begin
   //   `axi_kern_connect(8*i,i);
@@ -800,8 +810,9 @@ module pcie_spmv #(
     .AXI_BRESP(axi_hbm_bresp),
     .AXI_BVALID(axi_hbm_bvalid),
 
-    .hbm_diff_clk_p(hbm_diff_clk_p),
-    .hbm_diff_clk_n(hbm_diff_clk_n)
+    .hbm_clk(hbm_clk)
+    // .hbm_diff_clk_p(hbm_diff_clk_p),
+    // .hbm_diff_clk_n(hbm_diff_clk_n)
     // .axi_hbm_clk(axis_aclk)
   );
 

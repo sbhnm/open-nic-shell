@@ -32,16 +32,21 @@ set_property BITSTREAM.CONFIG.SPI_32BIT_ADDR Yes [current_design]
 
 create_pblock {pblock_gnblk2[0].spmv_clc_krnl_1}
 add_cells_to_pblock [get_pblocks {pblock_gnblk2[0].spmv_clc_krnl_1}] [get_cells -quiet [list {box_250mhz_inst/spmv_calc_top/genblk2[0].spmv_calc_kernel}]]
-resize_pblock [get_pblocks {pblock_gnblk2[0].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y4:CLOCKREGION_X1Y7}
+#resize_pblock [get_pblocks {pblock_gnblk2[0].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y4:CLOCKREGION_X1Y7}
+resize_pblock [get_pblocks {pblock_gnblk2[0].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y4:CLOCKREGION_X3Y7}
+
 create_pblock {pblock_gnblk2[1].spmv_clc_krnl_1}
 add_cells_to_pblock [get_pblocks {pblock_gnblk2[1].spmv_clc_krnl_1}] [get_cells -quiet [list {box_250mhz_inst/spmv_calc_top/genblk2[1].spmv_calc_kernel}]]
-resize_pblock [get_pblocks {pblock_gnblk2[1].spmv_clc_krnl_1}] -add {CLOCKREGION_X2Y4:CLOCKREGION_X3Y7}
+#resize_pblock [get_pblocks {pblock_gnblk2[1].spmv_clc_krnl_1}] -add {CLOCKREGION_X2Y4:CLOCKREGION_X3Y7}
+resize_pblock [get_pblocks {pblock_gnblk2[1].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y0:CLOCKREGION_X3Y3}
+
 create_pblock {pblock_gnblk2[2].spmv_clc_krnl_1}
 add_cells_to_pblock [get_pblocks {pblock_gnblk2[2].spmv_clc_krnl_1}] [get_cells -quiet [list {box_250mhz_inst/spmv_calc_top/genblk2[2].spmv_calc_kernel}]]
-resize_pblock [get_pblocks {pblock_gnblk2[2].spmv_clc_krnl_1}] -add {CLOCKREGION_X4Y4:CLOCKREGION_X5Y7}
-create_pblock {pblock_gnblk2[3].spmv_clc_krnl_1}
-add_cells_to_pblock [get_pblocks {pblock_gnblk2[3].spmv_clc_krnl_1}] [get_cells -quiet [list {box_250mhz_inst/spmv_calc_top/genblk2[3].spmv_calc_kernel}]]
-resize_pblock [get_pblocks {pblock_gnblk2[3].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y0:CLOCKREGION_X1Y3}
+resize_pblock [get_pblocks {pblock_gnblk2[2].spmv_clc_krnl_1}] -add {CLOCKREGION_X4Y4:CLOCKREGION_X7Y7}
+
+#create_pblock {pblock_gnblk2[3].spmv_clc_krnl_1}
+#add_cells_to_pblock [get_pblocks {pblock_gnblk2[3].spmv_clc_krnl_1}] [get_cells -quiet [list {box_250mhz_inst/spmv_calc_top/genblk2[3].spmv_calc_kernel}]]
+#resize_pblock [get_pblocks {pblock_gnblk2[3].spmv_clc_krnl_1}] -add {CLOCKREGION_X0Y0:CLOCKREGION_X3Y3}
 
 create_pblock qdma
 add_cells_to_pblock [get_pblocks qdma] [get_cells -quiet [list qdma_subsystem_inst]]

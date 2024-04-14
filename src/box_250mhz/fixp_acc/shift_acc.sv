@@ -11,6 +11,8 @@ module shift_acc #(
 
     input wire clr_valid,
     output wire clr_ready,
+    output wire add_valid,
+    
     stream.master res_pkt_stream
 
 );
@@ -39,7 +41,7 @@ module shift_acc #(
     
     Fifo #(
         .DATA_WIDTH(8 +1),
-        .DEPTH(10)
+        .DEPTH(16)
     ) fifo_cs(
         .clk(clk),
         .rst(~rstn),
@@ -67,6 +69,7 @@ module shift_acc #(
         .rstn(rstn),
         .clr_ready(clr_ready),
         .clr_valid(clr_valid),
+        .add_valid(add_valid),
         .input_sign(fifo_cs_dout[0]),
         .add_pkt_stream(add_pkt_stream),
         .res_pkt_stream(res_pkt_stream)

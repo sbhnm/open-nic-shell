@@ -38,14 +38,12 @@ module hbm_ctrl #(
     output [32*2 -1: 0]     AXI_BRESP,
     output [32*1-1:0]   AXI_BVALID,
 
-    input hbm_diff_clk_p,
-  
-    input hbm_diff_clk_n
 
-    // input axi_hbm_clk
+
+     input hbm_clk
 );
   
-  wire clk;
+  // wire clk;
   wire HBM_REF_CLK_0;
   wire HBM_REF_CLK_1;
   wire  [31 : 0] APB_0_PWDATA;
@@ -82,21 +80,14 @@ module hbm_ctrl #(
   //assign HBM_REF_CLK_0 = clk;
   //assign HBM_REF_CLK_1 = clk;
 
-    hbm_clk_wiz hbm_clk_wiz
-   (
-    // Clock out ports
-    .clk_out1(clk),     // output clk_out1
-   // Clock in ports
-    .clk_in1_p(hbm_diff_clk_p),    // input clk_in1_p
-    .clk_in1_n(hbm_diff_clk_n)    // input clk_in1_n
-);
+
       BUFG bufg_inst_1 (
-      .I(clk),  // 将rstn连接到BUFG的输入端口
+      .I(hbm_clk),  // 将rstn连接到BUFG的输入端口
       .O(HBM_REF_CLK_0)      // BUFG的输出端口，如果不需要可以不连接
  
       );     
        BUFG bufg_inst_2 (
-      .I(clk),  // 将rstn连接到BUFG的输入端口
+      .I(hbm_clk),  // 将rstn连接到BUFG的输入端口
       .O(HBM_REF_CLK_1)      // BUFG的输出端口，如果不需要可以不连接
  
       );

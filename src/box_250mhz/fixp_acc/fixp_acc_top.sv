@@ -8,6 +8,7 @@ module fixp_acc_top #(
 
     input wire clr_valid,
     output wire clr_ready,
+    output wire add_valid,
     stream.slave fp64_stream,
     stream.master fp64_sum_stream
     
@@ -23,8 +24,8 @@ module fixp_acc_top #(
     wire [52:0] input_frac;
     wire [10:0] input_expo;
 
-    assign input_expo = fp64_stream.tdata[10:0];
-    assign input_frac = {1'b1,fp64_stream.tdata[11+:52]};
+    assign input_expo = fp64_stream.tdata[52+:11];
+    assign input_frac = {1'b1,fp64_stream.tdata[0+:52]};
     assign input_sign = fp64_stream.tdata[63];
 
     wire [7:0] input_acc_cs;
@@ -57,6 +58,7 @@ module fixp_acc_top #(
         .input_sign(input_sign),
         .clr_valid(clr_valid),
         .clr_ready(clr_ready),
+        .add_valid(add_valid),
         .res_pkt_stream(res_pkt_stream_p)
     );   
 
