@@ -25,25 +25,49 @@ module fixp_acc_top #(
     wire [10:0] input_expo;
 
     assign input_expo = fp64_stream.tdata[52+:11];
-    assign input_frac = {1'b1,fp64_stream.tdata[0+:52]};
-    assign input_sign = fp64_stream.tdata[63];
+    
+    
+    assign input_frac = fp64_stream.tdata == 0 ? 0:{1'b1,fp64_stream.tdata[0+:52]};
 
+
+    assign input_sign = fp64_stream.tdata[63];
+    //assign input_sign =0;
+    
+    
     wire [7:0] input_acc_cs;
     wire [clogb2(SHIHT_WIDTH-1)-1:0] shift_len;
-    assign input_acc_cs = (input_expo < (64-53)) ? 0: ((input_expo +53) / 64 -1);
+    wire [clogb2(SHIHT_WIDTH-1)-1:0] shift_bias;
+    assign shift_bias =  32'h40;
+    // reg [clogb2(SHIHT_WIDTH-1)-1:0] shift_len_buf;
+    reg [7:0] input_acc_cs_buf;
+    assign input_acc_cs =  fp64_stream.tdata != 0 ?((input_expo +1) / 64) :input_acc_cs_buf;
 
     wire [15:0] exp_base;
     assign exp_base = input_acc_cs * 64;
-    assign shift_len = input_expo-exp_base;
-
+    assign shift_len = input_expo+1 - exp_base;
+    always @(posedge clk ) begin
+        if(~rstn)begin
+            input_acc_cs_buf <= 0;
+        end
+        else if(fp64_stream.tdata != 0)begin
+            input_acc_cs_buf <=input_acc_cs;
+        end
+        
+    end
     
     stream #(clogb2(SHIHT_WIDTH-1) + SHIHT_WIDTH)  shift_data_stream_p();
     
-    stream #(2*SHIHT_WIDTH + clogb2(ACC_DEPTH-1))  res_pkt_stream_p();
+    stream #(2*SHIHT_WIDTH + clogb2(ACC_DEPTH-1) +1)  res_pkt_stream_p();
 
-    // assign shift_data_stream_p.tdata = input_sign ? {1,(~input_frac+1),shift_len}:{0,input_frac,shift_len};
+    wire [SHIHT_WIDTH-1:0] ff_ff;
+    generate for (genvar i = 0; i < SHIHT_WIDTH; i++) begin
+        assign ff_ff[i] = 1;
+    end
+    endgenerate
+
+    assign shift_data_stream_p.tdata = input_sign ? {ff_ff,(~input_frac+1),shift_len}:{0,input_frac,shift_len};
     
-    assign shift_data_stream_p.tdata =  {0,input_frac,shift_len};
+    // assign shift_data_stream_p.tdata =  {0,input_frac,shift_len};
 
     assign shift_data_stream_p.tvalid = fp64_stream.tvalid;
     assign fp64_stream.tready = shift_data_stream_p.tready;

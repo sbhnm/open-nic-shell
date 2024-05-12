@@ -66,7 +66,6 @@ module Xi_Reader_s#(
 
 
     output wire [1-1 : 0] m_axi_colIndex_arid;
-    
     output reg [48-1 : 0] m_axi_colIndex_araddr;
     output wire [7 : 0] m_axi_colIndex_arlen;
     output wire [2 : 0] m_axi_colIndex_arsize;
@@ -75,22 +74,30 @@ module Xi_Reader_s#(
     output wire [3 : 0] m_axi_colIndex_arcache;
     output wire [2 : 0] m_axi_colIndex_arprot;
     output wire [3 : 0] m_axi_colIndex_arqos;
+    //`DEBUG
     
     output wire  m_axi_colIndex_arvalid;
+    //`DEBUG
     
     input wire  m_axi_colIndex_arready;
     input wire [1-1 : 0] m_axi_colIndex_rid;
+    //`DEBUG
+    
     input wire [32-1 : 0] m_axi_colIndex_rdata;
     input wire [1 : 0] m_axi_colIndex_rresp;
     input wire  m_axi_colIndex_rlast;
+    //`DEBUG
     
     input wire  m_axi_colIndex_rvalid;
+    //`DEBUG
     
     output wire  m_axi_colIndex_rready;
     wire  colIndex_rready;
 
 
     output wire [1-1 : 0] m_axi_Xi_arid;
+    //`DEBUG
+    
     output wire [48-1 : 0] m_axi_Xi_araddr;
     output wire [7 : 0] m_axi_Xi_arlen;
     output wire [2 : 0] m_axi_Xi_arsize;
@@ -99,13 +106,23 @@ module Xi_Reader_s#(
     output wire [3 : 0] m_axi_Xi_arcache;
     output wire [2 : 0] m_axi_Xi_arprot;
     output wire [3 : 0] m_axi_Xi_arqos;
+    //`DEBUG
+    
     output wire  m_axi_Xi_arvalid;
+    //`DEBUG
+    
     input wire  m_axi_Xi_arready;
     input wire [1-1 : 0] m_axi_Xi_rid;
+    //`DEBUG
+    
     input  wire [64-1 : 0] m_axi_Xi_rdata;
     input wire [1 : 0] m_axi_Xi_rresp;
     input wire  m_axi_Xi_rlast;
+    //`DEBUG
+    
     input wire  m_axi_Xi_rvalid;
+    //`DEBUG
+    
     output wire  m_axi_Xi_rready;
 
     wire [31:0] col_idx_fifo_o;

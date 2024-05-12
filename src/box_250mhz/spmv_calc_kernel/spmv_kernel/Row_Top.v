@@ -26,41 +26,41 @@ module Row_Top#(
 (
     input wire clk,
     input wire rstn,
-    input wire [1:0] Ctrl_sig_Val,
-    input wire [1:0] Ctrl_sig_Xi,
-    input wire [1:0] Ctrl_sig_Yi,
-    input wire [31:0] Row_Num,
+`DEBUG    input wire [1:0] Ctrl_sig_Val,
+`DEBUG    input wire [1:0] Ctrl_sig_Xi,
+`DEBUG    input wire [1:0] Ctrl_sig_Yi,
+`DEBUG    input wire [31:0] Row_Num,
     
-    input wire [31:0] NNZ_Num,
+`DEBUG    input wire [31:0] NNZ_Num,
 
-    input wire Calc_Begin,
+`DEBUG    input wire Calc_Begin,
     output wire Calc_End,
 
 
-    output wire [3-1 : 0] m_axi_NNZ_arid,
-    
-     output wire [48-1 : 0] m_axi_NNZ_araddr,
-     output wire [7 : 0] m_axi_NNZ_arlen,
-    output wire [2 : 0] m_axi_NNZ_arsize,
-    output wire [1 : 0] m_axi_NNZ_arburst,
-    output wire  m_axi_NNZ_arlock,
-    output wire [3 : 0] m_axi_NNZ_arcache,
-    output wire [2 : 0] m_axi_NNZ_arprot,
-    output wire [3 : 0] m_axi_NNZ_arqos,
-    
-     output wire  m_axi_NNZ_arvalid,
-    
-    input wire  m_axi_NNZ_arready,
-    input wire [3-1 : 0] m_axi_NNZ_rid,
-    
-     input wire [256-1 : 0] m_axi_NNZ_rdata,
-    input wire [1 : 0] m_axi_NNZ_rresp,
-    
-     input wire  m_axi_NNZ_rlast,
-    
-     input wire  m_axi_NNZ_rvalid,
-    
-     output wire  m_axi_NNZ_rready,
+`DEBUG     output wire [3-1 : 0] m_axi_NNZ_arid,
+
+`DEBUG     output wire [48-1 : 0] m_axi_NNZ_araddr,
+`DEBUG     output wire [7 : 0] m_axi_NNZ_arlen,
+`DEBUG     output wire [2 : 0] m_axi_NNZ_arsize,
+`DEBUG     output wire [1 : 0] m_axi_NNZ_arburst,
+`DEBUG     output wire  m_axi_NNZ_arlock,
+`DEBUG     output wire [3 : 0] m_axi_NNZ_arcache,
+`DEBUG     output wire [2 : 0] m_axi_NNZ_arprot,
+`DEBUG     output wire [3 : 0] m_axi_NNZ_arqos,
+
+`DEBUG     output wire  m_axi_NNZ_arvalid,
+
+`DEBUG     input wire  m_axi_NNZ_arready,
+`DEBUG     input wire [3-1 : 0] m_axi_NNZ_rid,
+
+`DEBUG     input wire [256-1 : 0] m_axi_NNZ_rdata,
+`DEBUG     input wire [1 : 0] m_axi_NNZ_rresp,
+
+`DEBUG     input wire  m_axi_NNZ_rlast,
+
+`DEBUG     input wire  m_axi_NNZ_rvalid,
+
+`DEBUG     output wire  m_axi_NNZ_rready,
 
     
     //colIndex Buffer
@@ -243,30 +243,29 @@ module Row_Top#(
     output wire             Kernel4_m_axi_Xi_rready,
 
 
-    output wire [3-1 : 0] m_axi_Val_arid,
+`DEBUG     output wire [3-1 : 0] m_axi_Val_arid,
     
-    output reg [48-1 : 0] m_axi_Val_araddr,
-    output wire [7 : 0] m_axi_Val_arlen,
-    output wire [2 : 0] m_axi_Val_arsize,
-    output wire [1 : 0] m_axi_Val_arburst,
-    output wire  m_axi_Val_arlock,
-    output wire [3 : 0] m_axi_Val_arcache,
-    output wire [2 : 0] m_axi_Val_arprot,
-    output wire [3 : 0] m_axi_Val_arqos,
+`DEBUG     output reg [48-1 : 0] m_axi_Val_araddr,
+`DEBUG     output wire [7 : 0] m_axi_Val_arlen,
+`DEBUG     output wire [2 : 0] m_axi_Val_arsize,
+`DEBUG     output wire [1 : 0] m_axi_Val_arburst,
+`DEBUG     output wire  m_axi_Val_arlock,
+`DEBUG     output wire [3 : 0] m_axi_Val_arcache,
+`DEBUG     output wire [2 : 0] m_axi_Val_arprot,
+`DEBUG     output wire [3 : 0] m_axi_Val_arqos,
+`DEBUG     output reg  m_axi_Val_arvalid,
     
-    output reg  m_axi_Val_arvalid,
+`DEBUG     input wire  m_axi_Val_arready,
+`DEBUG     input wire [3-1 : 0] m_axi_Val_rid,
+`DEBUG     input wire [256-1 : 0] m_axi_Val_rdata,
+`DEBUG     input wire [1 : 0] m_axi_Val_rresp,
     
-    input wire  m_axi_Val_arready,
-    input wire [3-1 : 0] m_axi_Val_rid,
-    input wire [256-1 : 0] m_axi_Val_rdata,
-    input wire [1 : 0] m_axi_Val_rresp,
+`DEBUG     input wire  m_axi_Val_rlast,
     
-    input wire  m_axi_Val_rlast,
-    
-    input wire  m_axi_Val_rvalid,
+`DEBUG     input wire  m_axi_Val_rvalid,
     //HXZ
     
-    output reg  m_axi_Val_rready,
+`DEBUG     output reg  m_axi_Val_rready,
     
     output wire [3-1 : 0] m_axi_Yi_awid,
     output wire [48-1 : 0] m_axi_Yi_awaddr,
@@ -317,7 +316,7 @@ module Row_Top#(
     reg Kernel_Begin_2=0;
     reg Kernel_Begin_3=0;
     reg Kernel_Begin_4=0;
-
+    `DEBUG
     reg [3:0] Ctrl_State=0;
     
     reg [3:0] Read_NNZ_State=0;
@@ -651,7 +650,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in({32'd1,32'd1,32'd1,32'd1,32'd1,32'd1,32'd1,32'd1}),
+        .data_in({32'd30,32'd25,32'd20,32'd15,32'd10,32'd9,32'd8,32'd7}),
         `endif 
         .data_out(Row_Kernel_1_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_1_empty),   
@@ -672,7 +671,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
+        .data_in({32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30}),
         `endif   
         .data_out(Row_Kernel_2_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_2_empty),   
@@ -693,7 +692,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
+        .data_in({32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30}),
         `endif   
         .data_out(Row_Kernel_3_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_3_empty),   
@@ -714,7 +713,7 @@ module Row_Top#(
         `ifdef __synthesis__
         .data_in(m_axi_NNZ_rdata),
         `else  
-        .data_in({32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15,32'd15}),
+        .data_in({32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30,32'd30}),
         `endif 
         .data_out(Row_Kernel_4_S_AXIS_TIMES_tdata),  
         .empty(NNZ_fifo_4_empty),   

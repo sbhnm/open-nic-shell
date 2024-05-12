@@ -35,7 +35,7 @@ module sim_acc_top #(
         fixp64_stream.tdata <= {int_data,tail_data};
 
         fixp64_stream.tvalid <= ($random % 10 <5);
-
+        // fixp64_stream.tvalid <= 1;
         // @(posedge clk);
         // shift_data_stream.tvalid<=0;
     endtask 
@@ -48,7 +48,8 @@ module sim_acc_top #(
 
         end
         else begin
-            fix_data_req($random % 5000000,$random % 500 + 500);
+            fix_data_req(($random % 10 < 3) ?  1: -1,0);
+            //fix_data_req(0,32'b0000_1000_0000_0000_0000_0000_0000_0001);
         end
     end
     

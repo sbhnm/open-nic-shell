@@ -146,11 +146,7 @@ module Row_Kernel#(
         .Ctrl_sig(Ctrl_sig_Val),
         .input_valid(Radix_Converter_Val_input_valid),
         .input_ready(Radix_Converter_Val_input_ready),
-        `ifdef __synthesis__
         .input_data(Radix_Converter_Val_input_data),
-        `else
-        .input_data(0),
-        `endif
         .output_valid(Radix_Converter_Val_output_valid),
         .output_ready(Radix_Converter_Val_output_ready),
         // .output_ready(1),

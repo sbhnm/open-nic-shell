@@ -87,7 +87,7 @@ module pcie_spmv #(
   parameter int    NUM_PHYS_FUNC   = 1,
   parameter int    NUM_QUEUE       = 512,
   parameter int    NUM_CMAC_PORT   = 1,
-  parameter int CONF_NUM_KERNEL = 32'h3
+  parameter int CONF_NUM_KERNEL = 32'h2
 ) (
  `ifdef __au280__
    output                         hbm_cattrip, // Fix the CATTRIP issue for AU280 custom flow
@@ -741,6 +741,9 @@ module pcie_spmv #(
 
 
   `axi_hbm_connect(31);
+
+
+  
   `axi_kern_connect(7,CONF_NUM_KERNEL);
 
   `axi_kern_connect(0,0);
@@ -749,8 +752,8 @@ module pcie_spmv #(
   `axi_kern_connect(8,1);
   `axi_kern_connect(9,1 + CONF_NUM_KERNEL + 1);
 
-  `axi_kern_connect(16,2);
-  `axi_kern_connect(17,1 + CONF_NUM_KERNEL + 2);
+  // `axi_kern_connect(16,2);
+  // `axi_kern_connect(17,1 + CONF_NUM_KERNEL + 2);
 
   // `axi_kern_connect(2,3);
   // `axi_kern_connect(3,1 + CONF_NUM_KERNEL + 3);
@@ -768,6 +771,7 @@ module pcie_spmv #(
 //     .clk_in1(clk_in1)      // input clk_in1
 // );
   assign axi_hbm_aclk[`getvec(1,31)] = qdma_clk;
+  assign axi_hbm_areset_n[`getvec(1,31)] = box_250mhz_rstn;
   generate for (genvar j = 0; j < 31; j++) begin
         assign axi_hbm_areset_n[`getvec(1,j)] = box_250mhz_rstn;
         assign axi_hbm_aclk[`getvec(1,j)] = axis_aclk;

@@ -8,7 +8,7 @@ module fixpkt2fp64 #(
     stream.slave ptk_in_stream,
     stream.master fp64_out_stream
 );
-    localparam EXPO_BIAS = PRE_REG_STEP;
+    localparam EXPO_BIAS = 74;
     function integer clogb2 (input integer bit_depth);              
     begin                                                           
     for(clogb2=0; bit_depth>0; clogb2=clogb2+1)                   
@@ -21,13 +21,14 @@ module fixpkt2fp64 #(
     
     wire [clogb2(DEPTH-1)-1 :0] expo_cs;
     wire [11:0] data_expo;
-    
+    wire input_sign;
+
     assign expo_cs = ptk_in_stream.tdata[clogb2(DEPTH-1)-1:0];
     assign data_lmb = ptk_in_stream.tdata[clogb2(DEPTH-1)+:PRE_REG_WIDTH];
     assign data_msb = ptk_in_stream.tdata[clogb2(DEPTH-1)+PRE_REG_WIDTH+:PRE_REG_WIDTH];
-    
+    assign input_sign = ptk_in_stream.tdata[clogb2(DEPTH-1)+2*PRE_REG_WIDTH  +:1];
 
-    assign data_expo = expo_cs * PRE_REG_STEP -EXPO_BIAS;
+    assign data_expo = expo_cs * PRE_REG_STEP  +EXPO_BIAS;
     wire [PRE_REG_STEP + PRE_REG_WIDTH-1:0] data_frac;
     assign data_frac = expo_cs ==0? data_lmb : ({64'h0,data_lmb} + {data_msb,64'h0});//how to normlize？
     
@@ -54,7 +55,7 @@ module fixpkt2fp64 #(
     );
     
     wire [clogb2(192-1)-1:0] fifo_shift_len_dout;
-    wire [12-1:0] fifo_expo_bias_dout;
+    wire [12:0] fifo_expo_bias_dout;
     
     Fifo #(
         .DATA_WIDTH(clogb2(192-1)),
@@ -68,13 +69,13 @@ module fixpkt2fp64 #(
         .rd_en(shifter_data_out.tvalid & shifter_data_out.tready)
     ); 
     Fifo #(
-        .DATA_WIDTH(12),
+        .DATA_WIDTH(12+1),
         .DEPTH(32)
     ) fifo_expo_bias(
         .clk(clk),
         .rst(~rstn),
         .wr_en(fixp_in_stream.tready & fixp_in_stream.tvalid),
-        .data_in(data_expo),
+        .data_in({input_sign,data_expo}),
         .data_out(fifo_expo_bias_dout),
         .rd_en(shifter_data_out.tvalid & shifter_data_out.tready)
     ); 
@@ -90,9 +91,9 @@ module fixpkt2fp64 #(
     );
     assign fp64_out_stream.tvalid = shifter_data_out.tvalid;
     // assign fp64_out_stream.tdata = {1'b0,shifter_data_out.tdata[139:190],(fifo_expo_bias_dout - fifo_shift_len_dout)}; //sgin frac expo
-    assign fp64_out_stream.tdata[63] = 0; //sgin frac expo
-    assign fp64_out_stream.tdata[62:11] = shifter_data_out.tdata[190:139]; //sgin frac expo
-    assign fp64_out_stream.tdata[10:0] = fifo_expo_bias_dout - fifo_shift_len_dout; //sgin frac expo
+    assign fp64_out_stream.tdata[63] = fifo_expo_bias_dout[12]; //sgin frac expo
+    assign fp64_out_stream.tdata[0+:52] = shifter_data_out.tdata[190:139]; //sgin frac expo
+    assign fp64_out_stream.tdata[52+:11] = fifo_expo_bias_dout[11:0] - fifo_shift_len_dout; //sgin frac expo
     
     
     assign shifter_data_out.tready = fp64_out_stream.tready;

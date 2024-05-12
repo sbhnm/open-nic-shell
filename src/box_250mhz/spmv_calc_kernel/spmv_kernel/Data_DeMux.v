@@ -13,7 +13,8 @@ module Data_DeMux #(
     input clk,
     input rstn
 );
-    assign s_ready = (now_prt >= SLAVE_WIDTH / MASTER_WIDTH) & rstn;
+    assign s_ready = ((now_prt >= SLAVE_WIDTH / MASTER_WIDTH) )  
+    | (now_prt == (SLAVE_WIDTH / MASTER_WIDTH)-1 & m_ready & m_valid) & rstn;
     reg [7:0] now_prt;
     reg [SLAVE_WIDTH-1:0] Data_Buffer;
     assign m_data = Data_Buffer[now_prt*MASTER_WIDTH+:MASTER_WIDTH];
@@ -22,7 +23,7 @@ module Data_DeMux #(
             Data_Buffer<=0;
         end
         else begin
-            if(s_ready & s_valid)begin
+            if(s_ready & s_valid )begin
                 Data_Buffer<=s_data;
             end
         end
