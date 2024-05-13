@@ -1,6 +1,6 @@
 
 module demm_calc_top #(
-    parameters
+    
 ) (
     input axil_clk,
     input axis_clk,
@@ -33,7 +33,7 @@ module demm_calc_top #(
     input                          s_axil_rready,
 
 
-    axi4.master m_axi_data[2],
+    axi4.master m_axi_data[2]
     
 );
     wire [32-1:0] ctrl_reg;
@@ -73,6 +73,9 @@ module demm_calc_top #(
         .aresetn(rstn)
     );
 
+    demm_calc_kernel #()
+    demm_calc_kernel(
         
+    );
 
 endmodule

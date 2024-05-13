@@ -107,11 +107,11 @@ module vector_dot #(
     
     
     assign     axis_mul_res_tready = fp64_stream.tready & ~clr_valid;
-`ifdef __synthesis__
+// `ifdef __synthesis__
     assign     fp64_stream.tdata = axis_mul_res_tdata;
-`else
-    assign     fp64_stream.tdata = 64'hbff0000000000000;
-`endif
+// `else
+//     assign     fp64_stream.tdata = 64'hbff0000000000000;
+// `endif
     // end
 
     
